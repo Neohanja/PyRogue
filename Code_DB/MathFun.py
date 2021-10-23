@@ -2,6 +2,7 @@
 
 from numpy import sqrt # Needed to find a point on a circle
 
+# Vector 2 (x, y) for location information
 class Vec2:
     """ A Vector 2 class with math funcitons as needed """
     def __init__(self, x : int, y : int):
@@ -35,13 +36,51 @@ class Vec2:
     # Overrides the == operator, checking if 2 Vector 2s are in the same spot
     def __eq__(self, other):
         """ Checks if 2 Vector2 are at the same point """
-        return self.x == other.x and self.y == other.y
+        if isinstance(other, Vec2):
+            return self.x == other.x and self.y == other.y
+        else:
+            return False
     
     # Overrides the * operator, for a single point value
     def __mul__(self, const):
         """ Allows multiplication of a constant value by Vector2 """
         return Vec2(self.x * const, self.y * const)
+
+# A Boundary Box to check if things are within a specific range. Called room
+# since this is a majority of the box's intents.
+
+class Room:
+    """ Determines a room (or building) based on parameters """
+    def __init__(self, start : Vec2, end : Vec2):
+        """ Constructor """
+        self.start = start
+        self.end = end
+        self.center = Vec2(
+            (self.end.x - self.start.x) // 2 + self.start.x,
+            (self.end.y - self.start.y) // 2 + self.start.y)
+        self.door = Vec2(self.center.x, self.center.y)
     
+    def WithinBounds(self, other, distance):
+        """ Checks if 2 boundaries intersect """
+        
+        return self.PointWithinBounds(other.start.x, other.start.y, distance) or \
+            self.PointWithinBounds(other.start.x, other.end.y, distance) or \
+            self.PointWithinBounds(other.end.x, other.start.y, distance) or \
+            self.PointWithinBounds(other.end.x, other.end.y, distance) or \
+            self.PointWithinBounds(other.center.x, other.center.y, distance) or \
+            other.PointWithinBounds(self.start.x, self.start.y, distance) or \
+            other.PointWithinBounds(self.start.x, self.end.y, distance) or \
+            other.PointWithinBounds(self.end.x, self.start.y, distance) or \
+            other.PointWithinBounds(self.end.x, self.end.y, distance) or \
+            other.PointWithinBounds(self.center.x, self.center.y, distance)
+
+    def PointWithinBounds(self, x, y, distance):
+        """ Checks if a point is within the bounds """
+        return self.start.x - distance <= x <= self.end.x + distance and \
+            self.start.y - distance <= y <= self.end.y + distance
+
+# Additional math helper functions
+
 def Clamp(a, b, val):
     """ Clamps a value between a and b where a < b"""
     if val < a:

@@ -9,23 +9,26 @@ from Noise import *
 from NameGen import *
 from TownGen import *
 
-class WorldMap:
-    """ Map Class, used to store map data """
-    # Symbols = [Name] : Icon, Color, Block Movement
-    map_symbols = { 
+MAP_SYMBOLS = { 
         # Acts as the "barrier" of sorts
         'Water' : ['~', "Blue", True],
         # Natural Tiles
         'Dirt' : ['.', "Brown", False],
         'Grass' : ['v', "Green", False],
         'Sand' : [chr(0x2248), "Tan", False],
-        'Tree' : ['T', "Olive", True],
+        'Mountains' : ['M', "Olive", True],
         # Blocking Tiles
         'Wall' : ['#', "Grey", True],
         'Road' : [chr(0xB1), "Dark Grey", False],
         # Tiles with special actions, like flowers or portals
-        'Town' : ['A', "Tristian", False]
+        'Town' : ['A', "Tristian", False],
+        'Door' : ['D', 'Olive', False]
     }
+
+class WorldMap:
+    """ Map Class, used to store map data """
+    # Symbols = [Name] : Icon, Color, Block Movement
+    
     # Drawing parameters for the map, static values that
     # do not need to change unless a new game mode is open
     START_X = 1
@@ -70,9 +73,9 @@ class WorldMap:
                 elif noise_map[row][col] <= -0.05:
                     new_row += ['Sand']
                 elif 0.3 <= noise_map[row][col]:
-                    new_row += ['Tree']
+                    new_row += ['Mountains']
                 else:
-                    if random.randint(1,100) < 2:
+                    if random.random() < 0.005:
                         new_row += ['Town']
                     else:
                         new_row += ['Grass']
@@ -151,7 +154,7 @@ class WorldMap:
             if m[0] == 'o':
                 x = random.randint(0, self.width - 1)
                 y = random.randint(0, self.height - 1)
-                if not WorldMap.map_symbols[self.overworld[y][x]][2]:
+                if not MAP_SYMBOLS[self.overworld[y][x]][2]:
                     return Vec2(x, y)
             elif m[0] == 't':
                 return Vec2(0, 0) # Generic for now
@@ -172,13 +175,13 @@ class WorldMap:
                 return True
             if cord.y < 0 or cord.y >= self.height:
                 return True
-            return WorldMap.map_symbols[self.overworld[cord.y][cord.x]][2] # <--- That is almost a nightmare to remember!
+            return MAP_SYMBOLS[self.overworld[cord.y][cord.x]][2] # <--- That is almost a nightmare to remember!
         elif self.curMapType == 't':
             if cord.x < 0 or cord.x >= self.towns[self.mapID][0][1]:
                 return False
             if cord.y < 0 or cord.y >= self.towns[self.mapID][0][2]:
                 return False
-            return WorldMap.map_symbols[self.towns[self.mapID][cord.y+1][cord.x]][2]
+            return MAP_SYMBOLS[self.towns[self.mapID][cord.y+1][cord.x]][2]
         elif self.curMapType == 'd':
             pass # temp place holder
 
@@ -223,8 +226,8 @@ class WorldMap:
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
                 index = self.towns[self.mapID][start.y + y + 1][start.x + x]
-                icon = WorldMap.map_symbols[index][0]
-                color = ColorLibrary.GetColor(WorldMap.map_symbols[index][1])
+                icon = MAP_SYMBOLS[index][0]
+                color = ColorLibrary.GetColor(MAP_SYMBOLS[index][1])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)
         
@@ -243,7 +246,7 @@ class WorldMap:
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
                 index = self.overworld[start.y + y][start.x + x]
-                icon = WorldMap.map_symbols[index][0]
-                color = ColorLibrary.GetColor(WorldMap.map_symbols[index][1])
+                icon = MAP_SYMBOLS[index][0]
+                color = ColorLibrary.GetColor(MAP_SYMBOLS[index][1])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)

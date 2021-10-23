@@ -36,7 +36,6 @@ class ANode:
         return self.total_cost > other.total_cost
 
 class AStar:
-
     def __init__(self, grid):
         """ Constructor """
         self.node_status = {}
@@ -60,6 +59,11 @@ class AStar:
         start_node = ANode(start, end)
         self.node_status[str(start_node)] = 'Open'
         self.open_list.append(start_node)
+
+        if start == end:
+            # In the event the pathfinder is at the end point already,
+            # it is useless to send it to the next point
+            include_goal = False
 
         while len(self.open_list) > 0:
             if self.open_list[0].point == end:

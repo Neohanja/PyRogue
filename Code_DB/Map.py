@@ -165,7 +165,7 @@ class WorldMap:
         """ 
             Checks if a location is blocked
             Map Index:
-            o: - Overworld
+            o: Overworld
             t: Vector2 - Towns
             d: x, y, level - Dungeons
         """
@@ -195,10 +195,13 @@ class WorldMap:
             t: <Name> - Towns
             d: x, y, level - Dungeons
         """
+        map_display_loc = Vec2(WorldMap.MAP_VIEW_WIDTH - 2, WorldMap.MAP_VIEW_HEIGHT + 2)
         if self.curMapType == 'o':
-            display.print(x = 1, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = self.mapName)
+            display.print(x = map_display_loc.x, y = map_display_loc.y, string = 'Overworld')
             self.DrawOverworld(start, display)
         if self.curMapType == 't':
+            town_name = 'Town: ' + self.towns[self.mapID][0][0]
+            display.print(x = map_display_loc.x, y = map_display_loc.y, string = town_name)
             self.DrawTown(start, display)
         if self.curMapType == 'd':
             self.DrawDungeon(start, display)
@@ -212,12 +215,8 @@ class WorldMap:
             print("Debug Warning:", self.mapID, "was not built during initial entering of town.")
         
         # Simplify the use of the repetitive data
-        town_name = self.towns[self.mapID][0][0]
         width = self.towns[self.mapID][0][1]
         height = self.towns[self.mapID][0][2]
-
-        townData = town_name + " Width: " + str(width) + " Height: " + str(height)
-        display.print(x = 1, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = townData)
         
         start.x = Clamp(0, width - WorldMap.MAP_VIEW_WIDTH, start.x)
         start.y = Clamp(0, height - WorldMap.MAP_VIEW_HEIGHT, start.y)

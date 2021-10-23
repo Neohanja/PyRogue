@@ -1,6 +1,4 @@
-# PyRogue
-File: Python Rogue
-Author: George Hall
+George Hall
 Final Project : CS 120
 
 File List:

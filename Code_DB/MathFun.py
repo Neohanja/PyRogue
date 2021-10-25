@@ -1,4 +1,4 @@
-# Math Function needed to do many of the system functionality
+# Math Function needed to do many of the game system functionality
 
 from numpy import sqrt # Needed to find a point on a circle
 

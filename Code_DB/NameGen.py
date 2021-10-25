@@ -39,7 +39,9 @@ class NameData:
         "hole",
         "stone",
         "shire",
-        "bend"
+        "bend",
+        "ster",
+        "mire"
     ]
 
 def GenTownName():

@@ -18,8 +18,9 @@ class Player(Actor):
                 self.map_data.ChangeMap('o:')
 
     def Draw(self, console, corner):
-        super().Draw(console, corner)
+        super().Draw(console, corner) # Ensure to conform to the Actor.Draw() first
 
+        # Player Specific functionality
         x = WorldMap.MAP_VIEW_WIDTH + 2
         console.print(x = x, y = 1, string = "Name: " + self.name)
 

@@ -22,7 +22,8 @@ MAP_SYMBOLS = {
         'Road' : [chr(0xB1), "Dark Grey", False],
         # Tiles with special actions, like flowers or portals
         'Town' : ['A', "Tristian", False],
-        'Door' : ['D', 'Olive', False]
+        'Door' : ['D', "Olive", False],
+        'Portal' : ['0', "Rainbow", False]
     }
 
 class WorldMap:
@@ -68,17 +69,23 @@ class WorldMap:
         for row in range(self.height):
             new_row = []
             for col in range(self.width):
+                symbol = 'Grass'
                 if noise_map[row][col] <= -0.11:
-                    new_row += ['Water']
+                    symbol = 'Water'
                 elif noise_map[row][col] <= -0.05:
-                    new_row += ['Sand']
+                    symbol = 'Sand'
                 elif 0.3 <= noise_map[row][col]:
-                    new_row += ['Mountains']
+                    symbol = 'Mountains'
                 else:
-                    if random.random() < 0.005:
-                        new_row += ['Town']
-                    else:
-                        new_row += ['Grass']
+                    map_decor = random.random()
+                    if  map_decor < 0.005:
+                        symbol = 'Portal'
+                    elif map_decor < 0.01:
+                        symbol = 'Town'
+                    # Default case
+                    # else:
+                    #    symbol = 'Grass'
+                new_row += [symbol]
             self.overworld += [new_row]
 
     def BuildTown(self, t_name, t_cord):

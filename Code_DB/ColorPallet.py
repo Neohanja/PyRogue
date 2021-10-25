@@ -23,7 +23,8 @@ class ColorLibrary:
         "Olive" : [85, 71, 14],
         "Tan" : [247, 220, 180],
         "Grey" : [125, 125, 125],
-        "Dark Grey" : [75, 75, 75]
+        "Dark Grey" : [75, 75, 75],
+        "Rainbow" : [234, 123, 25]
     }
 
     def GetColor(color_name : str):

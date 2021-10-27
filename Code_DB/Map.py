@@ -3,27 +3,35 @@
 
 import tcod
 import random
-from ColorPallet import *
+import ColorPallet
 import MathFun
 from Noise import *
 from NameGen import *
 from TownGen import *
 
+# For maps only, or map manipulation (such as A* and entity placement)
+# Dictionary : Key => Terrain Feature
+# List:
+# 0 => Symbol
+# 1 => Color (from color pallet. Colors do not exist will print a warning to the console and default to [255, 0, 255])
+# 2 => Does this feature block normal movement
+# 3 => Description when "examined"
 MAP_SYMBOLS = { 
         # Acts as the "barrier" of sorts
-        'Water' : ['~', "Blue", True],
+        'Water' : ['~', "Blue", True, "You see water, so beautiful and blue. You can get lost for hours just watching the waves hit the shore."],
         # Natural Tiles
-        'Dirt' : ['.', "Brown", False],
-        'Grass' : ['v', "Green", False],
-        'Sand' : [chr(0x2248), "Tan", False],
-        'Mountains' : ['M', "Olive", True],
+        'Dirt' : ['.', "Brown", False, "You see plain soil, perfect for planting things or starting a home."],
+        'Grass' : ['v', "Green", False, "You see a field of grass with some flowers sprinkled in."],
+        'Sand' : [chr(0x2248), "Tan", False, "You see sand for miles, only golden, hot sand."],
+        'Mountains' : ['M', "Olive", True, "You see majestic mountains, much higher than you want to climb."],
         # Blocking Tiles
-        'Wall' : ['#', "Grey", True],
-        'Road' : [chr(0xB1), "Dark Grey", False],
+        'Wall' : ['#', "Grey", True, "You see a wall. It stands to block you progression."],
+        'Road' : [chr(0xB1), "Dark Grey", False, "You see a road, improved to show travelers where to go."],
         # Tiles with special actions, like flowers or portals
-        'Town' : ['A', "Tristian", False],
-        'Door' : ['D', "Olive", False],
-        'Portal' : ['0', "Rainbow", False]
+        'Town' : ['A', "Tristian", False, "You see a town."],
+        'Door' : ['D', "Olive", False, "You see a door, the mortal foe to many would-be adventurers."],
+        'Portal' : ['0', "Portal", False, "You see a portal. Who knows what perils await?"],
+        'Void' : [' ', 'Black', True, "You see nothing here."]
     }
 
 class WorldMap:
@@ -45,32 +53,33 @@ class WorldMap:
         if width < WorldMap.MAP_VIEW_WIDTH:
             width = WorldMap.MAP_VIEW_WIDTH
 
-        self.height = height
-        self.curMapType = 'o'
-        self.player = None
-        self.mapName = GenTownName()
-        self.mapID = ''
-        self.width = width
-        self.overworld = []
-        self.towns = {}
-        self.dungeons = {}
-        self.noise = Noise(256)
+        self.height = height # Overword Height
+        self.width = width # Overworld Width
+        self.curMapType = 'o' # Defaults the start point to the overworld
+        self.player = None # Does not build the player to start with
+        self.mapName = GenTownName() # For now, the world gets a random name. Will fix later
+        self.mapID = '' # The current "town/dungeon". This is empty for the overworld (as for now, there is only one)
+        self.overworld = [] # The overworld map - May make endless later
+        self.towns = {} # A dictionary containing data for every town
+        self.dungeons = {} # A dictionary containing data for every dungeon
+        self.noise = Noise(256) # Initialize the noise engine
 
     # Generation Techniques for the world, towns and dungeons
 
     def BuildOverworld(self):
         """ Builds an overworld map """
-        # Size (width, height), percent chance of live cell, 
-        # smoothing iterations, rebirth population, under population
-        # cell_map = CellAuto.CellAuto(self.width, self.height, 45, 3, 5, 4)
+        # Builds the baseline for terrain. May layer noise later for more interesting looking maps.
         noise_map = self.noise.BuildMap(self.width, self.height, Vec2(0, 0), 23.14)
-
+        # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = []
+
         for row in range(self.height):
             new_row = []
             for col in range(self.width):
-                symbol = 'Grass'
-                if noise_map[row][col] <= -0.11:
+                symbol = 'Grass' # Default tile, for now
+                # The noise function returns a range from -1 to 1, unclamped
+                # This means that we may get a rare value that is < -1 or > 1.
+                if noise_map[row][col] <= -0.11: 
                     symbol = 'Water'
                 elif noise_map[row][col] <= -0.05:
                     symbol = 'Sand'
@@ -82,14 +91,14 @@ class WorldMap:
                         symbol = 'Portal'
                     elif map_decor < 0.01:
                         symbol = 'Town'
-                    # Default case
-                    # else:
-                    #    symbol = 'Grass'
                 new_row += [symbol]
             self.overworld += [new_row]
 
     def BuildTown(self, t_name, t_cord):
         """ Builds a town """
+        # Town: Dict Key => Coord : str(Vec2)
+        # 0: Map Data
+        # 1+: Tile Data
         tRNG = random.Random(t_name)
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
@@ -103,34 +112,57 @@ class WorldMap:
         for y in range(town_height):
             self.towns[t_cord] += [new_map[y]]
 
+    def BuildDungeon(self, d_name, d_cord):
+        """ Builds a dungeon """
+        pass
+
     # Helper functions for manipulating map functions and such
 
     def SetPlayer(self, player):
         """ Sets the player character for map operations """
         self.player = player
 
+    def GetTerrainFeature(self, loc : Vec2, getIndex = False):
+        """ 
+            Gets the Map Symbol (returns the whole list) for a spot,
+            Highly dependant of the currently displayed map.
+        """
+        sym = MAP_SYMBOLS["Void"] # The default
+        if self.curMapType == 'o':
+            index = self.overworld[loc.y][loc.x]
+            if getIndex:
+                return index
+            sym = MAP_SYMBOLS[index]
+        elif self.curMapType == 't':
+            index = self.towns[self.mapID][loc.y + 1][loc.x]
+            if getIndex:
+                return index
+            sym = MAP_SYMBOLS[index]
+        elif self.curMapType == 'd':
+            index = self.dungeons[self.mapID][loc.y + 1][loc.x]
+            if getIndex:
+                return index
+            sym = MAP_SYMBOLS[index]
+        return sym
+
+
     def GetExamineAction(self):
         """ Determines the action to take when at a location when examine/use is pressed """
-        s = ''
-        if self.curMapType == 'o':
-            index = self.overworld[self.player.Position().y][self.player.Position().x]
-            # Special behaviors based on the current location
-            if index == 'Town':
-                t_loc = str(self.player.position.x) + ',' + str(self.player.position.y)
-                if t_loc not in self.towns:
-                    self.BuildTown(GenTownName(), t_loc)
-                s = 'Welcome to ' + self.towns[t_loc][0][0]
-                self.ChangeMap('t:' + t_loc)
-                self.player.mapLoc = 't:' + t_loc
-                self.player.position = Vec2(self.towns[t_loc][0][1]//2, self.towns[t_loc][0][2] - 1)
-                return s
-            # Everything else
-            else:
-                s = "You see a field of " + index
-        elif self.curMapType == 't':
-            pass
-        elif self.curMapType == 'd':
-            pass
+        feature = self.GetTerrainFeature(self.player.Position(), True)
+        sym = MAP_SYMBOLS[feature]
+
+        s = sym[3]
+
+        if feature == "Town":
+            t_loc = str(self.player.position.x) + ',' + str(self.player.position.y)
+            if t_loc not in self.towns:
+                self.BuildTown(GenTownName(), t_loc)
+            s += '\nWelcome to ' + self.towns[t_loc][0][0]
+            self.ChangeMap('t:' + t_loc)
+            self.player.mapLoc = 't:' + t_loc
+            self.player.position = Vec2(self.towns[t_loc][0][1]//2, self.towns[t_loc][0][2] - 1)
+        if feature == "Portal":
+            pass # add Dungeon Mechanics here
         return s
 
     def ChangeMap(self, new_map : str):
@@ -233,7 +265,7 @@ class WorldMap:
                 # Get the index
                 index = self.towns[self.mapID][start.y + y + 1][start.x + x]
                 icon = MAP_SYMBOLS[index][0]
-                color = ColorLibrary.GetColor(MAP_SYMBOLS[index][1])
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)
         
@@ -253,6 +285,6 @@ class WorldMap:
                 # Get the index
                 index = self.overworld[start.y + y][start.x + x]
                 icon = MAP_SYMBOLS[index][0]
-                color = ColorLibrary.GetColor(MAP_SYMBOLS[index][1])
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)

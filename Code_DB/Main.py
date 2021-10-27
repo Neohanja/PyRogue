@@ -70,7 +70,7 @@ def main() -> None:
 
             for event in tcod.event.wait():
                 context.convert_event(event)
-                # print(event) # Debug Log
+                # print(event) # Debug Log - Good for figuring out what is going on behind the scenes
                 action = event_handler.dispatch(event)
 
                 if action is None:

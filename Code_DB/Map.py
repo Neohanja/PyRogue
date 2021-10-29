@@ -7,7 +7,8 @@ import ColorPallet
 import MathFun
 from Noise import *
 from NameGen import *
-from TownGen import *
+from TownGen import TownGenerator
+from DungeonGen import DungeonGenerator
 
 # For maps only, or map manipulation (such as A* and entity placement)
 # Dictionary : Key => Terrain Feature
@@ -24,6 +25,7 @@ MAP_SYMBOLS = {
         'Grass' : ['v', "Green", False, "You see a field of grass with some flowers sprinkled in."],
         'Sand' : [chr(0x2248), "Tan", False, "You see sand for miles, only golden, hot sand."],
         'Mountains' : ['M', "Olive", True, "You see majestic mountains, much higher than you want to climb."],
+        'Room Floor' : ['.', "Light Grey", False, "You see a nice flooring for a room."],
         # Blocking Tiles
         'Wall' : ['#', "Grey", True, "You see a wall. It stands to block you progression."],
         'Road' : [chr(0xB1), "Dark Grey", False, "You see a road, improved to show travelers where to go."],
@@ -31,8 +33,19 @@ MAP_SYMBOLS = {
         'Town' : ['A', "Tristian", False, "You see a town."],
         'Door' : ['D', "Olive", False, "You see a door, the mortal foe to many would-be adventurers."],
         'Portal' : ['0', "Portal", False, "You see a portal. Who knows what perils await?"],
-        'Void' : [' ', 'Black', True, "You see nothing here."]
+        'Void' : [' ', 'Black', True, "You see nothing here."],
+        'Upstairs' : [chr(0x2264), 'Portal', False, "You see stairs going up"],
+        'Downstairs' : [chr(0x2265), 'Portal', False, "You see stairs going down"]
     }
+
+# Indexes for specific map functions, ie: towns and dungeon headers
+HEADER = 0
+MAP_NAME = 0
+MAP_WIDTH = 1
+MAP_HEIGHT = 2
+DUNGEON_LEVEL = 3
+UPSTAIRS = 4
+DOWNSTAIRS = 5
 
 class WorldMap:
     """ Map Class, used to store map data """
@@ -114,7 +127,15 @@ class WorldMap:
 
     def BuildDungeon(self, d_name, d_cord):
         """ Builds a dungeon """
-        pass
+        # Town: Dict Key => Coord : str(Vec2)
+        # 0: Map Data
+        # 1+: Tile Data
+        dungeon_level = int(d_cord.split(',')[2])
+        dRNG = random.Random(d_name)
+        dungeon_width = dRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
+        dungeon_height = dRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
+
+        self.dungeons[d_cord] = DungeonGenerator([d_name, dungeon_width, dungeon_height, dungeon_level], dRNG)        
 
     # Helper functions for manipulating map functions and such
 
@@ -145,7 +166,7 @@ class WorldMap:
             sym = MAP_SYMBOLS[index]
         return sym
 
-
+    # Need to change that this only examines, and not uses, the terrain feature
     def GetExamineAction(self):
         """ Determines the action to take when at a location when examine/use is pressed """
         feature = self.GetTerrainFeature(self.player.Position(), True)
@@ -157,12 +178,48 @@ class WorldMap:
             t_loc = str(self.player.position.x) + ',' + str(self.player.position.y)
             if t_loc not in self.towns:
                 self.BuildTown(GenTownName(), t_loc)
-            s += '\nWelcome to ' + self.towns[t_loc][0][0]
+            s += '\nWelcome to ' + self.towns[t_loc][HEADER][MAP_NAME] + '.'
             self.ChangeMap('t:' + t_loc)
             self.player.mapLoc = 't:' + t_loc
-            self.player.position = Vec2(self.towns[t_loc][0][1]//2, self.towns[t_loc][0][2] - 1)
+            self.player.position = Vec2(self.towns[t_loc][HEADER][MAP_WIDTH]//2, self.towns[t_loc][HEADER][MAP_HEIGHT] - 1)
         if feature == "Portal":
-            pass # add Dungeon Mechanics here
+            d_loc = str(self.player.position.x) + ',' + str(self.player.position.y) + ',1'
+            if d_loc not in self.dungeons:
+                self.BuildDungeon(GenTownName(), d_loc)
+            s += '\nYou have entered ' + self.dungeons[d_loc][HEADER][MAP_NAME] + '.'
+            self.ChangeMap('d:' + d_loc)
+            self.player.mapLoc = 'd:' + d_loc
+            self.player.position = Vec2(self.dungeons[d_loc][HEADER][UPSTAIRS].x, self.dungeons[d_loc][HEADER][UPSTAIRS].y)
+        if feature == "Upstairs":
+            m = self.mapID.split(',')
+            lvl = int(m[2]) # Get the current level
+            if lvl <= 1:
+                s += '\nYou Have escaped the dungeon, ' + self.dungeons[self.mapID][HEADER][MAP_NAME] + '.'
+                self.ChangeMap('o:')
+                self.player.mapLoc = 'o:'
+                self.player.position = Vec2(int(m[0]), int(m[1]))
+            else:
+                s += '\nYou have traveled up a level in the dungeon.'
+                new_map = m[0] + ',' + m[1] + ',' + str(lvl - 1)
+                # In the event this dungeon portion does not exist for some reason
+                if new_map not in self.dungeons:
+                    d_name = self.dungeons[m[0] + ',' + m[1] + ',1'][HEADER][MAP_NAME]
+                    self.BuildDungeon(d_name, new_map)
+                self.ChangeMap('d:' + new_map)
+                self.player.position = Vec2(self.dungeons[new_map][HEADER][DOWNSTAIRS].x, self.dungeons[new_map][HEADER][DOWNSTAIRS].y)
+                self.player.mapLoc = 'd:' + new_map
+        if feature == "Downstairs":
+            m = self.mapID.split(',')
+            lvl = int(m[2])
+            s += '\nYou have traveled down a level in the dungeon.'
+            new_map = m[0] + ',' + m[1] + ',' + str(lvl + 1)
+            if new_map not in self.dungeons:
+                d_name = self.dungeons[m[0] + ',' + m[1] + ',1'][HEADER][MAP_NAME]
+                self.BuildDungeon(d_name, new_map)
+            self.ChangeMap('d:' + new_map)
+            self.player.position = Vec2(self.dungeons[new_map][HEADER][UPSTAIRS].x, self.dungeons[new_map][HEADER][UPSTAIRS].y)
+            self.player.mapLoc = 'd:' + new_map
+
         return s
 
     def ChangeMap(self, new_map : str):
@@ -175,14 +232,21 @@ class WorldMap:
             self.mapID = m[1]
 
     def OutsideMap(self, loc : Vec2):
+        """ Checks if a point is outside the bounds of the current map """
         width = self.width
         height = self.height
         if self.curMapType == 't':
-            width = self.towns[self.mapID][0][1]
-            height = self.towns[self.mapID][0][2]
+            width = self.towns[self.mapID][HEADER][MAP_WIDTH]
+            height = self.towns[self.mapID][HEADER][MAP_HEIGHT]
         return loc.x < 0 or loc.y < 0 or loc.x >= width or loc.y >= height
     
     def GetTownLoc(self):
+        """ Gets the location of the current town. Not valid if this location is not in a town """
+        m = self.mapID.split(',')
+        return Vec2(int(m[0]), int(m[1]))
+    
+    def GetDungeonLoc(self):
+        """ Gets the location of the current dungeon. """
         m = self.mapID.split(',')
         return Vec2(int(m[0]), int(m[1]))
     
@@ -216,13 +280,17 @@ class WorldMap:
                 return True
             return MAP_SYMBOLS[self.overworld[cord.y][cord.x]][2] # <--- That is almost a nightmare to remember!
         elif self.curMapType == 't':
-            if cord.x < 0 or cord.x >= self.towns[self.mapID][0][1]:
+            if cord.x < 0 or cord.x >= self.towns[self.mapID][HEADER][MAP_WIDTH]:
                 return False
-            if cord.y < 0 or cord.y >= self.towns[self.mapID][0][2]:
+            if cord.y < 0 or cord.y >= self.towns[self.mapID][HEADER][MAP_HEIGHT]:
                 return False
             return MAP_SYMBOLS[self.towns[self.mapID][cord.y+1][cord.x]][2]
         elif self.curMapType == 'd':
-            pass # temp place holder
+            if cord.x < 0 or cord.x >= self.dungeons[self.mapID][HEADER][MAP_WIDTH]:
+                return True
+            if cord.y < 0 or cord.y >= self.dungeons[self.mapID][HEADER][MAP_HEIGHT]:
+                return True
+            return MAP_SYMBOLS[self.dungeons[self.mapID][cord.y+1][cord.x]][2]
 
     # Functions to draw the maps
 
@@ -239,23 +307,20 @@ class WorldMap:
             display.print(x = map_display_loc.x, y = map_display_loc.y, string = 'Overworld')
             self.DrawOverworld(start, display)
         if self.curMapType == 't':
-            town_name = 'Town: ' + self.towns[self.mapID][0][0]
+            town_name = 'Town: ' + self.towns[self.mapID][HEADER][MAP_NAME]
             display.print(x = map_display_loc.x, y = map_display_loc.y, string = town_name)
             self.DrawTown(start, display)
         if self.curMapType == 'd':
+            m = self.mapID.split(',')
+            dungeon_name = 'Dungeon: ' + self.dungeons[self.mapID][HEADER][MAP_NAME] + " L: " + m[2]
+            display.print(x = map_display_loc.x, y = map_display_loc.y, string = dungeon_name)
             self.DrawDungeon(start, display)
 
     def DrawTown(self, start : MathFun.Vec2, display : tcod.Console):
         """ Draws a town """
-        # Check if the map ID is in the town index yet. It should be there from entering the town,
-        # but bugs do occur
-        if self.mapID not in self.towns: # Should be build upon entering, but just in case
-            self.BuildTown(GenTownName(), self.mapID)
-            print("Debug Warning:", self.mapID, "was not built during initial entering of town.")
-        
         # Simplify the use of the repetitive data
-        width = self.towns[self.mapID][0][1]
-        height = self.towns[self.mapID][0][2]
+        width = self.towns[self.mapID][HEADER][MAP_WIDTH]
+        height = self.towns[self.mapID][HEADER][MAP_HEIGHT]
         
         start.x = Clamp(0, width - WorldMap.MAP_VIEW_WIDTH, start.x)
         start.y = Clamp(0, height - WorldMap.MAP_VIEW_HEIGHT, start.y)
@@ -271,9 +336,23 @@ class WorldMap:
         
 
     def DrawDungeon(self, start : MathFun.Vec2, display : tcod.Console):
-        """ Draws the dungeon at a x/y coord """
-        # display.print(x = 1, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = "Dungeon")
-        pass
+        """ Draws the dungeon at a x/y/z coord """
+        # Simplify the use of the repetitive data
+        width = self.dungeons[self.mapID][HEADER][MAP_WIDTH]
+        height = self.dungeons[self.mapID][HEADER][MAP_HEIGHT]
+        
+        # Clamp the values of x and y
+        start.x = Clamp(0, width - WorldMap.MAP_VIEW_WIDTH, start.x)
+        start.y = Clamp(0, height - WorldMap.MAP_VIEW_HEIGHT, start.y)
+
+        for x in range(WorldMap.MAP_VIEW_WIDTH):
+            for y in range(WorldMap.MAP_VIEW_HEIGHT):
+                # Get the index
+                index = self.dungeons[self.mapID][start.y + y + 1][start.x + x]
+                icon = MAP_SYMBOLS[index][0]
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
+                display.print(x = x + WorldMap.START_X, 
+                    y = y + WorldMap.START_Y, string = icon, fg = color)
 
     def DrawOverworld(self, start : MathFun.Vec2, display : tcod.Console):
         """ Draw Overworld (main map) to the screen """

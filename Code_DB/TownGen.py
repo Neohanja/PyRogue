@@ -72,7 +72,7 @@ def TownGenerator(height, width):
                     or x == build_room.start.x or x == build_room.end.x:
                     town_design[y][x] = 'Wall'
                 else:
-                    town_design[y][x] = 'Dirt'
+                    town_design[y][x] = 'Room Floor'
 
     # Start the path making thing
     path_maker = AStar(town_design)

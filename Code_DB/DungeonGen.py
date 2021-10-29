@@ -87,19 +87,25 @@ def DungeonGenerator(dungeon_header : list, dRNG : random.Random):
     # Add the up and down stairs
     up_stairs = dRNG.choice(pending_rooms).center
     down_stairs = dRNG.choice(pending_rooms).center
-    dungeon_header.append(up_stairs)
-    dungeon_header.append(down_stairs)
 
     # make sure the up and down stairs are in the same place
     while up_stairs == down_stairs:
         down_stairs = dRNG.choice(pending_rooms).center
     
+    # Add the stairs to the header information
+    dungeon_header.append(up_stairs)
+    dungeon_header.append(down_stairs)
+    
+    # And to the map
     dungeon[up_stairs.y][up_stairs.x] = 'Upstairs'
-    if not is_bottom:
+    if not is_bottom: # Do not place stairs if we are at the bottom of the portal/dungeon
         dungeon[down_stairs.y][down_stairs.x] = 'Downstairs'
 
     # Start the path making thing
     path_maker = AStar(dungeon)
+
+    # Add the A* program to the dungeon header, to ensure there is no real need to rebuild it later
+    dungeon_header.append(path_maker)
 
     for room_num in range(len(pending_rooms)):
         next_room = room_num + 1

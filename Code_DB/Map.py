@@ -46,6 +46,7 @@ MAP_HEIGHT = 2
 DUNGEON_LEVEL = 3
 UPSTAIRS = 4
 DOWNSTAIRS = 5
+MAP_ASTAR = 6
 
 class WorldMap:
     """ Map Class, used to store map data """

@@ -37,5 +37,8 @@ class Stat:
     def __repr__(self):
         if self.stat_type == 0: # Basic stats, such as Strength
             return self.sName + ": " + str(self.base_val) + "+" + str(self.mod_val) + " total:" + str(self.Total())
-        if self.stat_type == 1: # Derived, such as HP
+        elif self.stat_type == 1: # Derived, such as HP
             return self.sName + ": " + str(self.mod_val) + "/" + str(self.base_val) + " (" + str(self.PercentRemaining()) + "%)"
+        
+        # Default:
+        return self.lName + ": " + str(self.Total())

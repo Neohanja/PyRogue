@@ -45,5 +45,6 @@ class FSM: # Basic FSM, mostly for mindless monsters
     # Helper Functions
     def GetPath(self, destination : Vec2):
         """ Returns the path from an A* Pathfinding """
+        pass
 
 # Any special cases will go down here, such as villagers with different logic or party members

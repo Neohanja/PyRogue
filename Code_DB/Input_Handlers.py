@@ -27,8 +27,10 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = MovementAction(dx = 1, dy = 0)
         elif key == tcod.event.K_r: # Resting
             action = MovementAction(dx = 0, dy = 0)
-        elif key == tcod.event.K_e: # Examine Key / Use
+        elif key == tcod.event.K_i: # Examine Key
             action = ExamineAction()
+        elif key == tcod.event.K_e: # Use Key
+            action = UseAction()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
         

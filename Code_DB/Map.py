@@ -43,10 +43,11 @@ HEADER = 0
 MAP_NAME = 0
 MAP_WIDTH = 1
 MAP_HEIGHT = 2
-DUNGEON_LEVEL = 3
-UPSTAIRS = 4
-DOWNSTAIRS = 5
-MAP_ASTAR = 6
+MAP_RNG = 3
+DUNGEON_LEVEL = 4
+UPSTAIRS = 5
+DOWNSTAIRS = 6
+MAP_ASTAR = 7
 
 class WorldMap:
     """ Map Class, used to store map data """
@@ -121,7 +122,7 @@ class WorldMap:
         new_map = TownGenerator(town_height, town_width)
         # If we are making the town, then the town 
         # does not exist in the dictionary yet.
-        self.towns[t_cord] = [[t_name, town_width, town_height]] # Header for all towns/dungeons
+        self.towns[t_cord] = [[t_name, town_width, town_height, tRNG]] # Header for all towns/dungeons
         # Add the town to the dictionary of maps
         for y in range(town_height):
             self.towns[t_cord] += [new_map[y]]
@@ -135,8 +136,7 @@ class WorldMap:
         dRNG = random.Random(d_name)
         dungeon_width = dRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         dungeon_height = dRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
-
-        self.dungeons[d_cord] = DungeonGenerator([d_name, dungeon_width, dungeon_height, dungeon_level], dRNG)        
+        self.dungeons[d_cord] = DungeonGenerator([d_name, dungeon_width, dungeon_height, dRNG, dungeon_level])
 
     # Helper functions for manipulating map functions and such
 
@@ -167,61 +167,11 @@ class WorldMap:
             sym = MAP_SYMBOLS[index]
         return sym
 
-    # Need to change that this only examines, and not uses, the terrain feature
     def GetExamineAction(self):
         """ Determines the action to take when at a location when examine/use is pressed """
         feature = self.GetTerrainFeature(self.player.Position(), True)
         sym = MAP_SYMBOLS[feature]
-
-        s = sym[3]
-
-        if feature == "Town":
-            t_loc = str(self.player.position.x) + ',' + str(self.player.position.y)
-            if t_loc not in self.towns:
-                self.BuildTown(GenTownName(), t_loc)
-            s += '\nWelcome to ' + self.towns[t_loc][HEADER][MAP_NAME] + '.'
-            self.ChangeMap('t:' + t_loc)
-            self.player.mapLoc = 't:' + t_loc
-            self.player.position = Vec2(self.towns[t_loc][HEADER][MAP_WIDTH]//2, self.towns[t_loc][HEADER][MAP_HEIGHT] - 1)
-        if feature == "Portal":
-            d_loc = str(self.player.position.x) + ',' + str(self.player.position.y) + ',1'
-            if d_loc not in self.dungeons:
-                self.BuildDungeon(GenTownName(), d_loc)
-            s += '\nYou have entered ' + self.dungeons[d_loc][HEADER][MAP_NAME] + '.'
-            self.ChangeMap('d:' + d_loc)
-            self.player.mapLoc = 'd:' + d_loc
-            self.player.position = Vec2(self.dungeons[d_loc][HEADER][UPSTAIRS].x, self.dungeons[d_loc][HEADER][UPSTAIRS].y)
-        if feature == "Upstairs":
-            m = self.mapID.split(',')
-            lvl = int(m[2]) # Get the current level
-            if lvl <= 1:
-                s += '\nYou Have escaped the dungeon, ' + self.dungeons[self.mapID][HEADER][MAP_NAME] + '.'
-                self.ChangeMap('o:')
-                self.player.mapLoc = 'o:'
-                self.player.position = Vec2(int(m[0]), int(m[1]))
-            else:
-                s += '\nYou have traveled up a level in the dungeon.'
-                new_map = m[0] + ',' + m[1] + ',' + str(lvl - 1)
-                # In the event this dungeon portion does not exist for some reason
-                if new_map not in self.dungeons:
-                    d_name = self.dungeons[m[0] + ',' + m[1] + ',1'][HEADER][MAP_NAME]
-                    self.BuildDungeon(d_name, new_map)
-                self.ChangeMap('d:' + new_map)
-                self.player.position = Vec2(self.dungeons[new_map][HEADER][DOWNSTAIRS].x, self.dungeons[new_map][HEADER][DOWNSTAIRS].y)
-                self.player.mapLoc = 'd:' + new_map
-        if feature == "Downstairs":
-            m = self.mapID.split(',')
-            lvl = int(m[2])
-            s += '\nYou have traveled down a level in the dungeon.'
-            new_map = m[0] + ',' + m[1] + ',' + str(lvl + 1)
-            if new_map not in self.dungeons:
-                d_name = self.dungeons[m[0] + ',' + m[1] + ',1'][HEADER][MAP_NAME]
-                self.BuildDungeon(d_name, new_map)
-            self.ChangeMap('d:' + new_map)
-            self.player.position = Vec2(self.dungeons[new_map][HEADER][UPSTAIRS].x, self.dungeons[new_map][HEADER][UPSTAIRS].y)
-            self.player.mapLoc = 'd:' + new_map
-
-        return s
+        return sym[3]
 
     def ChangeMap(self, new_map : str):
         """ Changes the map based on the string """
@@ -245,6 +195,10 @@ class WorldMap:
         """ Gets the location of the current town. Not valid if this location is not in a town """
         m = self.mapID.split(',')
         return Vec2(int(m[0]), int(m[1]))
+
+    def GetCurrentMap(self):
+        """ Return the Map ID for the currently viewed map """
+        return self.curMapType + ':' + self.mapID
     
     def GetDungeonLoc(self):
         """ Gets the location of the current dungeon. """
@@ -261,9 +215,23 @@ class WorldMap:
                 if not MAP_SYMBOLS[self.overworld[y][x]][2]:
                     return Vec2(x, y)
             elif m[0] == 't':
-                return Vec2(0, 0) # Generic for now
+                width = self.towns[m[1]][HEADER][MAP_WIDTH]
+                height = self.towns[m[1]][HEADER][MAP_HEIGHT]
+                x = random.randint(0, width - 1)
+                y = random.randint(0, height - 1)
+                if not MAP_SYMBOLS[self.towns[m[1]][y + 1][x]][2]:
+                    return Vec2(x, y)
             elif m[0] == 'd':
-                return Vec2(0, 0) # Generic for now
+                width = self.dungeons[m[1]][HEADER][MAP_WIDTH]
+                height = self.dungeons[m[1]][HEADER][MAP_HEIGHT]
+                x = random.randint(0, width - 1)
+                y = random.randint(0, height - 1)
+                point = Vec2(x, y)
+                if not MAP_SYMBOLS[self.dungeons[m[1]][y + 1][x]][2]:
+                    # Make sure this space isn't on top of a stairs
+                    if point == self.dungeons[m[1]][HEADER][UPSTAIRS] or point == self.dungeons[m[1]][HEADER][DOWNSTAIRS]:
+                        continue
+                    return point
 
     def SpaceBlocked(self, cord : MathFun.Vec2):
         """ 

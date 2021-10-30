@@ -3,11 +3,19 @@ from MathFun import *
 import random
 from Map import *
 
+MONSTER_STATS = {
+    "Goblin" : ['G', 'Jumbalia']
+}
+
+# Indexes
+M_ICON = 0
+M_COLOR = 1
+
 class Monster(Actor.Actor):
     """ Monster class, for all things trying to harm/kill the player"""
     
-    def __init__(self, init_position : Vec2, init_name, init_icon, init_color, map_data : WorldMap):
-        super().__init__(init_position, init_name, init_icon, init_color, map_data)
+    def __init__(self, monster_ID : str, map_data : WorldMap):
+        super().__init__(monster_ID, MONSTER_STATS[monster_ID][M_ICON], MONSTER_STATS[monster_ID][M_COLOR], map_data)
         """ Constructor """
         self.sight = 0
 

@@ -4,8 +4,8 @@ from Map import *
 
 class Player(Actor):
     """ Player Class """
-    def __init__(self, init_position : Vec2, init_name, init_icon, init_color, map_data : WorldMap):
-        super().__init__(init_position, init_name, init_icon, init_color, map_data)
+    def __init__(self, map_data : WorldMap):
+        super().__init__("Default", '@', 'White', map_data)
         """ Constructor Specific toward Player """
         self.debug = False
     
@@ -29,6 +29,4 @@ class Player(Actor):
             d = str(self.stats[s])
             console.print(x = x, y = y, string = d)
 
-        # Debug option
-        if self.debug:
-            console.print(x = 1, y = WorldMap.MAP_VIEW_HEIGHT + 2, string = str(self.position))
+        console.print(x = WorldMap.MAP_VIEW_WIDTH - 2, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = str(self.position))

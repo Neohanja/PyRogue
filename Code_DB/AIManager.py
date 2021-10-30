@@ -3,7 +3,9 @@ import Monster
 import Player
 #import NPC
 
+# Other imports required for functionality
 import Map
+import random
 from MathFun import *
 
 class AI_Manager:
@@ -11,31 +13,75 @@ class AI_Manager:
     # All Actors will be agents of the over-all class, rather than
     # making an instance of the AI Manager class. Initializing the class
     # will simply set up specific game items, such as the map and such
+
+    Instance = None # Static class for reference
     
     def __init__(self, map_data : Map.WorldMap):
         """ Initialize the AI Manager Program """
-        self.monsters = []
-        self.npcs = []
+        AI_Manager.Instance = self # Sets this as the static AI Manager Instance
+
+        # AI figures and the map
+        self.monsters = {}
+        self.npcs = {}
         self.map = map_data
         
-        self.player = Player.Player(Vec2(5, 5), "Default", '@', [255,255,255], map_data)
-        self.monsters += [Monster.Monster(Vec2(15, 15), 'Monster', 'M', [255,0,0], map_data)]
+        # Always need a player
+        self.player = Player.Player(map_data)
+        self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
     def Draw(self, console, corner):
         """ Draws the individual actors on the screen"""
         self.player.Draw(console, corner)
 
-        for m in self.monsters:
-            m.Draw(console, corner)
+        mapID = self.map.GetCurrentMap()
+
+        if mapID in self.monsters:
+            for m in self.monsters[mapID]:
+                m.Draw(console, corner)
 
     def ToggleDebug(self, toggle):
         """ Turns on or off the Dev-mode debug options s"""
         self.player.debug = toggle
 
+    def PopulateMonsters(self, d_Index : str, dRNG : random.Random, level : int):
+        """ Populates a dungeon """
+        m_count = dRNG.randint(3 * level, 5 * level)
+
+        if d_Index not in self.monsters:
+            self.monsters[d_Index] = []
+
+        for m in range(m_count):
+            new_monster = Monster.Monster('Goblin', self.map)
+            spawn_loc = self.map.GetEmptySpot(d_Index)
+            while self.EntityHere(spawn_loc, d_Index):
+                spawn_loc = self.map.GetEmptySpot(d_Index)
+            new_monster.SetSpawn(d_Index, spawn_loc)
+            self.monsters[d_Index] += [new_monster]
+
+    def PopulateNPCs(self, t_Index : str):
+        """ Populates a town """
+        pass
+
     def Move(self, playerMove : Vec2):
         """ Moves all AI Agents """
         self.player.Move(playerMove)
 
-        for m in self.monsters:
-            m.Move(self.player)
+        mapID = self.map.GetCurrentMap()
+
+        if mapID in self.monsters:
+            for m in self.monsters[mapID]:
+                m.Move(self.player)
+
+    def EntityHere(self, location : Vec2, mapID : str):
+        """ Checks if any other entities are in this spot """
+        if mapID in self.monsters:
+            for monster in self.monsters[mapID]:
+                if monster.Position() == location:
+                    return True
+        if mapID in self.npcs:
+            for npc in self.npcs[mapID]:
+                if npc.Position() == location:
+                    return True
+
+        return False # If it gets to this point, then there is nothing here

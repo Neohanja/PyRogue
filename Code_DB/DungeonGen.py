@@ -9,17 +9,19 @@ BUILDING_MIN_DISTANCE = 5
 D_NAME = 0
 D_WIDTH = 1
 D_HEIGHT = 2
-D_LEVEL = 3
-D_UP = 4
-D_DOWN = 5
+D_RNG = 3
+D_LEVEL = 4
+D_UP = 5
+D_DOWN = 6
 
 # Most of this will be the same (for now) as the town generator, but with some changes to give more depth
-def DungeonGenerator(dungeon_header : list, dRNG : random.Random):
+def DungeonGenerator(dungeon_header : list):
     """ Generates a town with specified dimentions"""
     dungeon = []
     width = dungeon_header[D_WIDTH]
     height = dungeon_header[D_HEIGHT]
     level = dungeon_header[D_LEVEL]
+    dRNG = dungeon_header[D_RNG]
 
     # Used to determine the bottom of the dungeon. With this math,
     # the absolute max depth will be 18 - May change later for an added challenge

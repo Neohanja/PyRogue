@@ -16,3 +16,7 @@ class MovementAction(Action):
 class ExamineAction(Action):
     """ Dictates what happens when the examine key is pressed """
     pass # Nothing needed as of yet, just the reference that the action is being taken
+
+class UseAction(Action):
+    """ Dictates what happens when the Use key is pressed """
+    pass

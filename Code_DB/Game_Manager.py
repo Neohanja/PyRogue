@@ -128,7 +128,7 @@ class GameManager:
         elif feature == "Downstairs":
             m = self.world.mapID.split(',')
             lvl = int(m[2])
-            self.eAction += '\nYou have traveled down a level in the dungeon.'
+            self.eAction += 'You have traveled down a level in the dungeon.'
             new_map = m[0] + ',' + m[1] + ',' + str(lvl + 1)
             mapLoc = 'd:' + new_map
             if new_map not in self.world.dungeons:

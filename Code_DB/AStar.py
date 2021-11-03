@@ -88,7 +88,7 @@ class AStar:
         for neighbor in [MathFun.Vec2(-1, 0), MathFun.Vec2(1, 0), MathFun.Vec2(0, -1), MathFun.Vec2(0, 1)]:
             if 0 <= start.x + neighbor.x < self.max_x and 0 <= start.y + neighbor.y < self.max_y:
                 next_point = MathFun.Vec2(start.x + neighbor.x, start.y + neighbor.y)
-                if not Map.MAP_SYMBOLS[self.grid[next_point.y][next_point.x]][2]:
+                if not Map.MAP_SYMBOLS[self.grid[next_point.y][next_point.x]][Map.SYMBOL_BLOCK_MOVEMENT]:
                     self.AddNode(ANode(next_point, goal, point))
     
     def AddNode(self, node : ANode):

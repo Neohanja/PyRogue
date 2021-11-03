@@ -36,7 +36,7 @@ class GameManager:
     def Update(self, action):
         """ Actions to take during the game loop """
         if isinstance(action, MovementAction):                    
-            self.aiEngine.Move(Vec2(action.dx, action.dy))
+            self.aiEngine.Update(Vec2(action.dx, action.dy))
             self.eAction = ''
             return True
         

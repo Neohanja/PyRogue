@@ -9,8 +9,8 @@ class Player(Actor):
         """ Constructor Specific toward Player """
         self.debug = False
     
-    def Move(self, offset : Vec2):
-        super().Move(offset)
+    def Update(self, offset : Vec2):
+        self.Move(offset)
         if 't' in self.mapLoc:
             if self.map_data.OutsideMap(self.Position()):
                 self.position = self.map_data.GetTownLoc()

@@ -53,7 +53,6 @@ def main() -> None:
                 # Make sure the screen is only updated when needed, to avoid glitches in the screen from coninuous redraw
                 refesh_screen = game_loop.Update(action)
                 
-
 # Main Function
 
 if __name__ == '__main__':

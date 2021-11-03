@@ -13,29 +13,48 @@ from DungeonGen import DungeonGenerator
 # For maps only, or map manipulation (such as A* and entity placement)
 # Dictionary : Key => Terrain Feature
 # List:
+SYMBOL_ICON = 0
+SYMBOL_COLOR = 1
+SYMBOL_BLOCK_MOVEMENT = 2
+SYMBOL_BLOCK_VIEW = 3
+SYMBOL_GEN_DESCRIPTION = 4
 # 0 => Symbol
 # 1 => Color (from color pallet. Colors do not exist will print a warning to the console and default to [255, 0, 255])
 # 2 => Does this feature block normal movement
 # 3 => Description when "examined"
 MAP_SYMBOLS = { 
         # Acts as the "barrier" of sorts
-        'Water' : ['~', "Blue", True, "You see water, so beautiful and blue. You can get lost for hours just watching the waves hit the shore."],
+        'Water' : ['~', "Blue", True, False, 
+            "You see water, so beautiful and blue. You can get lost for hours just watching the waves hit the shore."],
         # Natural Tiles
-        'Dirt' : ['.', "Brown", False, "You see plain soil, perfect for planting things or starting a home."],
-        'Grass' : ['v', "Green", False, "You see a field of grass with some flowers sprinkled in."],
-        'Sand' : [chr(0x2248), "Tan", False, "You see sand for miles, only golden, hot sand."],
-        'Mountains' : ['M', "Olive", True, "You see majestic mountains, much higher than you want to climb."],
-        'Room Floor' : ['.', "Light Grey", False, "You see a nice flooring for a room."],
+        'Dirt' : ['.', "Brown", False, False,
+            "You see plain soil, perfect for planting things or starting a home."],
+        'Grass' : ['v', "Green", False, False,
+            "You see a field of grass with some flowers sprinkled in."],
+        'Sand' : [chr(0x2248), "Tan", False, False,
+            "You see sand for miles, only golden, hot sand."],
+        'Mountains' : ['M', "Olive", True, True,
+            "You see majestic mountains, much higher than you want to climb."],
+        'Room Floor' : ['.', "Light Grey", False, False,
+            "You see a nice flooring for a room."],
         # Blocking Tiles
-        'Wall' : ['#', "Grey", True, "You see a wall. It stands to block you progression."],
-        'Road' : [chr(0xB1), "Dark Grey", False, "You see a road, improved to show travelers where to go."],
+        'Wall' : ['#', "Grey", True, True,
+            "You see a wall. It stands to block you progression."],
+        'Road' : [chr(0xB1), "Dark Grey", False, False,
+            "You see a road, improved to show travelers where to go."],
         # Tiles with special actions, like flowers or portals
-        'Town' : ['A', "Tristian", False, "You see a town."],
-        'Door' : ['D', "Olive", False, "You see a door, the mortal foe to many would-be adventurers."],
-        'Portal' : ['0', "Portal", False, "You see a portal. Who knows what perils await?"],
-        'Void' : [' ', 'Black', True, "You see nothing here."],
-        'Upstairs' : [chr(0x2264), 'Portal', False, "You see stairs going up"],
-        'Downstairs' : [chr(0x2265), 'Portal', False, "You see stairs going down"]
+        'Town' : ['A', "Tristian", False, False,
+            "You see a town."],
+        'Door' : ['D', "Olive", False, True,
+            "You see a door, the mortal foe to many would-be adventurers."],
+        'Portal' : ['0', "Portal", False, False,
+            "You see a portal. Who knows what perils await?"],
+        'Void' : [' ', 'Black', True, False,
+            "You see nothing here."],
+        'Upstairs' : [chr(0x2264), 'Portal', False, False,
+            "You see stairs going up"],
+        'Downstairs' : [chr(0x2265), 'Portal', False, False,
+            "You see stairs going down"]
     }
 
 # Indexes for specific map functions, ie: towns and dungeon headers
@@ -171,7 +190,7 @@ class WorldMap:
         """ Determines the action to take when at a location when examine/use is pressed """
         feature = self.GetTerrainFeature(self.player.Position(), True)
         sym = MAP_SYMBOLS[feature]
-        return sym[3]
+        return sym[SYMBOL_GEN_DESCRIPTION]
 
     def ChangeMap(self, new_map : str):
         """ Changes the map based on the string """
@@ -212,14 +231,14 @@ class WorldMap:
             if m[0] == 'o':
                 x = random.randint(0, self.width - 1)
                 y = random.randint(0, self.height - 1)
-                if not MAP_SYMBOLS[self.overworld[y][x]][2]:
+                if not MAP_SYMBOLS[self.overworld[y][x]][SYMBOL_BLOCK_MOVEMENT]:
                     return Vec2(x, y)
             elif m[0] == 't':
                 width = self.towns[m[1]][HEADER][MAP_WIDTH]
                 height = self.towns[m[1]][HEADER][MAP_HEIGHT]
                 x = random.randint(0, width - 1)
                 y = random.randint(0, height - 1)
-                if not MAP_SYMBOLS[self.towns[m[1]][y + 1][x]][2]:
+                if not MAP_SYMBOLS[self.towns[m[1]][y + 1][x]][SYMBOL_BLOCK_MOVEMENT]:
                     return Vec2(x, y)
             elif m[0] == 'd':
                 width = self.dungeons[m[1]][HEADER][MAP_WIDTH]
@@ -227,7 +246,7 @@ class WorldMap:
                 x = random.randint(0, width - 1)
                 y = random.randint(0, height - 1)
                 point = Vec2(x, y)
-                if not MAP_SYMBOLS[self.dungeons[m[1]][y + 1][x]][2]:
+                if not MAP_SYMBOLS[self.dungeons[m[1]][y + 1][x]][SYMBOL_BLOCK_MOVEMENT]:
                     # Make sure this space isn't on top of a stairs
                     if point == self.dungeons[m[1]][HEADER][UPSTAIRS] or point == self.dungeons[m[1]][HEADER][DOWNSTAIRS]:
                         continue
@@ -247,19 +266,19 @@ class WorldMap:
                 return True
             if cord.y < 0 or cord.y >= self.height:
                 return True
-            return MAP_SYMBOLS[self.overworld[cord.y][cord.x]][2] # <--- That is almost a nightmare to remember!
+            return MAP_SYMBOLS[self.overworld[cord.y][cord.x]][SYMBOL_BLOCK_MOVEMENT] # <--- That is almost a nightmare to remember!
         elif self.curMapType == 't':
             if cord.x < 0 or cord.x >= self.towns[self.mapID][HEADER][MAP_WIDTH]:
                 return False
             if cord.y < 0 or cord.y >= self.towns[self.mapID][HEADER][MAP_HEIGHT]:
                 return False
-            return MAP_SYMBOLS[self.towns[self.mapID][cord.y+1][cord.x]][2]
+            return MAP_SYMBOLS[self.towns[self.mapID][cord.y+1][cord.x]][SYMBOL_BLOCK_MOVEMENT]
         elif self.curMapType == 'd':
             if cord.x < 0 or cord.x >= self.dungeons[self.mapID][HEADER][MAP_WIDTH]:
                 return True
             if cord.y < 0 or cord.y >= self.dungeons[self.mapID][HEADER][MAP_HEIGHT]:
                 return True
-            return MAP_SYMBOLS[self.dungeons[self.mapID][cord.y+1][cord.x]][2]
+            return MAP_SYMBOLS[self.dungeons[self.mapID][cord.y+1][cord.x]][SYMBOL_BLOCK_MOVEMENT]
 
     # Functions to draw the maps
 
@@ -298,8 +317,8 @@ class WorldMap:
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
                 index = self.towns[self.mapID][start.y + y + 1][start.x + x]
-                icon = MAP_SYMBOLS[index][0]
-                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
+                icon = MAP_SYMBOLS[index][SYMBOL_ICON]
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)
         
@@ -318,8 +337,8 @@ class WorldMap:
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
                 index = self.dungeons[self.mapID][start.y + y + 1][start.x + x]
-                icon = MAP_SYMBOLS[index][0]
-                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
+                icon = MAP_SYMBOLS[index][SYMBOL_ICON]
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)
 
@@ -333,6 +352,6 @@ class WorldMap:
                 # Get the index
                 index = self.overworld[start.y + y][start.x + x]
                 icon = MAP_SYMBOLS[index][0]
-                color = ColorPallet.GetColor(MAP_SYMBOLS[index][1])
+                color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)

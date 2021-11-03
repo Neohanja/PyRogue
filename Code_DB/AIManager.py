@@ -52,7 +52,8 @@ class AI_Manager:
             self.monsters[d_Index] = []
 
         for m in range(m_count):
-            new_monster = Monster.Monster('Goblin', self.map)
+            which_monster = dRNG.choice(Monster.DUNGEON)
+            new_monster = Monster.Monster(which_monster, self.map, self.player)
             spawn_loc = self.map.GetEmptySpot(d_Index)
             while self.EntityHere(spawn_loc, d_Index):
                 spawn_loc = self.map.GetEmptySpot(d_Index)
@@ -63,18 +64,21 @@ class AI_Manager:
         """ Populates a town """
         pass
 
-    def Move(self, playerMove : Vec2):
-        """ Moves all AI Agents """
-        self.player.Move(playerMove)
+    def Update(self, playerMove : Vec2):
+        """ Updates all AI Agents and Player logic """
+        self.player.Update(playerMove)
 
         mapID = self.map.GetCurrentMap()
 
         if mapID in self.monsters:
             for m in self.monsters[mapID]:
-                m.Move(self.player)
+                m.Update()
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """
+        if self.player.mapLoc == mapID and self.player.Position() == location:
+            return True
+
         if mapID in self.monsters:
             for monster in self.monsters[mapID]:
                 if monster.Position() == location:

@@ -1,4 +1,8 @@
 # Math Function needed to do many of the game system functionality
+# Classes:
+# - Vector 2: A point on the Cortesian plane (R x R), or (x, y) coordinates
+# - Room: All the functionality of a rectangle, with an exit point (door) and
+#   functions to determine where the inside of the room is and its edges
 
 from numpy import sqrt # Needed to find a point on a circle
 
@@ -27,10 +31,22 @@ class Vec2:
     def __add__(self, other):
         """ Adds 2 Vector2 together """
         return Vec2(self.x + other.x, self.y + other.y)
+
+    def Copy(self):
+        """ Returns a copy of this Vector 2, rather than a reference"""
+        return Vec2(self.x, self.y)
+    
+    def Distance(self, other):
+        """ calculates the distance between this and another Vector 2 """
+        x_sqr = self.x - other.x
+        x_sqr = x_sqr * x_sqr # Square the result for x_1 - x_2
+        y_sqr = self.y - other.y
+        y_sqr = y_sqr * y_sqr # Square the result for y_1 - y_2
+        return sqrt(x_sqr + y_sqr) # Distance formula for 2 points
     
     # Override the - operator for 2 Vector 2s : Aka - The offset between 2 points
     def __sub__(self, other):
-        """ Subtracts a Vector2 from this Vector2"""
+        """ Subtracts a Vector2 from this Vector2 """
         return Vec2(self.x - other.x, self.y - other.y)
     
     # Overrides the == operator, checking if 2 Vector 2s are in the same spot

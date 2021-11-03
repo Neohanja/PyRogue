@@ -12,6 +12,7 @@ class State:
         self.turnsInState = 5 # Default for now
         self.elapsedTurns = 0 # Elapsed turns should always start at 0
         self.targetDest = Vec2(0, 0)
+        self.path = []
         self.engine = FSM_engine
     
     def ChooseState(self):
@@ -49,7 +50,7 @@ class Idle(State):
         super().StateAction()
 
 class Wander(State):
-    """ Wandering State """
+    """ Wandering State; Mostly aimless, may modify later. """
     def __init__(self, behavior_engine):
         super().__init__('Wander', behavior_engine)
 
@@ -83,21 +84,44 @@ class Wander(State):
         self.engine.actor.Move(move_dir)
 
 class Chase(State):
+    """ Found its prey (typically player), moving toward it now """
     def __init__(self, FSM_engine):
-        super().__init__('Chase', FSM_engine)        
+        super().__init__('Chase', FSM_engine)
+        # reaction time, so the pathfinding doesn't fire off ever round
+        self.turnsInState = 3
 
     def ChooseState(self):
         """ Determine what state to use based on choices available """
-        if self.elapsedTurns >= self.turnsInState:
-            return 'Idle' # Placeholder
+        if len(self.path)  == 0:
+            return 'Idle' # Lost player, take a break
         return super().ChooseState()
     
     def LoadIntoState(self):
         """ What to do when returning to this state """
         super().LoadIntoState()
         self.targetDest = self.engine.GetPreyLocation()
-        self.path = [self.engine.GetPath(self.targetDest)]
+        self.path = self.engine.GetPath(self.targetDest)
 
     def StateAction(self):
         """ Determines the action to take in a state """
         super().StateAction()
+        self.targetDest = self.engine.GetPreyLocation()
+        if self.elapsedTurns >= self.turnsInState and self.engine.actor.CanSeeTarget(self.targetDest):
+            self.elapsedTurns = 0 # Reset turns
+            self.path = self.engine.GetPath(self.targetDest)
+        
+        # Next move
+        if len(self.path) > 0:
+            move = self.path.pop(0)
+            move_dir = Vec2(0, 0)
+            startPos = self.engine.actor.Position()
+            if move.x > startPos.x:
+                move_dir.x += 1
+            elif move.x < startPos.x:
+                move_dir.x -= 1
+            elif move.y > startPos.y:
+                move_dir.y += 1
+            elif move.y < startPos.y:
+                move_dir.y -= 1
+
+            self.engine.actor.Move(move_dir)

@@ -72,7 +72,7 @@ class AStar:
                 if not include_goal:
                     cur_node = cur_node.parent_node
                 while isinstance(cur_node, ANode):
-                    path.append(cur_node.point)
+                    path.insert(0, cur_node.point) # always add to the front of the list
                     cur_node = cur_node.parent_node
                 return path
 

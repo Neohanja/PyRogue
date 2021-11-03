@@ -3,6 +3,7 @@
 
 import tcod
 import random
+from AStar import AStar
 import ColorPallet
 import MathFun
 from Noise import *
@@ -63,9 +64,12 @@ MAP_NAME = 0
 MAP_WIDTH = 1
 MAP_HEIGHT = 2
 MAP_RNG = 3
+# Dungeon Specific
 DUNGEON_LEVEL = 4
 UPSTAIRS = 5
 DOWNSTAIRS = 6
+# Town Specific (Once needed/Used)
+# A* Pathfinding Module
 MAP_ASTAR = 7
 
 class WorldMap:
@@ -91,21 +95,24 @@ class WorldMap:
         self.width = width # Overworld Width
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
-        self.mapName = GenTownName() # For now, the world gets a random name. Will fix later
+        self.mapName = "Drakland" # World Name
         self.mapID = '' # The current "town/dungeon". This is empty for the overworld (as for now, there is only one)
         self.overworld = [] # The overworld map - May make endless later
+        self.overworld_pathfinder = None # Need to add this to our header instead, make everything uniform
         self.towns = {} # A dictionary containing data for every town
         self.dungeons = {} # A dictionary containing data for every dungeon
         self.noise = Noise(256) # Initialize the noise engine
+        self.BuildOverworld(width, height)
 
     # Generation Techniques for the world, towns and dungeons
 
-    def BuildOverworld(self):
+    def BuildOverworld(self, width, height, seed = 0):
         """ Builds an overworld map """
         # Builds the baseline for terrain. May layer noise later for more interesting looking maps.
         noise_map = self.noise.BuildMap(self.width, self.height, Vec2(0, 0), 23.14)
         # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = []
+        # overworld_header = ['Drakland', width, height, random.Random(seed), None, None, None]
 
         for row in range(self.height):
             new_row = []
@@ -127,6 +134,7 @@ class WorldMap:
                         symbol = 'Town'
                 new_row += [symbol]
             self.overworld += [new_row]
+        self.overworld_pathfinder = AStar(self.overworld)
 
     def BuildTown(self, t_name, t_cord):
         """ Builds a town """
@@ -137,11 +145,13 @@ class WorldMap:
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
         
+        town_header = [t_name, town_width, town_height, tRNG]
+
         # Build the map using an external function, as to not bloat the map drawing class
-        new_map = TownGenerator(town_height, town_width)
+        new_map = TownGenerator(town_header)
         # If we are making the town, then the town 
         # does not exist in the dictionary yet.
-        self.towns[t_cord] = [[t_name, town_width, town_height, tRNG]] # Header for all towns/dungeons
+        self.towns[t_cord] = [town_header] # Header for all towns/dungeons
         # Add the town to the dictionary of maps
         for y in range(town_height):
             self.towns[t_cord] += [new_map[y]]
@@ -162,6 +172,15 @@ class WorldMap:
     def SetPlayer(self, player):
         """ Sets the player character for map operations """
         self.player = player
+
+    def GetPathfinder(self):
+        """ Gets the pathfinding engine for the current map """
+        if self.curMapType == 'o':
+            return self.overworld_pathfinder # Rework this later, if time permits. Move overworld have a header as well
+        elif self.curMapType == 't':
+            return self.towns[self.mapID][HEADER][MAP_ASTAR]
+        elif self.curMapType == 'd':
+            return self.dungeons[self.mapID][HEADER][MAP_ASTAR]
 
     def GetTerrainFeature(self, loc : Vec2, getIndex = False):
         """ 

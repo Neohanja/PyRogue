@@ -22,7 +22,6 @@ class GameManager:
         self.height = Screen_Size.y
 
         self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
-        self.world.BuildOverworld() # Initialize the world
 
         self.aiEngine = AIManager.AI_Manager(self.world)
         self.aiEngine.ToggleDebug(DebugMode)

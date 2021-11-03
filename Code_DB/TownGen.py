@@ -5,9 +5,19 @@ import random
 
 # Minimum distance for buildings to be apart from each other
 BUILDING_MIN_DISTANCE = 5
+T_NAME = 0
+T_WIDTH = 1
+T_HEIGHT = 2
+T_RNG = 3
+T_LEVEL = 4
+T_UP = 5
+T_DOWN = 6
 
-def TownGenerator(height, width):
+def TownGenerator(town_header : list):
     """ Generates a town with specified dimentions"""
+    height = town_header[T_HEIGHT]
+    width = town_header[T_WIDTH]
+    tRNG = town_header[T_RNG]
     town_design = []
 
     for y in range(height):
@@ -17,7 +27,7 @@ def TownGenerator(height, width):
         town_design += [new_row]
 
     # Will have to mess with this later so buildings aren't too sparse
-    room_count = random.randint(10, 20)
+    room_count = tRNG.randint(10, 20)
     tries = 0
     rooms = 0
     # Start initial building list: Add the center to ensure nothing is built in
@@ -27,10 +37,10 @@ def TownGenerator(height, width):
     pending_rooms = [Room(Vec2(cX - 3, cY - 3), Vec2(cX + 3, cY + 3))]
 
     while rooms < room_count and tries < 1000:
-        sizeX = random.randint(5, 10)
-        sizeY = random.randint(5, 10)
-        startX = random.randint(3, width - sizeX - 4)
-        startY = random.randint(3, height - sizeY - 4)
+        sizeX = tRNG.randint(5, 10)
+        sizeY = tRNG.randint(5, 10)
+        startX = tRNG.randint(3, width - sizeX - 4)
+        startY = tRNG.randint(3, height - sizeY - 4)
         test_room = Room(Vec2(startX, startY), Vec2(startX + sizeX, startY + sizeY))
 
         keep_room = True
@@ -43,15 +53,15 @@ def TownGenerator(height, width):
             pending_rooms += [test_room]
             rooms += 1
             # Add a proper door
-            door_wall = random.randint(0,3)
+            door_wall = tRNG.randint(0,3)
             dX = test_room.start.x
             dY = test_room.start.y
             if door_wall % 2 == 0:
-                dX = random.randint(test_room.start.x + 1, test_room.end.x - 1)
+                dX = tRNG.randint(test_room.start.x + 1, test_room.end.x - 1)
                 if door_wall > 1:
                     dY = test_room.end.y
             else:
-                dY = random.randint(test_room.start.y + 1, test_room.end.y - 1)
+                dY = tRNG.randint(test_room.start.y + 1, test_room.end.y - 1)
                 if door_wall > 1:
                     dX = test_room.end.x
 
@@ -59,6 +69,11 @@ def TownGenerator(height, width):
 
         tries += 1
     
+    # Random garble for now
+    town_header.append(None) # Level
+    town_header.append(None) # Upstairs
+    town_header.append(None) # DownStairs
+
     # Remove the 'town square'
     pending_rooms.pop(0)
 
@@ -76,6 +91,7 @@ def TownGenerator(height, width):
 
     # Start the path making thing
     path_maker = AStar(town_design)
+    town_header.append(path_maker)
 
     for make_path in pending_rooms:
         next_path = path_maker.FindPath(make_path.center, Vec2(cX, cY), True)

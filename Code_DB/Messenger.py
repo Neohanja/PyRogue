@@ -1,8 +1,8 @@
 # Message system for the game:
 
 # Special characters, in case I forget:
-CLEAR_SCREEN = 'cls'
 
+# Class Definition
 class Messenger:
     """ Prints messages to the screen for readability """
     def __init__(self, startLoc, maxLines, maxLength):
@@ -13,13 +13,13 @@ class Messenger:
         self.maxLines = maxLines # Max lines that can be shown at any given time
         self.maxLength = maxLength # Max length of a line before wrapping to next line
 
+    def ClearScreen(self):
+        self.log.clear()
+        self.currentIndex = 0
+
     def AddText(self, message : str):
         if message == '':
             return #in case we try to add a blank string
-        if message == CLEAR_SCREEN:
-            self.log.clear()
-            self.currentIndex = 0
-            return # Clear the screen and leave
         s = ''
         for letter in message:
             if letter == '\n':

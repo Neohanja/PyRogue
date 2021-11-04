@@ -1,3 +1,14 @@
-<PLAYER>;Default;o:;192,82;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<PLAYER>;Default;d:111,19,1;83,22;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Orc;d:51,48,1;102,37;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Orc;d:51,48,1;75,58;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Goblin;d:51,48,1;100,28;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Orc;d:51,48,1;72,15;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Goblin;d:51,48,1;91,37;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Goblin;d:111,19,1;73,19;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Orc;d:111,19,1;64,25;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
+<MONSTER>;Orc;d:111,19,1;25,4;<STAT>,HP,Hit Points,5,5,1,;<STAT>,MP,Mana,5,5,1,;<STAT>,Str,Strength,5,0,0,;<STAT>,Dex,Dexterity,5,0,0,;<STAT>,Vit,Vitality,5,0,0,;
 <MAP>;o:;Drakland;256,256;
+<MAP>;t:36,49;Rudupool,108,47;
+<MAP>;d:51,48,1;Bronzeruxife,111,83;
+<MAP>;d:111,19,1;Xakowara Town,97,49;
 <EOF>

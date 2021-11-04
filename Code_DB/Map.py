@@ -100,15 +100,14 @@ class WorldMap:
         # Generate the world header
         # Temporary: World seed is 'Drakland'. Should be a string to ensure continuity with all "seeds"
         overworld_header = [seedName, width, height, random.Random(seedName), seedName, {}, {}]
-        self.worldSeed = seedName
-
+        self.worldSeed = ''
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
         self.mapID = '' # The current "town/dungeon". This is empty for the overworld (as for now, there is only one)
         self.overworld = [] # The overworld map - May make endless later
         self.towns = {} # A dictionary containing data for every town
         self.dungeons = {} # A dictionary containing data for every dungeon
-        self.noise = Noise(256, overworld_header[MAP_RNG]) # Initialize the noise engine
+        self.noise = None # Reserve the name
         self.BuildOverworld(overworld_header)
 
     # Generation Techniques for the world, towns and dungeons
@@ -118,13 +117,13 @@ class WorldMap:
         height = overworld_header[MAP_HEIGHT]
         width = overworld_header[MAP_WIDTH]
         wRNG = overworld_header[MAP_RNG]
+        self.noise = Noise(256, wRNG)
         
         # Builds the baseline for terrain. May layer noise later for more interesting looking maps.
         noise_map = self.noise.BuildMap(width, height, Vec2(0, 0), 23.14)
         # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = [overworld_header]
         self.worldSeed = overworld_header[MAP_NAME]
-        ws = self.worldSeed
 
         for row in range(height):
             new_row = []
@@ -143,10 +142,10 @@ class WorldMap:
                     terrainID = str(col) + ',' + str(row)
                     if  map_decor < 0.005:
                         symbol = 'Portal'
-                        overworld_header[OVER_DUNGEONS][terrainID] = GenTownName(ws + terrainID)
+                        overworld_header[OVER_DUNGEONS][terrainID] = GenTownName(self.worldSeed + terrainID)
                     elif map_decor < 0.01:
                         symbol = 'Town'
-                        overworld_header[OVER_TOWNS][terrainID] = GenTownName(ws + terrainID)
+                        overworld_header[OVER_TOWNS][terrainID] = GenTownName(self.worldSeed + terrainID)
                 new_row += [symbol]
             self.overworld += [new_row]
 
@@ -154,7 +153,7 @@ class WorldMap:
 
     def BuildTown(self, t_cord):
         """ Builds a town """
-        tRNG = random.Random(self.GetWorldSeed() + t_cord)
+        tRNG = random.Random(self.worldSeed + t_cord)
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
         
@@ -174,12 +173,9 @@ class WorldMap:
         d = d_cord.split(',')
         dungeon_level = int(d[2])
         d_index = d[0] + ',' + d[1]
-        dRNG = random.Random(self.GetWorldSeed() + d_cord)
+        dRNG = random.Random(self.worldSeed + d_cord)
         dungeon_width = dRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         dungeon_height = dRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
-
-        if not d_index in self.overworld[HEADER][OVER_TOWNS]:
-            self.overworld[HEADER][OVER_DUNGEONS][d_index] = GenTownName(self.GetWorldSeed() + d_cord)
 
         self.dungeons[d_cord] = DungeonGenerator([self.overworld[HEADER][OVER_DUNGEONS][d_index], 
             dungeon_width, dungeon_height, dRNG, dungeon_level])
@@ -326,10 +322,6 @@ class WorldMap:
         """ Gets the location of the current dungeon. """
         m = self.mapID.split(',')
         return Vec2(int(m[0]), int(m[1]))
-    
-    def GetWorldSeed(self) -> str:
-        """ Returns the world's seed """
-        return self.worldSeed
     
     def GetEmptySpot(self, mapLoc : str):
         """ Finds a random empty spot on the map """

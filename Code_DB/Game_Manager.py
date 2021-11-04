@@ -161,5 +161,6 @@ class GameManager:
 
     def LoadGame(self):
         """ Loads a specific game file """
+        self.messenger.ClearScreen()
         LoadGame('Default', self.aiEngine, self.world)
         

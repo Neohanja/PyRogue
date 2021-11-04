@@ -89,7 +89,7 @@ class WorldMap:
     MAP_VIEW_WIDTH = 75
     MAP_VIEW_HEIGHT = 45
 
-    def __init__(self, height, width):
+    def __init__(self, height, width, seedName = 'Drakland'):
         """ Constructor """
         # Clamp minimum values to avoid complications later
         if height < WorldMap.MAP_VIEW_HEIGHT:
@@ -99,7 +99,8 @@ class WorldMap:
 
         # Generate the world header
         # Temporary: World seed is 'Drakland'. Should be a string to ensure continuity with all "seeds"
-        overworld_header = ['Drakland', height, width, random.Random('Drakland'), 'Drakland', {}, {}]
+        overworld_header = [seedName, width, height, random.Random(seedName), seedName, {}, {}]
+        self.worldSeed = seedName
 
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
@@ -122,8 +123,8 @@ class WorldMap:
         noise_map = self.noise.BuildMap(width, height, Vec2(0, 0), 23.14)
         # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = [overworld_header]
-
-        ws = self.GetWorldSeed()
+        self.worldSeed = overworld_header[MAP_NAME]
+        ws = self.worldSeed
 
         for row in range(height):
             new_row = []
@@ -176,6 +177,10 @@ class WorldMap:
         dRNG = random.Random(self.GetWorldSeed() + d_cord)
         dungeon_width = dRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         dungeon_height = dRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
+
+        if not d_index in self.overworld[HEADER][OVER_TOWNS]:
+            self.overworld[HEADER][OVER_DUNGEONS][d_index] = GenTownName(self.GetWorldSeed() + d_cord)
+
         self.dungeons[d_cord] = DungeonGenerator([self.overworld[HEADER][OVER_DUNGEONS][d_index], 
             dungeon_width, dungeon_height, dRNG, dungeon_level])
 
@@ -183,13 +188,41 @@ class WorldMap:
     def SaveMapData(self):
         """ Reads in the map as a full string, then returns it """
         msd = []
-        msd += [self.GetMapString('o','') + '\n<NEXT>\n']
+        msd += [self.GetMapString('o', '') + '\n']
         for town in self.towns.keys():
-            msd += [self.GetMapString('t', town) + '\n<NEXT>\n']
+            msd += [self.GetMapString('t', town) + '\n']
         for dungeon in self.dungeons.keys():
-            msd += [self.GetMapString('d', dungeon) + '\n<NEXT>\n']
+            msd += [self.GetMapString('d', dungeon) + '\n']
         return msd
         
+    def LoadMapData(self, map_lines : list):
+        """ Loads in a map """
+        self.dungeons.clear()
+        self.towns.clear()
+        for map_data in map_lines:
+            self.CreateMapFromString(map_data)
+    
+    def CreateMapFromString(self, map_string : str):
+        """ Loads a map from a string """
+        parsed_map = map_string.split(';')
+        mapType = parsed_map[1].split(':')[0]   
+        # overworld_header = ['Drakland', height, width, random.Random('Drakland'), 'Drakland', {}, {}]
+        if mapType == 'o':
+            mapName = parsed_map[2]
+            mapdimensions = parsed_map[3].split(',')
+            mapWidth = int(mapdimensions[0])
+            mapHeight = int(mapdimensions[1])   
+            header = [mapName, mapHeight, mapWidth, random.Random(mapName), mapName, {}, {}]
+            self.BuildOverworld(header)
+            pass
+        elif mapType == 'd':
+            mapID = parsed_map[1].split(':')[1]  
+            self.BuildDungeon(mapID)
+            pass
+        elif mapType == 't':
+            mapID = parsed_map[1].split(':')[1]  
+            self.BuildTown(mapID)
+            pass
 
     def GetMapString(self, mapType : str, mapID : str):
         """ Gets the string interpretation of a map """
@@ -197,51 +230,20 @@ class WorldMap:
         if mapType == 'o':
             height = self.overworld[HEADER][MAP_HEIGHT]
             width = self.overworld[HEADER][MAP_WIDTH]
-            st += self.overworld[HEADER][MAP_NAME] + ','
-            st += str(width) + ',' + str(height) + ';<T>;'
-            for t_data in self.overworld[HEADER][OVER_TOWNS].keys():
-                st += t_data + ':' + self.overworld[HEADER][OVER_TOWNS][t_data] + ';'
-            st += '<D>;'
-            for d_data in self.overworld[HEADER][OVER_DUNGEONS].keys():
-                st += d_data + ':' + self.overworld[HEADER][OVER_DUNGEONS][d_data] + ';'
-            st += '<M>;'
-            for row in range(height):
-                for col in range(width):
-                    st += self.overworld[row + 1][col]
-                    if row < height - 1:
-                        st += ','
-                    else:
-                        st += ';'
+            st += self.overworld[HEADER][MAP_NAME] + ';'
+            st += str(width) + ',' + str(height) + ';'
             return st
         elif mapType == 'd':
             height = self.dungeons[mapID][HEADER][MAP_HEIGHT]
             width = self.dungeons[mapID][HEADER][MAP_WIDTH]
             st += self.dungeons[mapID][HEADER][MAP_NAME] + ','
             st += str(width) + ',' + str(height) + ';'
-            st += '<UP>;' + str(self.dungeons[mapID][HEADER][UPSTAIRS]) + ';'
-            st += '<DOWN>;' + str(self.dungeons[mapID][HEADER][DOWNSTAIRS]) + ';'
-            st += '<M>;'
-            for row in range(height):
-                for col in range(width):
-                    st += self.dungeons[mapID][row + 1][col]
-                    if row < height - 1:
-                        st += ','
-                    else:
-                        st += ';'
             return st
         elif mapType == 't':
             height = self.towns[mapID][HEADER][MAP_HEIGHT]
             width = self.towns[mapID][HEADER][MAP_WIDTH]
             st += self.towns[mapID][HEADER][MAP_NAME] + ','
             st += str(width) + ',' + str(height) + ';'
-            st += '<M>;'
-            for row in range(height):
-                for col in range(width):
-                    st += self.towns[mapID][row + 1][col]
-                    if row < height - 1:
-                        st += ','
-                    else:
-                        st += ';'
             return st
 
     # Helper functions for manipulating map functions and such
@@ -327,7 +329,7 @@ class WorldMap:
     
     def GetWorldSeed(self) -> str:
         """ Returns the world's seed """
-        return self.overworld[HEADER][WORLD_SEED]
+        return self.worldSeed
     
     def GetEmptySpot(self, mapLoc : str):
         """ Finds a random empty spot on the map """

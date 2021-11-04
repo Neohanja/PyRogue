@@ -51,9 +51,19 @@ class GameManager:
         elif isinstance(action, ExamineAction):
             self.messenger.AddText(self.world.GetExamineAction())
             return True
+
+        elif isinstance(action, SaveAction):
+            self.SaveGame()
+            self.AddLog('Game Saved')
+            return True
+        
+        elif isinstance(action, LoadAction):
+            self.LoadGame()
+            self.AddLog('Game Loaded')
+            return True
                 
         elif isinstance(action, EscapeAction):
-            self.ExitCleanup()
+            # self.SaveGame() -> Save on exit, if we choose to do a pure roguelike
             raise SystemExit()
 
         return False # It shouldn't reach this point, but who knows
@@ -145,7 +155,11 @@ class GameManager:
             self.world.ChangeMap(mapLoc)
             self.aiEngine.player.SetSpawn(mapLoc, new_point)
     
-    def ExitCleanup(self):
+    def SaveGame(self):
         """ Cleaning up, such as saving, on Exit """
         SaveGame(self.world, self.aiEngine)
+
+    def LoadGame(self):
+        """ Loads a specific game file """
+        LoadGame('Default', self.aiEngine, self.world)
         

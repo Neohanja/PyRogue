@@ -37,7 +37,7 @@ class Actor:
         sd += self.mapLoc + ';' # Map ID
         sd += str(self.position) + ';' # Position on map
         for stats in self.stats:
-            sd += '<stat>,'
+            sd += '<STAT>,'
             sd += stats.sName + ','
             sd += stats.lName + ','
             sd += str(stats.base_val) + ','
@@ -56,6 +56,9 @@ class Actor:
         self.stats.append(Stat('Strength', 'Str', 5, 0, 0))
         self.stats.append(Stat('Dexterity', 'Dex', 5, 0, 0))
         self.stats.append(Stat('Vitality', 'Vit', 5, 0, 0))
+    
+    def LoadStats(self, new_stats : list):
+        self.stats = new_stats
 
     def Update(self, offset : Vec2):
         """ Update for game loop purposes """

@@ -33,6 +33,10 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = UseAction()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
+        elif key == tcod.event.K_F4: # Save
+            action = SaveAction()
+        elif key == tcod.event.K_F5: # Load
+            action = LoadAction()
         
         return action
     

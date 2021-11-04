@@ -7,6 +7,7 @@ import Player
 import Map
 import random
 from MathFun import *
+from Stats import Stat
 
 class AI_Manager:
     """ AI Manager class : Includes player as an Actor """
@@ -32,15 +33,53 @@ class AI_Manager:
         self.map.SetPlayer(self.player)
 
     def SaveActors(self):
+        """ Saves all actors to a file """
         asd = []
-        asd += ['<PLAYER>;' + self.player.SaveFormatter() + '\n<NEXT>\n']
+        asd += ['<PLAYER>;' + self.player.SaveFormatter() + '\n']
         for mapID in self.monsters.keys():
             for monster in self.monsters[mapID]:
-                asd += ['<MONSTER>;' + monster.SaveFormatter() + '\n<NEXT>\n']
+                asd += ['<MONSTER>;' + monster.SaveFormatter() + '\n']
         for mapID in self.npcs.keys():
             for npc in self.npcs[mapID]:
-                asd += ['<NPC>;' + npc.SaveFormatter() + '\n<NEXT>\n']
+                asd += ['<NPC>;' + npc.SaveFormatter() + '\n']
         return asd
+
+    def LoadActors(self, actor_list : list):
+        """ Loads the actors from a file """
+        new_map_load = 'o:' # default
+        self.monsters.clear()
+        self.npcs.clear()
+        for actor in actor_list:
+            actor_data = actor.split(';')
+            aName = actor_data[1]
+            aMap = actor_data[2]
+            aLoc = actor_data[3].split(',')
+            aPos = Vec2(int(aLoc[0]), int(aLoc[1]))
+            # Load stats
+            if len(actor_data) > 4:
+                stat_list = []
+                for stat in actor_data[4:]:
+                    s_data = stat.split(',')
+                    if s_data[0] == '<STAT>':
+                        stat_list.append(Stat(s_data[2], s_data[1], int(s_data[3]), int(s_data[4]), int(s_data[5])))
+            # Not too complex, now to figure out which actor to add. Replace player, add monster/NPC        
+            if actor_data[0] == '<PLAYER>':
+                self.player.SetSpawn(aMap, aPos)
+                self.player.name = aName
+                self.player.LoadStats(stat_list)
+                new_map_load = aMap
+            elif actor_data[0] == '<MONSTER>':
+                monster = Monster.Monster(aName, self.map, self.player, self)
+                monster.SetSpawn(aMap, aPos)
+                monster.LoadStats(stat_list)
+                if aMap in self.monsters:
+                    self.monsters[aMap] += [monster]
+                else:
+                    self.monsters[aMap] = [monster]
+            elif actor_data[0] == '<NPC>':
+                pass # Awaiting NPC integration
+        self.map.ChangeMap(new_map_load)
+
 
     def Draw(self, console, corner):
         """ Draws the individual actors on the screen"""

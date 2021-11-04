@@ -20,3 +20,11 @@ class ExamineAction(Action):
 class UseAction(Action):
     """ Dictates what happens when the Use key is pressed """
     pass
+
+class SaveAction(Action):
+    """ Tells the system we would like to save this file """
+    pass
+
+class LoadAction(Action):
+    """ Tells the system we would like to load a file """
+    pass

@@ -87,12 +87,11 @@ class Chase(State):
     """ Found its prey (typically player), moving toward it now """
     def __init__(self, FSM_engine):
         super().__init__('Chase', FSM_engine)
-        # reaction time, so the pathfinding doesn't fire off ever round
-        self.turnsInState = 3
 
     def ChooseState(self):
         """ Determine what state to use based on choices available """
-        if len(self.path)  == 0:
+        if self.path == []:
+            self.engine.SendMessage(self.engine.actor.name + ' has lost the player. Returning to idle.')
             return 'Idle' # Lost player, take a break
         return super().ChooseState()
     
@@ -106,10 +105,8 @@ class Chase(State):
         """ Determines the action to take in a state """
         super().StateAction()
         self.targetDest = self.engine.GetPreyLocation()
-        if self.elapsedTurns >= self.turnsInState:
-            self.elapsedTurns = 0 # Reset turns
-            if self.engine.actor.CanSeeTarget(self.targetDest):
-                self.path = self.engine.GetPath(self.targetDest)
+        if self.engine.actor.CanSeeTarget(self.targetDest):
+            self.path = self.engine.GetPath(self.targetDest)
         
         # Next move
         if len(self.path) > 0:

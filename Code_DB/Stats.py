@@ -2,9 +2,8 @@
 
 class Stat:
     """ Individual stat """
-    def __init__(self, long_name, short_name, base_val, mod_val, stat_type : int):
+    def __init__(self, short_name, base_val, mod_val, stat_type : int):
         self.sName = short_name
-        self.lName = long_name
         self.base_val = base_val
         self.mod_val = mod_val
         self.stat_type = stat_type
@@ -41,4 +40,4 @@ class Stat:
             return self.sName + ": " + str(self.mod_val) + "/" + str(self.base_val) + " (" + str(self.PercentRemaining()) + "%)"
         
         # Default:
-        return self.lName + ": " + str(self.Total())
+        return self.sName + ": " + str(self.Total())

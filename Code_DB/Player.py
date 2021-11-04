@@ -32,10 +32,10 @@ class Player(Actor):
         # Player Specific functionality
         x = WorldMap.MAP_VIEW_WIDTH + 2
         console.print(x = x, y = 1, string = "Name: " + self.name)
-
-        for s in range(len(self.stats)):
-            y = s + 2            
-            d = str(self.stats[s])
+        y = 2
+        for stat in self.stats.keys():
+            d = str(self.stats[stat])
             console.print(x = x, y = y, string = d)
+            y += 1
 
-        console.print(x = WorldMap.MAP_VIEW_WIDTH - 2, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = str(self.position))
+        console.print(x = WorldMap.MAP_VIEW_WIDTH - 2, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = str(self.position.ToString()))

@@ -14,7 +14,7 @@ class Actor:
         # Initial, default values
         self.position = Vec2(0, 0) # default location
         self.mapLoc = 'o:'
-        self.stats = []
+        self.stats = {}
         self.FSM = None # this will be assigned case by case, but in parent class to ensure intellisense
         # Added by class
         self.name = init_name
@@ -36,13 +36,13 @@ class Actor:
         sd += self.name + ';' # Name
         sd += self.mapLoc + ';' # Map ID
         sd += str(self.position) + ';' # Position on map
-        for stats in self.stats:
+        for stats in self.stats.keys():
             sd += '<STAT>,'
-            sd += stats.sName + ','
-            sd += stats.lName + ','
-            sd += str(stats.base_val) + ','
-            sd += str(stats.mod_val) + ','
-            sd += str(stats.stat_type) + ','
+            sd += stats + ','
+            sd += self.stats[stats].sName + ','
+            sd += str(self.stats[stats].base_val) + ','
+            sd += str(self.stats[stats].mod_val) + ','
+            sd += str(self.stats[stats].stat_type) + ','
             sd += ';'
         return sd
 
@@ -51,13 +51,14 @@ class Actor:
             Creates the stat list for this entity; 
             Super() should always be included for child classes 
         """        
-        self.stats.append(Stat('Hit Points', 'HP', 5, 5, 1))
-        self.stats.append(Stat('Mana', 'MP', 5, 5, 1))
-        self.stats.append(Stat('Strength', 'Str', 5, 0, 0))
-        self.stats.append(Stat('Dexterity', 'Dex', 5, 0, 0))
-        self.stats.append(Stat('Vitality', 'Vit', 5, 0, 0))
+        self.stats['Hit Points'] = Stat('HP', 5, 5, 1)
+        self.stats['Mana'] = Stat('MP', 5, 5, 1)
+        self.stats['Strength'] = Stat('Str', 5, 0, 0)
+        self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
+        self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
+        self.stats['Damage'] = Stat('Dmg', 1, 0, 0)
     
-    def LoadStats(self, new_stats : list):
+    def LoadStats(self, new_stats : dict):
         self.stats = new_stats
 
     def Update(self, offset : Vec2):
@@ -66,6 +67,12 @@ class Actor:
     
     def Move(self, offset : Vec2):
         """ Moves an actor """
+        # Check if someone else is occupying this space
+        collide = self.parent.CheckCollision(self)
+
+        if collide != None:
+            self.SendMessage(self.name + ' says hello to ' + collide.name + '.')
+
         # Check if a space is blocked or not. If it is, we cannot move here
         if not self.map_data.SpaceBlocked(self.position + offset):
             self.position += offset

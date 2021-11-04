@@ -1,7 +1,7 @@
 # Processes saved games
 import os
 
-GAME_SAVE_EXTENTION = '.txt' # For testing only
+GAME_SAVE_EXTENTION = '.prs' # For testing only
 
 def SaveGame(mapData, actorData):
     """ Saves the game information to a file """

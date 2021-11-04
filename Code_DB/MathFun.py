@@ -26,7 +26,10 @@ class Vec2:
     def __repr__(self):
         """ String representation of the Vector 2"""
         return str(self.x) + ',' + str(self.y)
-        # return 'x: ' + str(self.x) + ' y: ' + str(self.y)
+
+    def ToString(self):
+        """ A proper string variation, much like __repr__ """
+        return 'x: ' + str(self.x) + ' y: ' + str(self.y)
 
     # Override the + operator for 2 Vector 2s
     def __add__(self, other):

@@ -28,7 +28,7 @@ class AI_Manager:
         self.gm = game_master
         
         # Always need a player
-        self.player = Player.Player(map_data, self.gm)
+        self.player = Player.Player(map_data, self)
         self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
@@ -57,11 +57,11 @@ class AI_Manager:
             aPos = Vec2(int(aLoc[0]), int(aLoc[1]))
             # Load stats
             if len(actor_data) > 4:
-                stat_list = []
+                stat_list = {}
                 for stat in actor_data[4:]:
                     s_data = stat.split(',')
                     if s_data[0] == '<STAT>':
-                        stat_list.append(Stat(s_data[2], s_data[1], int(s_data[3]), int(s_data[4]), int(s_data[5])))
+                        stat_list[s_data[1]] = Stat(s_data[2], int(s_data[3]), int(s_data[4]), int(s_data[5]))
             # Not too complex, now to figure out which actor to add. Replace player, add monster/NPC        
             if actor_data[0] == '<PLAYER>':
                 self.player.SetSpawn(aMap, aPos)
@@ -108,7 +108,7 @@ class AI_Manager:
 
         for m in range(m_count):
             which_monster = dRNG.choice(Monster.DUNGEON)
-            new_monster = Monster.Monster(which_monster, self.map, self.player, self.gm)
+            new_monster = Monster.Monster(which_monster, self.map, self.player, self)
             spawn_loc = self.map.GetEmptySpot(d_Index)
             while self.EntityHere(spawn_loc, d_Index):
                 spawn_loc = self.map.GetEmptySpot(d_Index)
@@ -118,6 +118,28 @@ class AI_Manager:
     def PopulateNPCs(self, t_Index : str):
         """ Populates a town """
         pass
+
+    def CheckCollision(self, actor_a):
+        """ Checks if an actor (A) is trying to enter the space of another actor. If so, return it """
+        if actor_a is not self.player:
+            if actor_a.position == self.player.position:
+                return self.player
+        
+        mapID = self.player.mapLoc
+        if mapID in self.monsters:
+            for monster in self.monsters[mapID]:
+                if actor_a is monster:
+                    continue
+                elif actor_a.position == monster.position:
+                    return monster
+        if mapID in self.npcs:
+            for npc in self.npcs[mapID]:
+                if actor_a is npc:
+                    continue
+                elif actor_a.position == npc.position:
+                    return npc
+
+        return None # Return nothing if we hit nothing 
 
     def Update(self, playerMove : Vec2):
         """ Updates all AI Agents and Player logic """

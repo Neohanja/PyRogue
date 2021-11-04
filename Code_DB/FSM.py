@@ -15,6 +15,10 @@ class FSM: # Basic FSM, mostly for mindless monsters
         self.prey = keep_watch_for # aka: the target!
         self.BuildStateList()
         pass
+
+    def SendMessage(self, message : str):
+        """ Sends a message through the actor """
+        self.actor.SendMessage(message)
     
     def Update(self):
         """ Per turn update for FSM list """

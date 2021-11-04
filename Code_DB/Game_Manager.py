@@ -32,7 +32,9 @@ class GameManager:
         eL = Screen_Size.y - 1 - sL
         mL = Map.WorldMap.MAP_VIEW_WIDTH - 10
 
-        self.messenger = Messenger(sL, eL, mL)        
+        self.messenger = Messenger(sL, eL, mL)
+        # Next line for testing messages that may need multiple lines
+        # self.messenger.AddText('This needs to be super long to test this system and how it works, as well as getting the spacing correct for the word wrap. I\'m hoping all is well with it, since it didn\'t take long to make, compared to other systems that are just plain annoying.')
     
     def Start(self):
         """ Pre-game stuff """

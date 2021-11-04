@@ -46,7 +46,7 @@ MAP_SYMBOLS = {
         # Tiles with special actions, like flowers or portals
         'Town' : ['A', "Tristian", False, False,
             "You see a town."],
-        'Door' : ['D', "Olive", False, True,
+        'Door' : ['D', "Olive", False, False,
             "You see a door, the mortal foe to many would-be adventurers."],
         'Portal' : ['0', "Portal", False, False,
             "You see a portal. Who knows what perils await?"],
@@ -69,12 +69,12 @@ DUNGEON_LEVEL = 4
 UPSTAIRS = 5
 DOWNSTAIRS = 6
 # Town Specific (Once needed/Used)
+# Overworld Specific (Once needed/Used)
 # A* Pathfinding Module
 MAP_ASTAR = 7
 
 class WorldMap:
     """ Map Class, used to store map data """
-    # Symbols = [Name] : Icon, Color, Block Movement
     
     # Drawing parameters for the map, static values that
     # do not need to change unless a new game mode is open
@@ -91,32 +91,35 @@ class WorldMap:
         if width < WorldMap.MAP_VIEW_WIDTH:
             width = WorldMap.MAP_VIEW_WIDTH
 
-        self.height = height # Overword Height
-        self.width = width # Overworld Width
+        # Generate the world header
+        overworld_header = ['Drakland', height, width, random.Random('Drakland'), None, None, None]
+
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
-        self.mapName = "Drakland" # World Name
         self.mapID = '' # The current "town/dungeon". This is empty for the overworld (as for now, there is only one)
         self.overworld = [] # The overworld map - May make endless later
-        self.overworld_pathfinder = None # Need to add this to our header instead, make everything uniform
         self.towns = {} # A dictionary containing data for every town
         self.dungeons = {} # A dictionary containing data for every dungeon
-        self.noise = Noise(256) # Initialize the noise engine
-        self.BuildOverworld(width, height)
+        self.noise = Noise(256, overworld_header[MAP_RNG]) # Initialize the noise engine
+        self.BuildOverworld(overworld_header)
 
     # Generation Techniques for the world, towns and dungeons
 
-    def BuildOverworld(self, width, height, seed = 0):
+    def BuildOverworld(self, overworld_header : list):
         """ Builds an overworld map """
+        # Get the important values from the header
+        height = overworld_header[MAP_HEIGHT]
+        width = overworld_header[MAP_WIDTH]
+        wRNG = overworld_header[MAP_RNG]
+        
         # Builds the baseline for terrain. May layer noise later for more interesting looking maps.
-        noise_map = self.noise.BuildMap(self.width, self.height, Vec2(0, 0), 23.14)
+        noise_map = self.noise.BuildMap(width, height, Vec2(0, 0), 23.14)
         # This assumes we are building a new world, and will override the old one if it exists
-        self.overworld = []
-        # overworld_header = ['Drakland', width, height, random.Random(seed), None, None, None]
+        self.overworld = [overworld_header]
 
-        for row in range(self.height):
+        for row in range(height):
             new_row = []
-            for col in range(self.width):
+            for col in range(width):
                 symbol = 'Grass' # Default tile, for now
                 # The noise function returns a range from -1 to 1, unclamped
                 # This means that we may get a rare value that is < -1 or > 1.
@@ -127,14 +130,15 @@ class WorldMap:
                 elif 0.3 <= noise_map[row][col]:
                     symbol = 'Mountains'
                 else:
-                    map_decor = random.random()
+                    map_decor = wRNG.random()
                     if  map_decor < 0.005:
                         symbol = 'Portal'
                     elif map_decor < 0.01:
                         symbol = 'Town'
                 new_row += [symbol]
             self.overworld += [new_row]
-        self.overworld_pathfinder = AStar(self.overworld)
+
+        overworld_header.append(AStar(self.overworld))
 
     def BuildTown(self, t_name, t_cord):
         """ Builds a town """
@@ -176,7 +180,7 @@ class WorldMap:
     def GetPathfinder(self):
         """ Gets the pathfinding engine for the current map """
         if self.curMapType == 'o':
-            return self.overworld_pathfinder # Rework this later, if time permits. Move overworld have a header as well
+            return self.overworld[HEADER][MAP_ASTAR]
         elif self.curMapType == 't':
             return self.towns[self.mapID][HEADER][MAP_ASTAR]
         elif self.curMapType == 'd':
@@ -189,7 +193,7 @@ class WorldMap:
         """
         sym = MAP_SYMBOLS["Void"] # The default
         if self.curMapType == 'o':
-            index = self.overworld[loc.y][loc.x]
+            index = self.overworld[loc.y + 1][loc.x]
             if getIndex:
                 return index
             sym = MAP_SYMBOLS[index]
@@ -222,11 +226,17 @@ class WorldMap:
 
     def OutsideMap(self, loc : Vec2):
         """ Checks if a point is outside the bounds of the current map """
-        width = self.width
-        height = self.height
-        if self.curMapType == 't':
+        width = 0
+        height = 0
+        if self.curMapType == 'o':
+            width = self.overworld[HEADER][MAP_WIDTH]
+            height = self.overworld[HEADER][MAP_HEIGHT]
+        elif self.curMapType == 't':
             width = self.towns[self.mapID][HEADER][MAP_WIDTH]
             height = self.towns[self.mapID][HEADER][MAP_HEIGHT]
+        elif self.curMapType == 'd':
+            width = self.dungeons[self.mapID][HEADER][MAP_WIDTH]
+            height = self.dungeons[self.mapID][HEADER][MAP_HEIGHT]
         return loc.x < 0 or loc.y < 0 or loc.x >= width or loc.y >= height
     
     def GetTownLoc(self):
@@ -248,9 +258,9 @@ class WorldMap:
         m = mapLoc.split(':')
         while True: # DANGEROUS INFINITE LOOP POTENTIAL !!!!
             if m[0] == 'o':
-                x = random.randint(0, self.width - 1)
-                y = random.randint(0, self.height - 1)
-                if not MAP_SYMBOLS[self.overworld[y][x]][SYMBOL_BLOCK_MOVEMENT]:
+                x = random.randint(0, self.overworld[HEADER][MAP_WIDTH] - 1)
+                y = random.randint(0, self.overworld[HEADER][MAP_HEIGHT] - 1)
+                if not MAP_SYMBOLS[self.overworld[y + 1][x]][SYMBOL_BLOCK_MOVEMENT]:
                     return Vec2(x, y)
             elif m[0] == 't':
                 width = self.towns[m[1]][HEADER][MAP_WIDTH]
@@ -281,11 +291,11 @@ class WorldMap:
         """
         if self.curMapType == 'o':
             # To prevent out of array issues, assume the map edges are blocked
-            if cord.x < 0 or cord.x >= self.width:
+            if cord.x < 0 or cord.x >= self.overworld[HEADER][MAP_WIDTH]:
                 return True
-            if cord.y < 0 or cord.y >= self.height:
+            if cord.y < 0 or cord.y >= self.overworld[HEADER][MAP_HEIGHT]:
                 return True
-            return MAP_SYMBOLS[self.overworld[cord.y][cord.x]][SYMBOL_BLOCK_MOVEMENT] # <--- That is almost a nightmare to remember!
+            return MAP_SYMBOLS[self.overworld[cord.y + 1][cord.x]][SYMBOL_BLOCK_MOVEMENT] # <--- That is almost a nightmare to remember!
         elif self.curMapType == 't':
             if cord.x < 0 or cord.x >= self.towns[self.mapID][HEADER][MAP_WIDTH]:
                 return False
@@ -363,14 +373,14 @@ class WorldMap:
 
     def DrawOverworld(self, start : MathFun.Vec2, display : tcod.Console):
         """ Draw Overworld (main map) to the screen """
-        start.x = Clamp(0, self.width - WorldMap.MAP_VIEW_WIDTH, start.x)
-        start.y = Clamp(0, self.height - WorldMap.MAP_VIEW_HEIGHT, start.y)
+        start.x = Clamp(0, self.overworld[HEADER][MAP_WIDTH] - WorldMap.MAP_VIEW_WIDTH, start.x)
+        start.y = Clamp(0, self.overworld[HEADER][MAP_HEIGHT] - WorldMap.MAP_VIEW_HEIGHT, start.y)
 
         for x in range(WorldMap.MAP_VIEW_WIDTH):
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
-                index = self.overworld[start.y + y][start.x + x]
-                icon = MAP_SYMBOLS[index][0]
+                index = self.overworld[start.y + y + 1][start.x + x]
+                icon = MAP_SYMBOLS[index][SYMBOL_ICON]
                 color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)

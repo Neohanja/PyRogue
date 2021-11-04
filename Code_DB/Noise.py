@@ -8,7 +8,7 @@ from MathFun import *
 class Noise:
     """ Class of Noise """
     
-    def __init__(self, sqr_size):
+    def __init__(self, sqr_size, wRNG):
         """ Constructor """
         # Step 1: Initialize the table
         # Since I am not building a random number generator,
@@ -20,9 +20,9 @@ class Noise:
         for col in range(sqr_size):
             new_row = []                        # start a new row
             for row in range(sqr_size):
-                x = random.randint(0,100) / 100 # Get a random number 0.0 to 1.0
+                x = wRNG.randint(0,100) / 100 # Get a random number 0.0 to 1.0
                 y = PointOnCircle(x)            # Get the point on the circle for the y cord based on x
-                quad = random.randint(0, 3)     # determine the quadrant of the point
+                quad = wRNG.randint(0, 3)     # determine the quadrant of the point
                 if quad == 1 or quad == 2:      # Quads will rotate clockwise, starting with +x/+y
                     y *= -1
                 if quad == 2 or quad == 3:

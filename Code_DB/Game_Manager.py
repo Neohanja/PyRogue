@@ -62,8 +62,8 @@ class GameManager:
         if self.eAction != '':
                     console.print(x = 1, y = Map.WorldMap.MAP_VIEW_HEIGHT + 4, string = self.eAction)
         # Find the Upper Left corner
-        max_x = self.world.width - Map.WorldMap.MAP_VIEW_WIDTH + 1
-        max_y = self.world.width - Map.WorldMap.MAP_VIEW_HEIGHT + 1
+        max_x = self.world.overworld[Map.HEADER][Map.MAP_WIDTH] - Map.WorldMap.MAP_VIEW_WIDTH + 1
+        max_y = self.world.overworld[Map.HEADER][Map.MAP_HEIGHT] - Map.WorldMap.MAP_VIEW_HEIGHT + 1
         corner = Vec2(
                     Clamp(0, max_x, self.aiEngine.player.position.x - (Map.WorldMap.MAP_VIEW_WIDTH // 2)),
                     Clamp(0, max_y, self.aiEngine.player.position.y - (Map.WorldMap.MAP_VIEW_HEIGHT // 2)))

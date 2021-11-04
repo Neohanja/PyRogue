@@ -6,6 +6,7 @@ import AIManager
 from Messenger import *
 from NameGen import *
 from MathFun import *
+from SaveGame import *
 from Screens import WorldUI
 from Action import *
 from Input_Handlers import *
@@ -52,6 +53,7 @@ class GameManager:
             return True
                 
         elif isinstance(action, EscapeAction):
+            self.ExitCleanup()
             raise SystemExit()
 
         return False # It shouldn't reach this point, but who knows
@@ -142,3 +144,8 @@ class GameManager:
         if change_map:
             self.world.ChangeMap(mapLoc)
             self.aiEngine.player.SetSpawn(mapLoc, new_point)
+    
+    def ExitCleanup(self):
+        """ Cleaning up, such as saving, on Exit """
+        SaveGame(self.world, self.aiEngine)
+        

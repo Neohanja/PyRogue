@@ -111,7 +111,6 @@ class WorldMap:
         self.BuildOverworld(overworld_header)
 
     # Generation Techniques for the world, towns and dungeons
-
     def BuildOverworld(self, overworld_header : list):
         """ Builds an overworld map """
         # Get the important values from the header
@@ -180,8 +179,72 @@ class WorldMap:
         self.dungeons[d_cord] = DungeonGenerator([self.overworld[HEADER][OVER_DUNGEONS][d_index], 
             dungeon_width, dungeon_height, dRNG, dungeon_level])
 
-    # Helper functions for manipulating map functions and such
+    # Save and Load Functions
+    def SaveMapData(self):
+        """ Reads in the map as a full string, then returns it """
+        msd = []
+        msd += [self.GetMapString('o','') + '\n<NEXT>\n']
+        for town in self.towns.keys():
+            msd += [self.GetMapString('t', town) + '\n<NEXT>\n']
+        for dungeon in self.dungeons.keys():
+            msd += [self.GetMapString('d', dungeon) + '\n<NEXT>\n']
+        return msd
+        
 
+    def GetMapString(self, mapType : str, mapID : str):
+        """ Gets the string interpretation of a map """
+        st = '<MAP>;' + mapType + ':' + mapID + ';'
+        if mapType == 'o':
+            height = self.overworld[HEADER][MAP_HEIGHT]
+            width = self.overworld[HEADER][MAP_WIDTH]
+            st += self.overworld[HEADER][MAP_NAME] + ','
+            st += str(width) + ',' + str(height) + ';<T>;'
+            for t_data in self.overworld[HEADER][OVER_TOWNS].keys():
+                st += t_data + ':' + self.overworld[HEADER][OVER_TOWNS][t_data] + ';'
+            st += '<D>;'
+            for d_data in self.overworld[HEADER][OVER_DUNGEONS].keys():
+                st += d_data + ':' + self.overworld[HEADER][OVER_DUNGEONS][d_data] + ';'
+            st += '<M>;'
+            for row in range(height):
+                for col in range(width):
+                    st += self.overworld[row + 1][col]
+                    if row < height - 1:
+                        st += ','
+                    else:
+                        st += ';'
+            return st
+        elif mapType == 'd':
+            height = self.dungeons[mapID][HEADER][MAP_HEIGHT]
+            width = self.dungeons[mapID][HEADER][MAP_WIDTH]
+            st += self.dungeons[mapID][HEADER][MAP_NAME] + ','
+            st += str(width) + ',' + str(height) + ';'
+            st += '<UP>;' + str(self.dungeons[mapID][HEADER][UPSTAIRS]) + ';'
+            st += '<DOWN>;' + str(self.dungeons[mapID][HEADER][DOWNSTAIRS]) + ';'
+            st += '<M>;'
+            for row in range(height):
+                for col in range(width):
+                    st += self.dungeons[mapID][row + 1][col]
+                    if row < height - 1:
+                        st += ','
+                    else:
+                        st += ';'
+            return st
+        elif mapType == 't':
+            height = self.towns[mapID][HEADER][MAP_HEIGHT]
+            width = self.towns[mapID][HEADER][MAP_WIDTH]
+            st += self.towns[mapID][HEADER][MAP_NAME] + ','
+            st += str(width) + ',' + str(height) + ';'
+            st += '<M>;'
+            for row in range(height):
+                for col in range(width):
+                    st += self.towns[mapID][row + 1][col]
+                    if row < height - 1:
+                        st += ','
+                    else:
+                        st += ';'
+            return st
+
+    # Helper functions for manipulating map functions and such
     def SetPlayer(self, player):
         """ Sets the player character for map operations """
         self.player = player

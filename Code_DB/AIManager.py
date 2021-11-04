@@ -31,6 +31,17 @@ class AI_Manager:
         self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
+    def SaveActors(self):
+        asd = []
+        asd += ['<PLAYER>;' + self.player.SaveFormatter() + '\n<NEXT>\n']
+        for mapID in self.monsters.keys():
+            for monster in self.monsters[mapID]:
+                asd += ['<MONSTER>;' + monster.SaveFormatter() + '\n<NEXT>\n']
+        for mapID in self.npcs.keys():
+            for npc in self.npcs[mapID]:
+                asd += ['<NPC>;' + npc.SaveFormatter() + '\n<NEXT>\n']
+        return asd
+
     def Draw(self, console, corner):
         """ Draws the individual actors on the screen"""
         self.player.Draw(console, corner)

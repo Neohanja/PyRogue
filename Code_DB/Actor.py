@@ -30,6 +30,22 @@ class Actor:
         """ Send a message to the log system """
         self.parent.AddLog(message)
 
+    def SaveFormatter(self):
+        """ Builds a string specifically for saving data """
+        sd = ''
+        sd += self.name + ';' # Name
+        sd += self.mapLoc + ';' # Map ID
+        sd += str(self.position) + ';' # Position on map
+        for stats in self.stats:
+            sd += '<stat>,'
+            sd += stats.sName + ','
+            sd += stats.lName + ','
+            sd += str(stats.base_val) + ','
+            sd += str(stats.mod_val) + ','
+            sd += str(stats.stat_type) + ','
+            sd += ';'
+        return sd
+
     def CreateStats(self):
         """ 
             Creates the stat list for this entity; 

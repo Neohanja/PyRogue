@@ -106,9 +106,10 @@ class Chase(State):
         """ Determines the action to take in a state """
         super().StateAction()
         self.targetDest = self.engine.GetPreyLocation()
-        if self.elapsedTurns >= self.turnsInState and self.engine.actor.CanSeeTarget(self.targetDest):
+        if self.elapsedTurns >= self.turnsInState:
             self.elapsedTurns = 0 # Reset turns
-            self.path = self.engine.GetPath(self.targetDest)
+            if self.engine.actor.CanSeeTarget(self.targetDest):
+                self.path = self.engine.GetPath(self.targetDest)
         
         # Next move
         if len(self.path) > 0:

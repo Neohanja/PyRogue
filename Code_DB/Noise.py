@@ -8,7 +8,7 @@ from MathFun import *
 class Noise:
     """ Class of Noise """
     
-    def __init__(self, sqr_size, wRNG):
+    def __init__(self, sqr_size, wRNG = random.Random()):
         """ Constructor """
         # Step 1: Initialize the table
         # Since I am not building a random number generator,

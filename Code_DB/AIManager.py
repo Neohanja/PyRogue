@@ -16,7 +16,7 @@ class AI_Manager:
 
     Instance = None # Static class for reference
     
-    def __init__(self, map_data : Map.WorldMap):
+    def __init__(self, map_data : Map.WorldMap, game_master):
         """ Initialize the AI Manager Program """
         AI_Manager.Instance = self # Sets this as the static AI Manager Instance
 
@@ -24,9 +24,10 @@ class AI_Manager:
         self.monsters = {}
         self.npcs = {}
         self.map = map_data
+        self.gm = game_master
         
         # Always need a player
-        self.player = Player.Player(map_data)
+        self.player = Player.Player(map_data, self.gm)
         self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
@@ -44,6 +45,10 @@ class AI_Manager:
         """ Turns on or off the Dev-mode debug options s"""
         self.player.debug = toggle
 
+    def AddLog(self, message : str):
+        """ Added a send message to log function here for ease of access """
+        self.gm.AddLog(message)
+
     def PopulateMonsters(self, d_Index : str, dRNG : random.Random, level : int):
         """ Populates a dungeon """
         m_count = dRNG.randint(3 * level, 5 * level)
@@ -53,7 +58,7 @@ class AI_Manager:
 
         for m in range(m_count):
             which_monster = dRNG.choice(Monster.DUNGEON)
-            new_monster = Monster.Monster(which_monster, self.map, self.player)
+            new_monster = Monster.Monster(which_monster, self.map, self.player, self.gm)
             spawn_loc = self.map.GetEmptySpot(d_Index)
             while self.EntityHere(spawn_loc, d_Index):
                 spawn_loc = self.map.GetEmptySpot(d_Index)

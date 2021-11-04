@@ -9,7 +9,7 @@ import ColorPallet
 class Actor:
     """ Actor class for game entities """
 
-    def __init__(self, init_name, init_icon, init_color, map_data):
+    def __init__(self, init_name, init_icon, init_color, map_data, ai_manager):
         """ Constructor """
         # Initial, default values
         self.position = Vec2(0, 0) # default location
@@ -20,10 +20,15 @@ class Actor:
         self.name = init_name
         self.icon = init_icon        
         self.color = init_color
+        self.parent = ai_manager
         # Base Stats
         self.sight = 5
         self.map_data = map_data # reference only
         self.CreateStats()
+
+    def SendMessage(self, message : str):
+        """ Send a message to the log system """
+        self.parent.AddLog(message)
 
     def CreateStats(self):
         """ 

@@ -26,7 +26,8 @@ class FSM: # Basic FSM, mostly for mindless monsters
             # Check if the new state is in the state list
             if self.currentState in self.stateList:
                 self.lastState = self.currentState
-                print(self.actor.name,'has switched to', self.currentState + '.')
+                if self.currentState == 'Chase':
+                    self.actor.SendMessage(self.actor.name + ' gives chase!')
             else:
                 print(self.currentState, 'not loaded into state list. Reverting back to', self.lastState, 'state.')
                 self.currentState = self.lastState

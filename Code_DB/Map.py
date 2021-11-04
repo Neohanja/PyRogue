@@ -69,7 +69,13 @@ DUNGEON_LEVEL = 4
 UPSTAIRS = 5
 DOWNSTAIRS = 6
 # Town Specific (Once needed/Used)
+TOWN_NPCS = 4
+TOWN_QUESTS = 5
+# Town somthing = 6
 # Overworld Specific (Once needed/Used)
+WORLD_SEED = 4
+OVER_TOWNS = 5
+OVER_DUNGEONS = 6
 # A* Pathfinding Module
 MAP_ASTAR = 7
 
@@ -92,7 +98,8 @@ class WorldMap:
             width = WorldMap.MAP_VIEW_WIDTH
 
         # Generate the world header
-        overworld_header = ['Drakland', height, width, random.Random('Drakland'), None, None, None]
+        # Temporary: World seed is 'Drakland'. Should be a string to ensure continuity with all "seeds"
+        overworld_header = ['Drakland', height, width, random.Random('Drakland'), 'Drakland', {}, {}]
 
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
@@ -117,6 +124,8 @@ class WorldMap:
         # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = [overworld_header]
 
+        ws = self.GetWorldSeed()
+
         for row in range(height):
             new_row = []
             for col in range(width):
@@ -131,25 +140,25 @@ class WorldMap:
                     symbol = 'Mountains'
                 else:
                     map_decor = wRNG.random()
+                    terrainID = str(col) + ',' + str(row)
                     if  map_decor < 0.005:
                         symbol = 'Portal'
+                        overworld_header[OVER_DUNGEONS][terrainID] = GenTownName(ws + terrainID)
                     elif map_decor < 0.01:
                         symbol = 'Town'
+                        overworld_header[OVER_TOWNS][terrainID] = GenTownName(ws + terrainID)
                 new_row += [symbol]
             self.overworld += [new_row]
 
         overworld_header.append(AStar(self.overworld))
 
-    def BuildTown(self, t_name, t_cord):
+    def BuildTown(self, t_cord):
         """ Builds a town """
-        # Town: Dict Key => Coord : str(Vec2)
-        # 0: Map Data
-        # 1+: Tile Data
-        tRNG = random.Random(t_name)
+        tRNG = random.Random(self.GetWorldSeed() + t_cord)
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
         
-        town_header = [t_name, town_width, town_height, tRNG]
+        town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG]
 
         # Build the map using an external function, as to not bloat the map drawing class
         new_map = TownGenerator(town_header)
@@ -160,16 +169,16 @@ class WorldMap:
         for y in range(town_height):
             self.towns[t_cord] += [new_map[y]]
 
-    def BuildDungeon(self, d_name, d_cord):
+    def BuildDungeon(self, d_cord):
         """ Builds a dungeon """
-        # Town: Dict Key => Coord : str(Vec2)
-        # 0: Map Data
-        # 1+: Tile Data
-        dungeon_level = int(d_cord.split(',')[2])
-        dRNG = random.Random(d_name)
+        d = d_cord.split(',')
+        dungeon_level = int(d[2])
+        d_index = d[0] + ',' + d[1]
+        dRNG = random.Random(self.GetWorldSeed() + d_cord)
         dungeon_width = dRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         dungeon_height = dRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
-        self.dungeons[d_cord] = DungeonGenerator([d_name, dungeon_width, dungeon_height, dRNG, dungeon_level])
+        self.dungeons[d_cord] = DungeonGenerator([self.overworld[HEADER][OVER_DUNGEONS][d_index], 
+            dungeon_width, dungeon_height, dRNG, dungeon_level])
 
     # Helper functions for manipulating map functions and such
 
@@ -252,6 +261,10 @@ class WorldMap:
         """ Gets the location of the current dungeon. """
         m = self.mapID.split(',')
         return Vec2(int(m[0]), int(m[1]))
+    
+    def GetWorldSeed(self) -> str:
+        """ Returns the world's seed """
+        return self.overworld[HEADER][WORLD_SEED]
     
     def GetEmptySpot(self, mapLoc : str):
         """ Finds a random empty spot on the map """

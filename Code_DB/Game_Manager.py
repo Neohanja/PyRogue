@@ -3,7 +3,7 @@
 
 import Map
 import AIManager
-import tcod
+from Messenger import *
 from NameGen import *
 from MathFun import *
 from Screens import WorldUI
@@ -23,10 +23,15 @@ class GameManager:
 
         self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
 
-        self.aiEngine = AIManager.AI_Manager(self.world)
+        self.aiEngine = AIManager.AI_Manager(self.world, self)
         self.aiEngine.ToggleDebug(DebugMode)
+        self.mainCharacter = self.aiEngine.player
 
-        self.eAction = ''
+        sL = Map.WorldMap.MAP_VIEW_HEIGHT + 2
+        eL = Screen_Size.y - 1 - sL
+        mL = Map.WorldMap.MAP_VIEW_WIDTH - 10
+
+        self.messenger = Messenger(sL, eL, mL)        
     
     def Start(self):
         """ Pre-game stuff """
@@ -34,18 +39,16 @@ class GameManager:
 
     def Update(self, action):
         """ Actions to take during the game loop """
-        if isinstance(action, MovementAction):                    
+        if isinstance(action, MovementAction):  
             self.aiEngine.Update(Vec2(action.dx, action.dy))
-            self.eAction = ''
             return True
         
         elif isinstance(action, UseAction):
-            self.eAction = ''
             self.UseTerrain()
             return True
 
         elif isinstance(action, ExamineAction):
-            self.eAction = self.world.GetExamineAction()
+            self.messenger.AddText(self.world.GetExamineAction())
             return True
                 
         elif isinstance(action, EscapeAction):
@@ -59,8 +62,6 @@ class GameManager:
         border = WorldUI(self.width, self.height)
         for line in range(len(border)):
                     console.print(x=0,y=line, string = border[line])
-        if self.eAction != '':
-                    console.print(x = 1, y = Map.WorldMap.MAP_VIEW_HEIGHT + 4, string = self.eAction)
         # Find the Upper Left corner
         max_x = self.world.overworld[Map.HEADER][Map.MAP_WIDTH] - Map.WorldMap.MAP_VIEW_WIDTH + 1
         max_y = self.world.overworld[Map.HEADER][Map.MAP_HEIGHT] - Map.WorldMap.MAP_VIEW_HEIGHT + 1
@@ -71,11 +72,13 @@ class GameManager:
         # Draw everything else
         self.world.Draw(corner, console)
         self.aiEngine.Draw(console, corner)
+        # Draw the messanger system info
+        self.messenger.PrintText(console)
 
     # Helper functions
-    def PrintLog(self, console):
-        """ Prints the player log """
-        pass
+    def AddLog(self, message : str):
+        """ Adds a message to the messenger log. Added to game manager for ease of access """
+        self.messenger.AddText(message)
 
     def UseTerrain(self):
         """ Uses the terrain feature located at player's location """
@@ -90,8 +93,8 @@ class GameManager:
         if feature == "Town":
             if loc not in self.world.towns:
                 # Create and populate the new town
-                self.world.BuildTown(GenTownName(), loc)
-            self.eAction += 'Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.'
+                self.world.BuildTown(loc)
+            self.messenger.AddText('Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.')
             new_point = Vec2(self.world.towns[loc][Map.HEADER][Map.MAP_WIDTH]//2, self.world.towns[loc][Map.HEADER][Map.MAP_HEIGHT] - 1)
             mapLoc = 't:' + loc
             change_map = True
@@ -100,9 +103,9 @@ class GameManager:
             mapLoc = 'd:' + loc
             if loc not in self.world.dungeons:
                 # Generate and populate the dungeon
-                self.world.BuildDungeon(GenTownName(), loc)
+                self.world.BuildDungeon(loc)
                 self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][Map.HEADER][Map.MAP_RNG], 1)
-            self.eAction += 'You have entered ' + self.world.dungeons[loc][Map.HEADER][Map.MAP_NAME] + '.'
+            self.messenger.AddText('You have entered ' + self.world.dungeons[loc][Map.HEADER][Map.MAP_NAME] + '.')
             new_point = Vec2(self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS].x, self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS].y)
             
             change_map = True
@@ -110,30 +113,28 @@ class GameManager:
             m = self.world.mapID.split(',')
             lvl = int(m[2]) # Get the current level
             if lvl <= 1:
-                self.eAction += 'You Have escaped the dungeon, ' + self.world.dungeons[self.world.mapID][Map.HEADER][Map.MAP_NAME] + '.'
+                self.messenger.AddText('You Have escaped the dungeon, ' + self.world.dungeons[self.world.mapID][Map.HEADER][Map.MAP_NAME] + '.')
                 new_point = Vec2(int(m[0]), int(m[1]))
                 mapLoc = 'o:'
             else:
-                self.eAction += 'You have traveled up a level in the dungeon.'
+                self.messenger.AddText('You have traveled up a level in the dungeon.')
                 new_map = m[0] + ',' + m[1] + ',' + str(lvl - 1)
                 mapLoc = 'd:' + new_map
                 # In the event this dungeon portion does not exist for some reason
                 if new_map not in self.world.dungeons:
-                    d_name = self.world.dungeons[m[0] + ',' + m[1] + ',1'][Map.HEADER][Map.MAP_NAME]
-                    self.world.BuildDungeon(d_name, new_map)
+                    self.world.BuildDungeon(new_map)
                     self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl - 1)
                 new_point = Vec2(self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS].x, self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS].y)                
             change_map = True
         elif feature == "Downstairs":
             m = self.world.mapID.split(',')
             lvl = int(m[2])
-            self.eAction += 'You have traveled down a level in the dungeon.'
+            self.messenger.AddText('You have traveled down a level in the dungeon.')
             new_map = m[0] + ',' + m[1] + ',' + str(lvl + 1)
             mapLoc = 'd:' + new_map
             if new_map not in self.world.dungeons:
                 # Create the new dungeon and populate it
-                d_name = self.world.dungeons[m[0] + ',' + m[1] + ',1'][Map.HEADER][Map.MAP_NAME]
-                self.world.BuildDungeon(d_name, new_map)
+                self.world.BuildDungeon(new_map)
                 self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl + 1)
             new_point = Vec2(self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS].x, self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS].y)            
             change_map = True

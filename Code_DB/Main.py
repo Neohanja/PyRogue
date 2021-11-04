@@ -11,9 +11,8 @@ from Action import *
 from Input_Handlers import *
 from MathFun import *
 
-# Constant global variables
+# Constant global variables : Screen size
 WIDTH, HEIGHT = 100, 60
-WORLD_SIZE = 256
 
 # Declare as the main function:
 def main() -> None:
@@ -28,8 +27,8 @@ def main() -> None:
     event_handler = EventHandler()
     
     with tcod.context.new(
-        columns=console.width, # + console.width // 2, 
-        rows=console.height, # + console.height // 2, 
+        columns=console.width, # + console.width // 2,
+        rows=console.height, # + console.height // 2,
         tileset=tileset,
         title = "Python Rogue-Esque : Intro to Computing Finale",
         vsync = True

@@ -44,26 +44,31 @@ class NameData:
         "mire"
     ]
 
-def GenTownName():
+def GenTownName(seed = ''):
     """ Using various lists, generates the name of a town """
     # Potential "prefixes" for a town name
-    pre = random.random() < 0.25
-    mid_count = random.randint(0, 10)
-    post = not pre or random.random() < 0.5
+    if seed == '':
+        nRNG = random.Random()
+    else:
+        nRNG = random.Random(seed)
+
+    pre = nRNG.random() < 0.25
+    mid_count = nRNG.randint(0, 10)
+    post = not pre or nRNG.random() < 0.35
 
     town_name = ''
 
     if pre:
-        town_name += random.choice(NameData.prefix)
-        if random.random() < .25:
+        town_name += nRNG.choice(NameData.prefix)
+        if nRNG.random() < .25:
             town_name += ' '
     if mid_count > 0:
         for i in range(mid_count):
-            town_name += ChooseLetter(i % 2 == 1, random.random())
+            town_name += ChooseLetter(i % 2 == 1, nRNG.random())
     if post:
-        if random.random() < .25:
+        if nRNG.random() < .25:
             town_name += ' '
-        town_name += random.choice(NameData.suffix)
+        town_name += nRNG.choice(NameData.suffix)
     
     return town_name.title()
 

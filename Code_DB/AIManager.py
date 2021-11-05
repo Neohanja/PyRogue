@@ -119,10 +119,11 @@ class AI_Manager:
         """ Populates a town """
         pass
 
-    def CheckCollision(self, actor_a):
+    def CheckCollision(self, actor_a, offset):
         """ Checks if an actor (A) is trying to enter the space of another actor. If so, return it """
+        loc = actor_a.Position() + offset
         if actor_a is not self.player:
-            if actor_a.position == self.player.position:
+            if loc == self.player.position:
                 return self.player
         
         mapID = self.player.mapLoc
@@ -130,13 +131,13 @@ class AI_Manager:
             for monster in self.monsters[mapID]:
                 if actor_a is monster:
                     continue
-                elif actor_a.position == monster.position:
+                elif loc == monster.position:
                     return monster
         if mapID in self.npcs:
             for npc in self.npcs[mapID]:
                 if actor_a is npc:
                     continue
-                elif actor_a.position == npc.position:
+                elif loc == npc.position:
                     return npc
 
         return None # Return nothing if we hit nothing 

@@ -122,4 +122,5 @@ class Chase(State):
             elif move.y < startPos.y:
                 move_dir.y -= 1
 
-            self.engine.actor.Move(move_dir)
+            if not self.engine.actor.Move(move_dir):
+                self.path.insert(0, move)

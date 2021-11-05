@@ -72,11 +72,12 @@ class AStar:
                 if not include_goal:
                     cur_node = cur_node.parent_node
                 while isinstance(cur_node, ANode):
-                    path.insert(0, cur_node.point) # always add to the front of the list
+                    if cur_node.point != start:
+                        path.insert(0, cur_node.point) # always add to the front of the list
                     cur_node = cur_node.parent_node
                 return path
 
-            self.node_status[str(self.open_list[0])] = 'Closed'    
+            self.node_status[str(self.open_list[0])] = 'Closed'
             self.AddSurrounding(self.open_list.pop(0), end)
 
         return []

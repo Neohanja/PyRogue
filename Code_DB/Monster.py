@@ -25,7 +25,15 @@ class Monster(Actor.Actor):
         """ Constructor """
         self.FSM = FSM(self.map_data, self, target)
         self.sight = MONSTER_STATS[monster_ID][M_SIGHT]
+        self.actorType = 'Monster'
 
     def Update(self):
         """ Game Update loop for Monster Actor """
-        self.FSM.Update()        
+        self.FSM.Update()
+
+    def OnCollide(self, other):
+        """ What happens when the actor collides with something """
+        if other.actorType == 'Player':
+            self.Attack(other)
+        else:
+            return super().OnCollide(other)

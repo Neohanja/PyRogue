@@ -26,10 +26,10 @@ class Stat:
         else:
             return self.base_val
 
-    def AddTo(self, increase : int, healing = False):
+    def AddTo(self, increase : int):
         """ Heals or adds to a stat : -increase for damage"""
         self.mod_val += increase
-        if healing and self.mod_val > self.base_val:
+        if self.stat_type == 1 and self.mod_val > self.base_val:
             self.mod_val = self.base_val
 
     

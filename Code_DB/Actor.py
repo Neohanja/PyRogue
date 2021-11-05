@@ -4,6 +4,7 @@
 from MathFun import *
 import Map
 from Stats import *
+import random
 import ColorPallet
 
 class Actor:
@@ -16,6 +17,7 @@ class Actor:
         self.mapLoc = 'o:'
         self.stats = {}
         self.FSM = None # this will be assigned case by case, but in parent class to ensure intellisense
+        self.actorType = 'Generic'
         # Added by class
         self.name = init_name
         self.icon = init_icon        
@@ -65,17 +67,23 @@ class Actor:
         """ Update for game loop purposes """
         self.Move(offset)
     
+    def OnCollide(self, other):
+        """ Determine what to do on colliding """
+        self.SendMessage(self.name + ' says hello to ' + other.name + '.')
+
     def Move(self, offset : Vec2):
         """ Moves an actor """
         # Check if someone else is occupying this space
-        collide = self.parent.CheckCollision(self)
+        collide = self.parent.CheckCollision(self, offset)
 
         if collide != None:
-            self.SendMessage(self.name + ' says hello to ' + collide.name + '.')
+            self.OnCollide(collide)
+            return False # couldn't move
 
         # Check if a space is blocked or not. If it is, we cannot move here
-        if not self.map_data.SpaceBlocked(self.position + offset):
+        if not self.map_data.SpaceBlocked(self.position + offset) and collide == None:
             self.position += offset
+            return True
     
     def Draw(self, display, corner : Vec2):
         """ Displays the character to a screen; Corner = Top Left Corner Map Cord being displayed """
@@ -117,3 +125,20 @@ class Actor:
             if self.map_data.GetTerrainFeature(raycast)[Map.SYMBOL_BLOCK_VIEW]:
                 return False
         return True
+
+    # Combat
+    def Attack(self, defender):
+        """ Attack the defender """
+        dmg = self.stats['Damage'].Total()
+        hit = random.random() < 0.95
+        if hit:
+            self.SendMessage(self.name + ' hits ' + defender.name + ' for ' + str(dmg) + ' damage!')
+            defender.TakeHit(dmg)
+        else:
+            self.SendMessage(self.name + ' misses ' + defender.name + '.')
+
+    def TakeHit(self, damage):
+        """ Receive damage """
+        self.stats['Hit Points'].AddTo(-damage)
+        if self.stats['Hit Points'].IsEmpty():
+            pass # Actor is dead

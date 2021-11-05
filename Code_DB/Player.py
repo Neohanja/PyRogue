@@ -1,6 +1,7 @@
 # Player Class, since the player is a unique actor
 from Actor import *
 from Map import *
+from Monster import Monster
 
 PLAY_STATE = ['Main Menu', 'Help Menu', 'Story PAge', 'Dialog Loop', 'Stat Screen', 'Game Loop']
 MAIN_MENU = 0
@@ -16,6 +17,7 @@ class Player(Actor):
         super().__init__("Default", '@', 'White', map_data, ai_manager)
         """ Constructor Specific toward Player """
         self.playState = PLAY_STATE[GAME_LOOP]
+        self.actorType = 'Player'
         self.debug = False
     
     def Update(self, offset : Vec2):
@@ -25,6 +27,13 @@ class Player(Actor):
                 self.position = self.map_data.GetTownLoc()
                 self.mapLoc = 'o:'
                 self.map_data.ChangeMap('o:')
+
+    def OnCollide(self, other):
+        """ What happens when the actor collides with something """
+        if other.actorType == 'Monster':
+            self.Attack(other)
+        else:
+            return super().OnCollide(other)
 
     def Draw(self, console, corner):
         super().Draw(console, corner) # Ensure to conform to the Actor.Draw() first

@@ -3,24 +3,35 @@
 
 import Map
 import AIManager
+import Menus
 from Messenger import *
 from NameGen import *
 from MathFun import *
 from SaveGame import *
-from Screens import WorldUI
+from Screens import *
 from Action import *
 from Input_Handlers import *
 
 WORLD_WIDTH = 256
 WORLD_HEIGHT = 256
+# Game State Info
+PLAY_STATE = ['Main Menu', 'Help Menu', 'Story PAge', 'Dialog Loop', 'Stat Screen', 'Game Loop']
+MAIN_MENU = 0
+HELP_MENU = 1
+STORY_PAGE = 2
+DIALOG_LOOP = 3
+STAT_PAGE = 4
+GAME_LOOP = 5
 
 class GameManager:
     """ Game Manager """
 
     def __init__(self, Screen_Size : Vec2, DebugMode = False):
-        """ Game Manager Constructor """
+        """ Game Manager Constructor """        
         self.width = Screen_Size.x
         self.height = Screen_Size.y
+        self.playState = PLAY_STATE[MAIN_MENU]
+        self.gamePlaying = True
 
         self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
 
@@ -40,8 +51,18 @@ class GameManager:
         """ Pre-game stuff """
         pass
 
-    def Update(self, action):
-        """ Actions to take during the game loop """
+    # Update Loops for different game states
+
+    def MainTitle(self, action):
+        if isinstance(action, EscapeAction):
+            raise SystemExit()
+
+        elif isinstance(action, UseAction):
+            self.playState = PLAY_STATE[GAME_LOOP]
+            return True
+
+    def GameLoopUpdate(self, action):
+        """ Game Loop for Updating """
         if isinstance(action, MovementAction):  
             self.aiEngine.Update(Vec2(action.dx, action.dy))
             return True
@@ -65,12 +86,44 @@ class GameManager:
             return True
                 
         elif isinstance(action, EscapeAction):
-            # self.SaveGame() -> Save on exit, if we choose to do a pure roguelike
-            raise SystemExit()
+            self.playState = PLAY_STATE[MAIN_MENU]
+            return True
 
-        return False # It shouldn't reach this point, but who knows
+    def Update(self, action):        
+        """ Actions to take during the game loop """
+        refresh_screen = False
+
+        if self.playState == PLAY_STATE[GAME_LOOP]:
+            if self.GameLoopUpdate(action):
+                refresh_screen = True
+        elif self.playState == PLAY_STATE[MAIN_MENU]:
+            if self.MainTitle(action):
+                refresh_screen = True
+
+        return refresh_screen # It shouldn't reach this point, but who knows
+
+    # Draw Loops to update the screen
 
     def Draw(self, console):
+        """ Draws updates to all game existances """
+        if self.playState == PLAY_STATE[GAME_LOOP]:
+            self.DrawWorld(console)
+        if self.playState == PLAY_STATE[MAIN_MENU]:
+            self.DrawTitle(console)
+
+    def DrawTitle(self, console):
+        # Draw the UI
+        border = Title(self.width, self.height)
+        for line in range(len(border)):
+                    console.print(x=0,y=line, string = border[line])
+        colorData = Menus.TitleImage('Title.png')
+        height = len(colorData)
+        width = len(colorData[0])
+        for r in range(height):
+            for c in range(width):
+                console.print(x = 1 + c, y = 1 + r, string = 'X', fg = colorData[r][c])
+
+    def DrawWorld(self, console):
         """ Draw updates to all game existances """
         # Draw the UI
         border = WorldUI(self.width, self.height)

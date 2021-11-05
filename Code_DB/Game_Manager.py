@@ -34,6 +34,7 @@ class GameManager:
         self.gamePlaying = True
 
         self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
+        print(GetAllSaves())
 
         self.aiEngine = AIManager.AI_Manager(self.world, self)
         self.aiEngine.ToggleDebug(DebugMode)

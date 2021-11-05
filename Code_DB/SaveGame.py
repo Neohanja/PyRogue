@@ -1,7 +1,17 @@
 # Processes saved games
 import os
 
+# os.listdir(path) ==> Lists files in a directory!
+
 GAME_SAVE_EXTENTION = '.prs' # For testing only
+
+def GetAllSaves():
+    """ Gets all saved files in the Saves directory """
+    save_dir = os.getcwd() + r'\Saves'
+    if not os.path.exists(save_dir):
+        return []
+    else:
+        return os.listdir(save_dir + '\\')
 
 def SaveGame(mapData, actorData):
     """ Saves the game information to a file """

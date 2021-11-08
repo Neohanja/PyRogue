@@ -3,7 +3,6 @@
 
 import Map
 import AIManager
-import Menus
 from Messenger import *
 from NameGen import *
 from MathFun import *
@@ -17,7 +16,7 @@ TITLE_IMAGE = 'Title.png'
 WORLD_WIDTH = 256
 WORLD_HEIGHT = 256
 # Game State Info
-PLAY_STATE = ['Main Menu', 'Help Menu', 'Story PAge', 'Dialog Loop', 'Stat Screen', 'Game Loop', 'Load Menu']
+PLAY_STATE = ['Main Menu', 'Help Menu', 'Story Page', 'Dialog Loop', 'Stat Screen', 'Game Loop', 'Load Menu', 'CharGen']
 MAIN_MENU = 0
 HELP_MENU = 1
 STORY_PAGE = 2
@@ -25,6 +24,7 @@ DIALOG_LOOP = 3
 STAT_PAGE = 4
 GAME_LOOP = 5
 LOAD_MENU = 6
+CHAR_GEN = 7
 
 class GameManager:
     """ Game Manager """
@@ -35,7 +35,7 @@ class GameManager:
         self.playState = PLAY_STATE[MAIN_MENU] # Initialize the game state from the list of options (Enumeration)
         self.gamePlaying = False # Determines if the game is currently running or not.
         self.titleFull = True # Debugging option, and to show the full title menu or just the image.
-        self.titleData = Menus.TitleImage(TITLE_IMAGE) # Preload the title image, so it isn't loading EVERY frame
+        self.titleData = TitleImage(TITLE_IMAGE) # Preload the title image, so it isn't loading EVERY frame
 
         # for menu sequences
         self.cursorLoc = Vec2(0, 0)
@@ -43,6 +43,10 @@ class GameManager:
         self.maxOptions = 5
         self.menuOptions = {}
         self.page = 0
+
+        # general data for new games
+        self.newName = ''
+        self.seedName = ''
     
     def Start(self):
         """ Start a new Game """
@@ -62,7 +66,7 @@ class GameManager:
         self.gamePlaying = True
         # Next line for testing messages that may need multiple lines
         # self.messenger.AddText('This needs to be super long to test this system and how it works, as well as getting the spacing correct for the word wrap. I\'m hoping all is well with it, since it didn\'t take long to make, compared to other systems that are just plain annoying.')
-        
+    
     # Update Loops for different game states
     def MainTitle(self, action):
         """ Main Menu Actions """
@@ -78,8 +82,7 @@ class GameManager:
         elif isinstance(action, EnterAction):
             m_option = self.menuOptions[self.cursorLoc.y]
             if m_option == 'New':
-                self.Start()
-                self.playState = PLAY_STATE[GAME_LOOP]
+                self.playState = PLAY_STATE[CHAR_GEN]
             elif m_option == 'Back':
                 self.playState = PLAY_STATE[GAME_LOOP]
             elif m_option == 'Save':
@@ -129,6 +132,21 @@ class GameManager:
             return True
         return False
 
+    def NewGameUpdate(self, action):
+        """ When new game is selected """
+        if isinstance(action, EscapeAction):
+            self.cursorLoc.y = self.previousLoc.y
+            self.previousLoc.y = 0
+            self.playState = PLAY_STATE[MAIN_MENU]
+            return True
+        
+        elif isinstance(action, EnterAction): # New Game
+            self.Start()
+            self.playState = PLAY_STATE[GAME_LOOP]
+            return True
+        
+        return False
+
     def GameLoopUpdate(self, action):
         """ Game Loop for Updating """
         if isinstance(action, MovementAction):  
@@ -162,6 +180,9 @@ class GameManager:
         elif self.playState == PLAY_STATE[LOAD_MENU]:
             if self.LoadMenuSelections(action):
                 refresh_screen = True
+        elif self.playState == PLAY_STATE[CHAR_GEN]:
+            if self.NewGameUpdate(action):
+                refresh_screen = True
 
         return refresh_screen # It shouldn't reach this point, but who knows
 
@@ -171,10 +192,12 @@ class GameManager:
         """ Draws updates to all game existances """
         if self.playState == PLAY_STATE[GAME_LOOP]:
             self.DrawWorld(console)
-        if self.playState == PLAY_STATE[MAIN_MENU]:
+        elif self.playState == PLAY_STATE[MAIN_MENU]:
             self.DrawTitle(console)
-        if self.playState == PLAY_STATE[LOAD_MENU]:
+        elif self.playState == PLAY_STATE[LOAD_MENU]:
             self.DrawLoadScreen(console)
+        elif self.playState == PLAY_STATE[CHAR_GEN]:
+            self.DrawCharacterGenerator(console)
 
     def DrawLoadScreen(self, console):
         """ Draws the load screen, and borrows much of the code from the title """
@@ -194,9 +217,9 @@ class GameManager:
                 console.print(x = c + 20, y = r + 20, string = ' ', fg = [255,255,255])
         
         console.print(x = 30, y = 21, string = 'Saved Games')
-        console.print(x = 21, y = 23, string = Menus.TITLE_MENU[1][0]) # --- block (for consistency)
+        console.print(x = 21, y = 23, string = TITLE_MENU[1][0]) # --- block (for consistency)
 
-        self.menuOptions = Menus.GetSaveFiles(10, self.page)
+        self.menuOptions = GetSaveFiles(10, self.page)
 
         for index in self.menuOptions.keys():
             self.maxOptions = index
@@ -204,9 +227,7 @@ class GameManager:
         
         # Print the user cursor
         console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
-        console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')
-
-        
+        console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')        
 
     def DrawTitle(self, console):
         """ Draw the title screen, or the first screen seen by the player before their adventure begins"""
@@ -228,7 +249,7 @@ class GameManager:
             line = 0
             # account for the title bar from the "max options"
             self.maxOptions = -1
-            for text in Menus.TITLE_MENU:
+            for text in TITLE_MENU:
                 if text[1] or self.gamePlaying:
                     console.print(x = 21, y = 21 + (line * 2), string = text[0])                    
                     if text[2] != '':
@@ -239,13 +260,23 @@ class GameManager:
             console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
             console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')
 
+    def DrawCharacterGenerator(self, console):
+        """ Draws the UI and elements of the character generator screen """
+        border = WorldUI(self.screenSize.x, self.screenSize.y)
+        for line in range(len(border)):
+            console.print(x=0,y=line, string = border[line])
+        
+        y_pos = 2
+        for cs_Menu in CHARACTER_GENERATOR:
+            console.print(x = 2, y = y_pos, string = cs_Menu[0])
+            y_pos += 1
 
     def DrawWorld(self, console):
         """ Draw updates to all game existances """
         # Draw the UI
         border = WorldUI(self.screenSize.x, self.screenSize.y)
         for line in range(len(border)):
-                    console.print(x=0,y=line, string = border[line])
+            console.print(x=0,y=line, string = border[line])
         # Find the Upper Left corner
         max_x = self.world.overworld[Map.HEADER][Map.MAP_WIDTH] - Map.WorldMap.MAP_VIEW_WIDTH + 1
         max_y = self.world.overworld[Map.HEADER][Map.MAP_HEIGHT] - Map.WorldMap.MAP_VIEW_HEIGHT + 1

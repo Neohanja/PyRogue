@@ -24,7 +24,7 @@ def main() -> None:
         'terminal12x12_gs_ro.png', 16, 16,
         tcod.tileset.CHARMAP_CP437)
     console = tcod.Console(WIDTH, HEIGHT, order = "F")
-    event_handler = EventHandler()
+    event_handler = EventHandler(game_loop)
 
     with tcod.context.new(
         columns=console.width, # + console.width // 2,

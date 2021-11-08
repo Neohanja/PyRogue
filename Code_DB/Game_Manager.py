@@ -3,6 +3,7 @@
 
 import Map
 import AIManager
+import Player
 from Messenger import *
 from NameGen import *
 from MathFun import *
@@ -47,6 +48,7 @@ class GameManager:
         # general data for new games
         self.newName = ''
         self.seedName = ''
+        self.textLock = False # For any time a text entry is being used
     
     def Start(self):
         """ Start a new Game """
@@ -68,6 +70,7 @@ class GameManager:
         # self.messenger.AddText('This needs to be super long to test this system and how it works, as well as getting the spacing correct for the word wrap. I\'m hoping all is well with it, since it didn\'t take long to make, compared to other systems that are just plain annoying.')
     
     # Update Loops for different game states
+
     def MainTitle(self, action):
         """ Main Menu Actions """
         if isinstance(action, MovementAction):
@@ -82,6 +85,7 @@ class GameManager:
         elif isinstance(action, EnterAction):
             m_option = self.menuOptions[self.cursorLoc.y]
             if m_option == 'New':
+                # Start with generating a new character, then the world
                 self.playState = PLAY_STATE[CHAR_GEN]
             elif m_option == 'Back':
                 self.playState = PLAY_STATE[GAME_LOOP]
@@ -90,9 +94,7 @@ class GameManager:
                 self.AddLog('Game Saved')
                 self.playState = PLAY_STATE[GAME_LOOP]
             elif m_option == 'Load':
-                # Need to go to a load menu, but for now, we is good.
-                # self.LoadGame()
-                # self.AddLog('Game Loaded')
+                # Need to go to a load menu.
                 self.playState = PLAY_STATE[LOAD_MENU]
                 self.previousLoc.y = self.cursorLoc.y
                 self.cursorLoc.y = 0
@@ -133,7 +135,7 @@ class GameManager:
         return False
 
     def NewGameUpdate(self, action):
-        """ When new game is selected """
+        """ When new game is selected : event system passed through for typing """
         if isinstance(action, EscapeAction):
             self.cursorLoc.y = self.previousLoc.y
             self.previousLoc.y = 0
@@ -141,8 +143,34 @@ class GameManager:
             return True
         
         elif isinstance(action, EnterAction): # New Game
-            self.Start()
-            self.playState = PLAY_STATE[GAME_LOOP]
+            mSelection = self.menuOptions[self.cursorLoc.y]
+            if mSelection == 'Start':
+                self.Start()
+                self.playState = PLAY_STATE[GAME_LOOP]
+            elif mSelection == 'Name' or mSelection == 'Seed':
+                self.textLock = not self.textLock
+            return True
+        
+        elif self.textLock:
+            mSelection = self.menuOptions[self.cursorLoc.y]
+            nChar = action.letter
+            if mSelection == 'Name':
+                if nChar == 'Remove':
+                    self.newName = self.newName[:len(self.newName) - 1]
+                else:
+                    self.newName += nChar
+                self.newName = self.newName.title()
+                return True
+            elif mSelection == 'Seed':
+                if nChar == 'Remove':
+                    self.seedName = self.seedName[:len(self.seedName) - 1]
+                else:
+                    self.seedName += nChar
+                self.seedName = self.seedName.title()
+                return True
+
+        elif isinstance(action, MovementAction) and not self.textLock:
+            self.cursorLoc.y = Clamp(0, self.maxOptions, self.cursorLoc.y + action.dy)
             return True
         
         return False
@@ -167,7 +195,7 @@ class GameManager:
             self.cursorLoc.y = 0
             return True
 
-    def Update(self, action):        
+    def Update(self, action):
         """ Actions to take during the game loop """
         refresh_screen = False
 
@@ -266,10 +294,42 @@ class GameManager:
         for line in range(len(border)):
             console.print(x=0,y=line, string = border[line])
         
-        y_pos = 2
+        y_pos = 3
+        op = 0
         for cs_Menu in CHARACTER_GENERATOR:
-            console.print(x = 2, y = y_pos, string = cs_Menu[0])
-            y_pos += 1
+            if cs_Menu[2] == '':
+                console.print(x = 3, y = y_pos, string = cs_Menu[0])
+                y_pos += 2
+            elif cs_Menu[2] == '<Name>':
+                self.menuOptions[op] = 'Name'
+                op += 1
+                p_name = self.newName
+                if self.newName == '':
+                    p_name = 'Default'
+                console.print(x = 3, y = y_pos, string = cs_Menu[0])
+                # will do color in a little bit to notify modificaiton
+                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_name)
+                y_pos += 2
+            elif cs_Menu[2] == '<Seed>':
+                self.menuOptions[op] = 'Seed'
+                op += 1
+                p_seed = self.seedName
+                if self.seedName == '':
+                    p_seed = 'Drakland'
+                console.print(x = 3, y = y_pos, string = cs_Menu[0])
+                # will do color in a little bit to notify modificaiton
+                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_seed)
+                y_pos += 2
+            elif cs_Menu[2] == '<Classes>':
+                for cName in Player.CLASSES.keys():
+                    self.menuOptions[op] = cName
+                    op += 1
+                    console.print(x = 5, y = y_pos, string = cName)
+                    y_pos += 2
+        console.print(x = 5, y = y_pos, string = '<Start>')
+        self.menuOptions[op] = 'Start'
+        self.maxOptions = op
+        console.print(x = 3, y = 7 + (self.cursorLoc.y * 2), string = '>')
 
     def DrawWorld(self, console):
         """ Draw updates to all game existances """
@@ -365,5 +425,4 @@ class GameManager:
     def LoadGame(self, file = 'Default'):
         """ Loads a specific game file """
         self.messenger.ClearScreen()
-        LoadGame(file, self.aiEngine, self.world)
-        
+        LoadGame(file, self.aiEngine, self.world)        

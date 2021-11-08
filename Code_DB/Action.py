@@ -24,3 +24,8 @@ class UseAction(Action):
 class EnterAction(Action):
     """ When the player presses enter """
     pass
+
+class TextKeyPress(Action):
+    """ Needed to parse through key pressing """
+    def __init__(self, letter : str):
+        self.letter = letter

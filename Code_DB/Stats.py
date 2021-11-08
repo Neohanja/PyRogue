@@ -2,7 +2,7 @@
 
 class Stat:
     """ Individual stat """
-    def __init__(self, short_name, base_val, mod_val, stat_type : int, derived_stat = '', derived_mod = 0):
+    def __init__(self, short_name = 'Blank', base_val = 0, mod_val = 0, stat_type = 0, derived_stat = '', derived_mod = 0):
         """ 
             Base Stats: Short name, base value, modified value, stat type
 
@@ -17,6 +17,15 @@ class Stat:
         self.stat_type = stat_type
         self.derived_stat = derived_stat # stat this relies on
         self.derived_mod = derived_mod # how much gain from the derived stat this stat receives
+
+    def CopyStats(self, other):
+        """ Copies the stats of another stat """
+        self.sName = other.sName
+        self.base_val = other.base_val
+        self.mod_val = other.mod_val
+        self.stat_type = other.stat_type
+        self.derived_stat = other.derived_stat
+        self.derived_mod = other.derived_mod
     
     def IsEmpty(self):
         """ Returns if the value is empty (aka: Dead)"""

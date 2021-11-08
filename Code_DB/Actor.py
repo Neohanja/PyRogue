@@ -53,12 +53,12 @@ class Actor:
             Creates the stat list for this entity; 
             Super() should always be included for child classes 
         """        
-        self.stats['Hit Points'] = Stat('HP', 5, 5, 1)
+        self.stats['Hit Points'] = Stat('HP', 5, 5, 1, 'Vit', 2)
         self.stats['Mana'] = Stat('MP', 5, 5, 1)
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
-        self.stats['Damage'] = Stat('Dmg', 1, 0, 0)
+        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)
     
     def LoadStats(self, new_stats : dict):
         self.stats = new_stats

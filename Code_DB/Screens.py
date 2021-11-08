@@ -1,9 +1,13 @@
 # Screens for viewing in 'Python Roguelike'
+# Menus have also been moved here to lower file count, as they
+# serve mostly the same function as Screens do, and all are part of the
+# UI now.
+#
 # ASCII Lookup chart at:
 # https://python-tcod.readthedocs.io/en/latest/tcod/charmap-reference.html
 
 from Map import *
-# pip install opencv-python
+# pip install opencv-python : May use this instead of Loadpng.py
 from Loadpng import *
 import os
 import SaveGame
@@ -19,6 +23,7 @@ TITLE_MENU = [
     ['         Quit', True, 'Quit']
 ]
 
+# Character Generation Options: Text, gap to print after text, Secondary Print ID
 CHARACTER_GENERATOR = [
     ['        New Character :          ', 0, ''],
     ['---------------------------------', 0, ''],

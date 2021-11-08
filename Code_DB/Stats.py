@@ -2,15 +2,25 @@
 
 class Stat:
     """ Individual stat """
-    def __init__(self, short_name, base_val, mod_val, stat_type : int):
+    def __init__(self, short_name, base_val, mod_val, stat_type : int, derived_stat = '', derived_mod = 0):
+        """ 
+            Base Stats: Short name, base value, modified value, stat type
+
+            For stat type : 
+                0 = Regular (base + mod)
+                1 = Derived stat (mod out of base, or mod/base)
+                2 = just base (mod not used)
+        """
         self.sName = short_name
         self.base_val = base_val
         self.mod_val = mod_val
         self.stat_type = stat_type
+        self.derived_stat = derived_stat # stat this relies on
+        self.derived_mod = derived_mod # how much gain from the derived stat this stat receives
     
     def IsEmpty(self):
         """ Returns if the value is empty (aka: Dead)"""
-        if self.mod_val <= 0:
+        if self.stat_type == 0 and self.mod_val <= 0:
             return True
         else:
             return False
@@ -32,6 +42,30 @@ class Stat:
         if self.stat_type == 1 and self.mod_val > self.base_val:
             self.mod_val = self.base_val
 
+    def LevelUp(self, increase : int, stat_list : list):
+        """ Increase the base value, in the event of leveling up or such """
+        # Uses recursion to increase the stats, this will loop through
+        # each stat and check if it's increase (or decrease, if increase is
+        # negative) effects the stats in the list.
+        pass_list = []
+        while stat_list.count > 0:
+            stat = stat_list.pop(0) # get the first stat in a list
+            if stat.sName == self.sName:
+                # Ignore if the stat was also pass through the mod list, we are already modding it
+                continue
+            if stat.derived_stat == self.sName: # if this is a stat we can mod, mod it
+                # An example of recursion, where this will take anything that hasn't been checked
+                # yet (stat_list) and everything that has been checked, but not modded (pass_list)
+                # and check them for this stat. For all purposes, most of the stats should
+                # only have a single derivative, but more complex systems may have stats that
+                # derived from a derived stat. An example is that Vitality effects Health 
+                # (1 Vit = 2 HP), and Strength - for now - effects damage (1 Str = 2 Dmg).
+                # When skills are introduced, this will have a larger effect, as Coup De Grace
+                # May scale with damage, which scales with Strength.
+                stat.LevelUp(stat.derived_mod * increase, pass_list + stat_list)
+            else: # if we skipped it, add it to the next list
+                pass_list += [stat]
+        self.base_val += increase
     
     def __repr__(self):
         if self.stat_type == 0: # Basic stats, such as Strength

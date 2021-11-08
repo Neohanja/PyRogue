@@ -7,7 +7,7 @@ import Player
 from Messenger import *
 from NameGen import *
 from MathFun import *
-from SaveGame import *
+import SaveGame
 from Screens import *
 from Action import *
 from Input_Handlers import *
@@ -420,9 +420,9 @@ class GameManager:
     
     def SaveGame(self):
         """ Cleaning up, such as saving, on Exit """
-        SaveGame(self.world, self.aiEngine)
+        SaveGame.SaveGame(self.world, self.aiEngine)
 
     def LoadGame(self, file = 'Default'):
         """ Loads a specific game file """
         self.messenger.ClearScreen()
-        LoadGame(file, self.aiEngine, self.world)        
+        SaveGame.LoadGame(file, self.aiEngine, self.world)        

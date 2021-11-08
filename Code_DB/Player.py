@@ -3,6 +3,8 @@ from Actor import *
 from Map import *
 from Monster import Monster
 
+
+
 class Player(Actor):
     """ Player Class """
     def __init__(self, map_data : WorldMap, ai_manager):

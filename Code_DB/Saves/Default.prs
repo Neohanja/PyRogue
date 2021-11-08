@@ -1,7 +1,7 @@
-<PLAYER>;Default;d:136,158,1;18,49;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:136,158,1;17,50;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Orc;d:136,158,1;18,50;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:136,158,1;18,48;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<PLAYER>;Default;d:156,5,1;29,56;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MONSTER>;Goblin;d:156,5,1;15,14;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MONSTER>;Goblin;d:156,5,1;61,25;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MONSTER>;Goblin;d:156,5,1;51,58;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
 <MAP>;o:;Drakland;256,256;
-<MAP>;d:136,158,1;Pepejus Ton,121,60;
+<MAP>;d:156,5,1;Yibipetpool,88,84;
 <EOF>

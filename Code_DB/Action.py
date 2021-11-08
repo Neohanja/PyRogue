@@ -14,17 +14,13 @@ class MovementAction(Action):
         self.dy = dy
 
 class ExamineAction(Action):
-    """ Dictates what happens when the examine key is pressed """
+    """ Dictates what happens when the examine key (I) is pressed """
     pass # Nothing needed as of yet, just the reference that the action is being taken
 
 class UseAction(Action):
-    """ Dictates what happens when the Use key is pressed """
+    """ Dictates what happens when the Use key (E) is pressed """
     pass
 
-class SaveAction(Action):
-    """ Tells the system we would like to save this file """
-    pass
-
-class LoadAction(Action):
-    """ Tells the system we would like to load a file """
+class EnterAction(Action):
+    """ When the player presses enter """
     pass

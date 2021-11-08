@@ -12,55 +12,122 @@ from Screens import *
 from Action import *
 from Input_Handlers import *
 
+TITLE_IMAGE = 'Title.png'
+
 WORLD_WIDTH = 256
 WORLD_HEIGHT = 256
 # Game State Info
-PLAY_STATE = ['Main Menu', 'Help Menu', 'Story PAge', 'Dialog Loop', 'Stat Screen', 'Game Loop']
+PLAY_STATE = ['Main Menu', 'Help Menu', 'Story PAge', 'Dialog Loop', 'Stat Screen', 'Game Loop', 'Load Menu']
 MAIN_MENU = 0
 HELP_MENU = 1
 STORY_PAGE = 2
 DIALOG_LOOP = 3
 STAT_PAGE = 4
 GAME_LOOP = 5
+LOAD_MENU = 6
 
 class GameManager:
     """ Game Manager """
 
     def __init__(self, Screen_Size : Vec2, DebugMode = False):
         """ Game Manager Constructor """        
-        self.width = Screen_Size.x
-        self.height = Screen_Size.y
-        self.playState = PLAY_STATE[MAIN_MENU]
-        self.gamePlaying = True
+        self.screenSize = Screen_Size
+        self.playState = PLAY_STATE[MAIN_MENU] # Initialize the game state from the list of options (Enumeration)
+        self.gamePlaying = False # Determines if the game is currently running or not.
+        self.titleFull = True # Debugging option, and to show the full title menu or just the image.
+        self.titleData = Menus.TitleImage(TITLE_IMAGE) # Preload the title image, so it isn't loading EVERY frame
 
+        # for menu sequences
+        self.cursorLoc = Vec2(0, 0)
+        self.previousLoc = Vec2(0, 0)
+        self.maxOptions = 5
+        self.menuOptions = {}
+        self.page = 0
+    
+    def Start(self):
+        """ Start a new Game """
+        # To-Do:
+        # Seed the world (Give it a name and stuff)
+        # Character Generator
         self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
-        print(GetAllSaves())
-
         self.aiEngine = AIManager.AI_Manager(self.world, self)
-        self.aiEngine.ToggleDebug(DebugMode)
+        self.aiEngine.ToggleDebug(True)
         self.mainCharacter = self.aiEngine.player
 
         sL = Map.WorldMap.MAP_VIEW_HEIGHT + 2
-        eL = Screen_Size.y - 1 - sL
+        eL = self.screenSize.y - 1 - sL
         mL = Map.WorldMap.MAP_VIEW_WIDTH - 10
 
         self.messenger = Messenger(sL, eL, mL)
+        self.gamePlaying = True
         # Next line for testing messages that may need multiple lines
         # self.messenger.AddText('This needs to be super long to test this system and how it works, as well as getting the spacing correct for the word wrap. I\'m hoping all is well with it, since it didn\'t take long to make, compared to other systems that are just plain annoying.')
-    
-    def Start(self):
-        """ Pre-game stuff """
-        pass
-
+        
     # Update Loops for different game states
-
     def MainTitle(self, action):
-        if isinstance(action, EscapeAction):
+        """ Main Menu Actions """
+        if isinstance(action, MovementAction):
+            # Move up or down on the menu
+            self.cursorLoc.y = Clamp(0, self.maxOptions, self.cursorLoc.y + action.dy)
+            return True
+
+        elif isinstance(action, EscapeAction):
+            # Escape to quit from the menu - may change later
             raise SystemExit()
 
-        elif isinstance(action, UseAction):
-            self.playState = PLAY_STATE[GAME_LOOP]
+        elif isinstance(action, EnterAction):
+            m_option = self.menuOptions[self.cursorLoc.y]
+            if m_option == 'New':
+                self.Start()
+                self.playState = PLAY_STATE[GAME_LOOP]
+            elif m_option == 'Back':
+                self.playState = PLAY_STATE[GAME_LOOP]
+            elif m_option == 'Save':
+                self.SaveGame()
+                self.AddLog('Game Saved')
+                self.playState = PLAY_STATE[GAME_LOOP]
+            elif m_option == 'Load':
+                # Need to go to a load menu, but for now, we is good.
+                # self.LoadGame()
+                # self.AddLog('Game Loaded')
+                self.playState = PLAY_STATE[LOAD_MENU]
+                self.previousLoc.y = self.cursorLoc.y
+                self.cursorLoc.y = 0
+            elif m_option == 'Quit':
+                raise SystemExit()
             return True
+        return False
+
+    def LoadMenuSelections(self, action):
+        """ A quick menu for the load options """
+        if isinstance(action, MovementAction):
+            # Move up or down on the menu
+            self.cursorLoc.y = Clamp(0, self.maxOptions, self.cursorLoc.y + action.dy)
+            return True
+
+        elif isinstance(action, EnterAction):
+            m_option = self.menuOptions[self.cursorLoc.y]
+            if m_option == '<Back>':
+                if self.page > 0:
+                    self.page -= 1
+                else: # If this was the first page, go back to the main menu
+                    self.cursorLoc.y = self.previousLoc.y
+                    self.playState = PLAY_STATE[MAIN_MENU]
+            elif m_option == '<Next>':
+                self.cursorLoc.y = 0
+                self.page += 1
+            else:
+                # Load the game. If we get a file name, the file *should* exist
+                if not self.gamePlaying:
+                    self.Start() # If the game loop isn't going, this is needed to start the game loop
+                    self.gamePlaying = True
+                self.LoadGame(m_option)                    
+                self.AddLog('Game Loaded')
+                self.playState = PLAY_STATE[GAME_LOOP]
+                self.previousLoc.y = 0
+                self.cursorLoc.y = 0
+            return True
+        return False
 
     def GameLoopUpdate(self, action):
         """ Game Loop for Updating """
@@ -75,19 +142,11 @@ class GameManager:
         elif isinstance(action, ExamineAction):
             self.messenger.AddText(self.world.GetExamineAction())
             return True
-
-        elif isinstance(action, SaveAction):
-            self.SaveGame()
-            self.AddLog('Game Saved')
-            return True
-        
-        elif isinstance(action, LoadAction):
-            self.LoadGame()
-            self.AddLog('Game Loaded')
-            return True
                 
         elif isinstance(action, EscapeAction):
             self.playState = PLAY_STATE[MAIN_MENU]
+            self.cursorLoc.x = 0
+            self.cursorLoc.y = 0
             return True
 
     def Update(self, action):        
@@ -100,6 +159,9 @@ class GameManager:
         elif self.playState == PLAY_STATE[MAIN_MENU]:
             if self.MainTitle(action):
                 refresh_screen = True
+        elif self.playState == PLAY_STATE[LOAD_MENU]:
+            if self.LoadMenuSelections(action):
+                refresh_screen = True
 
         return refresh_screen # It shouldn't reach this point, but who knows
 
@@ -111,23 +173,77 @@ class GameManager:
             self.DrawWorld(console)
         if self.playState == PLAY_STATE[MAIN_MENU]:
             self.DrawTitle(console)
+        if self.playState == PLAY_STATE[LOAD_MENU]:
+            self.DrawLoadScreen(console)
 
-    def DrawTitle(self, console):
+    def DrawLoadScreen(self, console):
+        """ Draws the load screen, and borrows much of the code from the title """
         # Draw the UI
-        border = Title(self.width, self.height)
+        border = Title(self.screenSize.x, self.screenSize.y)
         for line in range(len(border)):
                     console.print(x=0,y=line, string = border[line])
-        colorData = Menus.TitleImage('Title.png')
-        height = len(colorData)
-        width = len(colorData[0])
+        height = len(self.titleData)
+        width = len(self.titleData[0])
         for r in range(height):
             for c in range(width):
-                console.print(x = 1 + c, y = 1 + r, string = 'X', fg = colorData[r][c])
+                console.print(x = 1 + c, y = 1 + r, string = 'X', fg = self.titleData[r][c])
+
+        for r in range(30):
+            for c in range(35):
+                # Clear the box and reset the text color
+                console.print(x = c + 20, y = r + 20, string = ' ', fg = [255,255,255])
+        
+        console.print(x = 30, y = 21, string = 'Saved Games')
+        console.print(x = 21, y = 23, string = Menus.TITLE_MENU[1][0]) # --- block (for consistency)
+
+        self.menuOptions = Menus.GetSaveFiles(10, self.page)
+
+        for index in self.menuOptions.keys():
+            self.maxOptions = index
+            console.print(x = 30, y = 25 + (index * 2), string = self.menuOptions[index])
+        
+        # Print the user cursor
+        console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
+        console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')
+
+        
+
+    def DrawTitle(self, console):
+        """ Draw the title screen, or the first screen seen by the player before their adventure begins"""
+        # Draw the UI
+        border = Title(self.screenSize.x, self.screenSize.y)
+        for line in range(len(border)):
+                    console.print(x=0,y=line, string = border[line])
+        height = len(self.titleData)
+        width = len(self.titleData[0])
+        for r in range(height):
+            for c in range(width):
+                console.print(x = 1 + c, y = 1 + r, string = 'X', fg = self.titleData[r][c])
+
+        if self.titleFull:
+            for r in range(30):
+                for c in range(35):
+                    # Clear the box and reset the text color
+                    console.print(x = c + 20, y = r + 20, string = ' ', fg = [255,255,255])
+            line = 0
+            # account for the title bar from the "max options"
+            self.maxOptions = -1
+            for text in Menus.TITLE_MENU:
+                if text[1] or self.gamePlaying:
+                    console.print(x = 21, y = 21 + (line * 2), string = text[0])                    
+                    if text[2] != '':
+                        self.maxOptions += 1
+                        self.menuOptions[self.maxOptions] = text[2]                        
+                    line += 1
+            # Print the user cursor
+            console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
+            console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')
+
 
     def DrawWorld(self, console):
         """ Draw updates to all game existances """
         # Draw the UI
-        border = WorldUI(self.width, self.height)
+        border = WorldUI(self.screenSize.x, self.screenSize.y)
         for line in range(len(border)):
                     console.print(x=0,y=line, string = border[line])
         # Find the Upper Left corner
@@ -215,8 +331,8 @@ class GameManager:
         """ Cleaning up, such as saving, on Exit """
         SaveGame(self.world, self.aiEngine)
 
-    def LoadGame(self):
+    def LoadGame(self, file = 'Default'):
         """ Loads a specific game file """
         self.messenger.ClearScreen()
-        LoadGame('Default', self.aiEngine, self.world)
+        LoadGame(file, self.aiEngine, self.world)
         

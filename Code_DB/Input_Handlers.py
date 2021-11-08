@@ -29,14 +29,12 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = MovementAction(dx = 0, dy = 0)
         elif key == tcod.event.K_i: # Examine Key
             action = ExamineAction()
+        elif key == tcod.event.K_RETURN:
+            action = EnterAction()
         elif key == tcod.event.K_e: # Use Key
             action = UseAction()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
-        elif key == tcod.event.K_F4: # Save
-            action = SaveAction()
-        elif key == tcod.event.K_F5: # Load
-            action = LoadAction()
         
         return action
     

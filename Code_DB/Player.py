@@ -42,7 +42,7 @@ class Player(Actor):
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
-        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)        
+        self.stats['Damage'] = Stat('Dmg', 10, 0, 0, 'Str', 2)        
 
     def OnCollide(self, other):
         """ What happens when the actor collides with something """
@@ -59,9 +59,13 @@ class Player(Actor):
 
         if my_lvl >= len(LEVEL_REQ):
             return # we don't need to process a level up, at max level        
-        while my_xp > LEVEL_REQ[my_lvl]: # In the event we gain a ton of XP, and it levels us a few times
+        while my_xp >= LEVEL_REQ[my_lvl]: # In the event we gain a ton of XP, and it levels us a few times
             # Level up stuff
             self.stats['Level'].LevelUp(1, []) # No stats passing through, as this will be handled later
+            my_lvl += 1
+            self.stats['Hit Points'].LevelUp(3, []) # Temp
+            self.stats['Hit Points'].AddTo(150) # until HP is higher than 150, this should always heal full
+            self.stats['Damage'].LevelUp(1, []) # Temp
 
     def Draw(self, console, corner):
         super().Draw(console, corner) # Ensure to conform to the Actor.Draw() first

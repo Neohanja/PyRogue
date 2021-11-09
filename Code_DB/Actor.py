@@ -57,6 +57,9 @@ class Actor:
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
         self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)
+
+    def IsDead(self):
+        return self.stats['Hit Points'].mod_val <= 0
     
     def LoadStats(self, new_stats : dict):
         self.stats = new_stats
@@ -128,15 +131,16 @@ class Actor:
     def Attack(self, defender):
         """ Attack the defender """
         dmg = self.stats['Damage'].Total()
-        hit = random.random() < 0.25
+        hit = random.random() < 0.75
         if hit:
             self.SendMessage(self.name + ' hits ' + defender.name + ' for ' + str(dmg) + ' damage!')
             defender.TakeHit(dmg)
         else:
             self.SendMessage(self.name + ' misses ' + defender.name + '.')
+        if defender.IsDead():
+            self.parent.Defeated(self, defender)
+
 
     def TakeHit(self, damage):
         """ Receive damage """
-        self.stats['Hit Points'].AddTo(-damage)
-        if self.stats['Hit Points'].IsEmpty():
-            pass # Actor is dead
+        self.stats['Hit Points'].AddTo(-damage)        

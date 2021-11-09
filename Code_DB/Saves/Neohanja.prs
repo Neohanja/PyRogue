@@ -1,8 +1,10 @@
-<PLAYER>;Neohanja;d:209,151,1;54,12;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:209,151,1;87,16;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Orc;d:209,151,1;47,13;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Orc;d:209,151,1;21,55;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:209,151,1;47,46;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<PLAYER>;Neohanja;d:76,151,4;32,6;<STAT>,Level,Lvl,4,0,2,;<STAT>,Experience,Exp,780,0,2,;<STAT>,Hit Points,HP,19,-7,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,13,0,0,;
+<MONSTER>;Goblin;d:76,151,4;31,29;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:76,151,4;27,10;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:76,151,4;25,10;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
 <MAP>;o:;Drakland;256,256;
-<MAP>;d:209,151,1;Duwuhovel,102,63;
+<MAP>;d:76,151,1;Kisarcove,86,63;
+<MAP>;d:76,151,2;Kisarcove,111,64;
+<MAP>;d:76,151,3;Kisarcove,118,60;
+<MAP>;d:76,151,4;Kisarcove,81,70;
 <EOF>

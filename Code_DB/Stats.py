@@ -57,7 +57,7 @@ class Stat:
         # each stat and check if it's increase (or decrease, if increase is
         # negative) effects the stats in the list.
         pass_list = []
-        while stat_list.count > 0:
+        while len(stat_list) > 0:
             stat = stat_list.pop(0) # get the first stat in a list
             if stat.sName == self.sName:
                 # Ignore if the stat was also pass through the mod list, we are already modding it

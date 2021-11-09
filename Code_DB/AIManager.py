@@ -154,11 +154,16 @@ class AI_Manager:
     
     def Defeated(self, attacker, defender):
         """ Handles an actor being defeated by another actor """
-        if isinstance(defender, Player):
+        if defender.actorType == 'Player':
             # place player has been defeated stuff here
             pass
-        elif isinstance(defender, Monster) and isinstance(attacker, Player):
+        elif defender.actorType == 'Monster' and attacker.actorType == 'Player':
+            attacker.GainExp(defender.GetXP())
+            mapID = self.map.GetCurrentMap()
+            if mapID in self.monsters:
+                self.monsters[mapID].remove(defender)
             pass
+
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """

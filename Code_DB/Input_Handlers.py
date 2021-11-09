@@ -50,8 +50,6 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = UseAction()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
-        elif key in ALPHA_INPUT:
-            action = TextKeyPress()
         
         return action
     

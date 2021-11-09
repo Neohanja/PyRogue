@@ -50,11 +50,9 @@ class Actor:
 
     def CreateStats(self):
         """ 
-            Creates the stat list for this entity; 
-            Super() should always be included for child classes 
+            Creates the stat list for this entity
         """        
         self.stats['Hit Points'] = Stat('HP', 5, 5, 1, 'Vit', 2)
-        self.stats['Mana'] = Stat('MP', 5, 5, 1)
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
@@ -130,7 +128,7 @@ class Actor:
     def Attack(self, defender):
         """ Attack the defender """
         dmg = self.stats['Damage'].Total()
-        hit = random.random() < 0.95
+        hit = random.random() < 0.25
         if hit:
             self.SendMessage(self.name + ' hits ' + defender.name + ' for ' + str(dmg) + ' damage!')
             defender.TakeHit(dmg)

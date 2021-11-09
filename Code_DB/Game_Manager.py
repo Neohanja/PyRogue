@@ -55,8 +55,13 @@ class GameManager:
         # To-Do:
         # Seed the world (Give it a name and stuff)
         # Character Generator
-        self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH)
-        self.aiEngine = AIManager.AI_Manager(self.world, self)
+        if self.newName == '':
+            self.newName = 'Default'
+        if self.seedName == '':
+            self.seedName = 'Drakland'
+
+        self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH, self.seedName)
+        self.aiEngine = AIManager.AI_Manager(self.world, self, self.newName)
         self.aiEngine.ToggleDebug(True)
         self.mainCharacter = self.aiEngine.player
 
@@ -66,6 +71,9 @@ class GameManager:
 
         self.messenger = Messenger(sL, eL, mL)
         self.gamePlaying = True
+        # Reset the name and seed for a possible new game
+        self.newName = ''
+        self.seedName = ''
         # Next line for testing messages that may need multiple lines
         # self.messenger.AddText('This needs to be super long to test this system and how it works, as well as getting the spacing correct for the word wrap. I\'m hoping all is well with it, since it didn\'t take long to make, compared to other systems that are just plain annoying.')
     
@@ -87,6 +95,8 @@ class GameManager:
             if m_option == 'New':
                 # Start with generating a new character, then the world
                 self.playState = PLAY_STATE[CHAR_GEN]
+                self.previousLoc.y = self.cursorLoc.y
+                self.cursorLoc.y = 0
             elif m_option == 'Back':
                 self.playState = PLAY_STATE[GAME_LOOP]
             elif m_option == 'Save':
@@ -304,21 +314,27 @@ class GameManager:
                 self.menuOptions[op] = 'Name'
                 op += 1
                 p_name = self.newName
+                c_name = [255,255,255]
                 if self.newName == '':
                     p_name = 'Default'
+                if self.textLock and self.menuOptions[self.cursorLoc.y] == 'Name':
+                    c_name = ColorPallet.GetColor('Portal')
                 console.print(x = 3, y = y_pos, string = cs_Menu[0])
                 # will do color in a little bit to notify modificaiton
-                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_name)
+                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_name, fg = c_name)
                 y_pos += 2
             elif cs_Menu[2] == '<Seed>':
                 self.menuOptions[op] = 'Seed'
                 op += 1
+                c_seed = [255,255,255]
                 p_seed = self.seedName
                 if self.seedName == '':
                     p_seed = 'Drakland'
+                if self.textLock and self.menuOptions[self.cursorLoc.y] == 'Seed':
+                    c_seed = ColorPallet.GetColor('Portal')
                 console.print(x = 3, y = y_pos, string = cs_Menu[0])
                 # will do color in a little bit to notify modificaiton
-                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_seed)
+                console.print(x = 3 + cs_Menu[1], y = y_pos, string = p_seed, fg = c_seed)
                 y_pos += 2
             elif cs_Menu[2] == '<Classes>':
                 for cName in Player.CLASSES.keys():

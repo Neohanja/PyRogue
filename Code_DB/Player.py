@@ -16,8 +16,8 @@ LEVEL_REQ = [ 0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500,
 
 class Player(Actor):
     """ Player Class """
-    def __init__(self, map_data : WorldMap, ai_manager):
-        super().__init__("Default", '@', 'White', map_data, ai_manager)
+    def __init__(self, map_data : WorldMap, ai_manager, new_name):
+        super().__init__(new_name, '@', 'White', map_data, ai_manager)
         """ Constructor Specific toward Player """
         
         self.actorType = 'Player'

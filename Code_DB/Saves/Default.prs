@@ -1,7 +1,3 @@
-<PLAYER>;Default;d:156,5,1;29,56;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:156,5,1;15,14;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:156,5,1;61,25;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:156,5,1;51,58;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Mana,MP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MAP>;o:;Drakland;256,256;
-<MAP>;d:156,5,1;Yibipetpool,88,84;
+<PLAYER>;Default;o:;228,100;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MAP>;o:;New World;256,256;
 <EOF>

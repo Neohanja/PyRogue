@@ -17,7 +17,7 @@ class AI_Manager:
 
     Instance = None # Static class for reference
     
-    def __init__(self, map_data : Map.WorldMap, game_master):
+    def __init__(self, map_data : Map.WorldMap, game_master, player_name = 'Default'):
         """ Initialize the AI Manager Program """
         AI_Manager.Instance = self # Sets this as the static AI Manager Instance
 
@@ -28,7 +28,7 @@ class AI_Manager:
         self.gm = game_master
         
         # Always need a player
-        self.player = Player.Player(map_data, self)
+        self.player = Player.Player(map_data, self, player_name)
         self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
@@ -151,6 +151,14 @@ class AI_Manager:
         if mapID in self.monsters:
             for m in self.monsters[mapID]:
                 m.Update()
+    
+    def Defeated(self, attacker, defender):
+        """ Handles an actor being defeated by another actor """
+        if isinstance(defender, Player):
+            # place player has been defeated stuff here
+            pass
+        elif isinstance(defender, Monster) and isinstance(attacker, Player):
+            pass
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """

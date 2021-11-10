@@ -1,10 +1,15 @@
-<PLAYER>;Neohanja;d:76,151,4;32,6;<STAT>,Level,Lvl,4,0,2,;<STAT>,Experience,Exp,780,0,2,;<STAT>,Hit Points,HP,19,-7,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,13,0,0,;
-<MONSTER>;Goblin;d:76,151,4;31,29;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
-<MONSTER>;Orc;d:76,151,4;27,10;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
-<MONSTER>;Goblin;d:76,151,4;25,10;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
-<MAP>;o:;Drakland;256,256;
-<MAP>;d:76,151,1;Kisarcove,86,63;
-<MAP>;d:76,151,2;Kisarcove,111,64;
-<MAP>;d:76,151,3;Kisarcove,118,60;
-<MAP>;d:76,151,4;Kisarcove,81,70;
+<PLAYER>;Neohanja;d:87,183,3;79,43;<STAT>,Level,Lvl,3,0,2,;<STAT>,Experience,Exp,420,0,2,;<STAT>,Hit Points,HP,16,1,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,12,0,0,;
+<MONSTER>;Goblin;d:87,183,3;97,44;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:87,183,3;93,24;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Orc;d:87,183,3;7,13;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:87,183,3;24,17;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:87,183,3;7,16;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:87,183,3;110,15;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Orc;d:87,183,3;78,24;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Orc;d:87,183,3;81,18;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:87,183,3;9,18;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MAP>;o:;West Side Story;256,256;
+<MAP>;d:87,183,1;Lake Vadaho,142,51;
+<MAP>;d:87,183,2;Lake Vadaho,97,53;
+<MAP>;d:87,183,3;Lake Vadaho,116,58;
 <EOF>

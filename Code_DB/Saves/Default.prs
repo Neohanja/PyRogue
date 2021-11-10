@@ -1,3 +1,19 @@
-<PLAYER>;Default;o:;228,100;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MAP>;o:;New World;256,256;
+<PLAYER>;Default;d:123,236,3;89,22;<STAT>,Level,Lvl,5,0,2,;<STAT>,Experience,Exp,1255,0,2,;<STAT>,Hit Points,HP,22,-6,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,14,0,0,;
+<MONSTER>;Orc;d:123,236,3;18,38;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Orc;d:123,236,3;46,34;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:123,236,3;76,39;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:123,236,3;50,26;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:123,236,3;120,25;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:123,236,3;88,39;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:123,236,3;106,5;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:123,236,3;99,39;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:123,236,3;101,30;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Goblin;d:123,236,3;64,39;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MAP>;o:;Drakland;256,256;
+<MAP>;d:114,235,1;Reburro,128,71;
+<MAP>;d:114,235,2;Reburro,122,68;
+<MAP>;d:114,235,3;Reburro,113,67;
+<MAP>;d:123,236,1;Kalesster,80,80;
+<MAP>;d:123,236,2;Kalesster,123,55;
+<MAP>;d:123,236,3;Kalesster,129,50;
 <EOF>

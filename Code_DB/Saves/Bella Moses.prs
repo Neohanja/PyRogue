@@ -1,0 +1,10 @@
+<PLAYER>;Bella Moses;d:151,135,2;34,25;<STAT>,Level,Lvl,2,0,2,;<STAT>,Experience,Exp,110,0,2,;<STAT>,Hit Points,HP,13,13,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,11,0,0,;
+<MONSTER>;Goblin;d:151,135,2;30,16;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:151,135,2;96,40;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Orc;d:151,135,2;83,65;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MONSTER>;Goblin;d:151,135,2;101,43;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
+<MONSTER>;Orc;d:151,135,2;48,4;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
+<MAP>;o:;Unicorns;256,256;
+<MAP>;d:151,135,1;Sehinosahovel,78,53;
+<MAP>;d:151,135,2;Sehinosahovel,112,75;
+<EOF>

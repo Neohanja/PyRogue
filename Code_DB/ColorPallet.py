@@ -2,7 +2,7 @@
 # strings and a dictionary. Some colors
 # will have "special" effects, such as
 # cycling through a spectrum of colors
-
+import MathFun
 
 COLOR_PALLET = {
     "White" : [255, 255, 255],
@@ -17,7 +17,8 @@ COLOR_PALLET = {
     "Grey" : [125, 125, 125],
     "Dark Grey" : [75, 75, 75],
     "Portal" : [71, 204, 231],
-    "Orange" : [255, 133, 51]
+    "Orange" : [255, 133, 51],
+    "Bloody" : [175, 0, 50]
     }
 
 def GetColor(color_name : str):
@@ -34,3 +35,18 @@ def GetColor(color_name : str):
 
     # Base Colors
     return COLOR_PALLET[color_name]
+
+def ColorLerp(a_color : str, b_color : str, blend_percent : float):
+    """ 
+        Lerps between two colors in a library. 
+        Clamps percent between 0 and 1.
+        Also ensures A and B are in the color pallet, or 
+        adds it as a Magenta placeholder.
+    """
+    blend_percent = MathFun.Clamp(0.0, 1.0, blend_percent)
+    a = GetColor(a_color)
+    b = GetColor(b_color)
+    col = []
+    for rgb in range(3):
+        col += [MathFun.Floor(MathFun.Lerp(b[rgb], a[rgb], blend_percent))]
+    return col

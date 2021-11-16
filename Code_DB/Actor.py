@@ -90,10 +90,12 @@ class Actor:
         """ Displays the character to a screen; Corner = Top Left Corner Map Cord being displayed """
         if corner.x <= self.position.x <= corner.x + Map.WorldMap.MAP_VIEW_WIDTH:
             if corner.y <= self.position.y <= corner.y + Map.WorldMap.MAP_VIEW_HEIGHT:
+                p = self.stats['Hit Points'].PercentRemaining() / 100
+                col = ColorPallet.ColorLerp(self.color, 'Bloody', p)
                 display.print(
                     x = self.position.x - corner.x + 1,
                     y = self.position.y - corner.y + 1,
-                    string = self.icon, fg = ColorPallet.GetColor(self.color))
+                    string = self.icon, fg = col)# ColorPallet.GetColor(self.color))
 
     def Position(self):
         """ Returns the actors location, but as a copy instead of reference """

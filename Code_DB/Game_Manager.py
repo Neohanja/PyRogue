@@ -222,7 +222,7 @@ class GameManager:
             if self.NewGameUpdate(action):
                 refresh_screen = True
 
-        return refresh_screen # It shouldn't reach this point, but who knows
+        return refresh_screen
 
     # Draw Loops to update the screen
 

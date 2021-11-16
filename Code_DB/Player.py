@@ -42,7 +42,7 @@ class Player(Actor):
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
-        self.stats['Damage'] = Stat('Dmg', 10, 0, 0, 'Str', 2)        
+        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)        
 
     def OnCollide(self, other):
         """ What happens when the actor collides with something """

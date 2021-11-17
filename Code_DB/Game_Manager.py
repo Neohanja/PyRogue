@@ -264,8 +264,7 @@ class GameManager:
             console.print(x = 30, y = 25 + (index * 2), string = self.menuOptions[index])
         
         # Print the user cursor
-        console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
-        console.print(x = 40, y = 25 + (self.cursorLoc.y * 2), string = '<')        
+        console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>', fg = ColorPallet.GetColor('Green'))
 
     def DrawTitle(self, console):
         """ Draw the title screen, or the first screen seen by the player before their adventure begins"""
@@ -367,6 +366,7 @@ class GameManager:
         self.messenger.PrintText(console)
 
     # Helper functions
+
     def AddLog(self, message : str):
         """ Adds a message to the messenger log. Added to game manager for ease of access """
         self.messenger.AddText(message)

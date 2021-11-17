@@ -9,13 +9,19 @@ class ANode:
     """ Individual node information for each node """
 
     def __init__(self, point : MathFun.Vec2, goal : MathFun.Vec2, parent_node = None):
+        # Since things cannot move diagonally, we calculate manhattan distance
         self.manhattan_cost = abs(point.x - goal.x) + abs(point.y - goal.y)
+        # The (x, y) of this point
         self.point = point
+        # The node prior to this one, if one exists
         self.parent_node = parent_node
-        self.previous_cost = 0
+        # Initialize the cost of the previous node. If none, then the cost = 0
+        previous_cost = 0
+        # Get parent's cost
         if isinstance(self.parent_node, ANode):
-            self.previous_cost = self.parent_node.total_cost
-        self.total_cost = self.previous_cost + self.manhattan_cost
+            previous_cost = self.parent_node.total_cost
+        #This point's total cost will be the parent's cost plus our distance cost
+        self.total_cost = previous_cost + self.manhattan_cost
 
     def __eq__(self, other):
         """ == operator overload """
@@ -23,10 +29,31 @@ class ANode:
             return self.point == other.point
         else:
             return False
+
+    def GetPath(self):
+        """ 
+            Recursively calls the parent node to return the complete path to get to
+            this node
+        """
+        # Base Case
+        if self.parent_node == None:
+            # If this is the start point, there will be no parent. Based on how A*
+            # works, we also need to account that since this is the start point,
+            # we should not include this point as the NPC/Path will include it and
+            # it will cause the NPC to be idle for a round (or more, depending on
+            # the frequency of being called).
+            return []
+        else:
+            # Call the parent's Get Path Function
+            path = self.parent_node.GetPath()
+            # Make sure this point is last, as it comes after the parent.
+            return path + [self.point]
     
     def __repr__(self):
+        """str(ANode) representation of this point. Returns the Vector2 version."""
         return str(self.point)
 
+    # Operations for sorting an ANode List
     def __lt__(self, other):
         """ Less than < operator """
         return self.total_cost < other.total_cost
@@ -36,6 +63,10 @@ class ANode:
         return self.total_cost > other.total_cost
 
 class AStar:
+    """ 
+        A Star Algorithm. Stores the map (grid) and nodes are built/rebuilt each time
+        Find Path is called. Can be modified later if endless terrain is used.
+    """
     def __init__(self, grid):
         """ Constructor """
         self.node_status = {}
@@ -63,19 +94,14 @@ class AStar:
         if start == end:
             # In the event the pathfinder is at the end point already,
             # it is useless to send it to the next point
-            include_goal = False
+            return []
 
         while len(self.open_list) > 0:
             if self.open_list[0].point == end:
-                path = []
                 cur_node = self.open_list[0]
-                if not include_goal:
+                if not include_goal: # Skip the goal if we program that. Useful for NPCs
                     cur_node = cur_node.parent_node
-                while isinstance(cur_node, ANode):
-                    if cur_node.point != start:
-                        path.insert(0, cur_node.point) # always add to the front of the list
-                    cur_node = cur_node.parent_node
-                return path
+                return cur_node.GetPath() # call the recursion on the A* Nodes to get the path
 
             self.node_status[str(self.open_list[0])] = 'Closed'
             self.AddSurrounding(self.open_list.pop(0), end)

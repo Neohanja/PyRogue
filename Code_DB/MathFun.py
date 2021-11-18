@@ -99,6 +99,41 @@ class Room:
         return self.start.x - distance <= x <= self.end.x + distance and \
             self.start.y - distance <= y <= self.end.y + distance
 
+class Spiral:
+    """ A class for making a spiral pattern for algorithms that need them """
+    def __init__(self, initPos : Vec2):
+        """ Constructor """
+        self.initialPoint = initPos
+        self.currentPoint = Vec2(initPos.x, initPos.y)
+        self.stepDir = 0
+        self.stepDist = 1
+    
+    def Step(self):
+        """ Get the next step in the spiral """
+        if self.stepDir == 0: # Go Right
+            self.currentPoint.x -= 1
+            if self.currentPoint.x == -self.stepDist:
+                self.stepDir = 1
+        elif self.stepDir == 1: # Then Up
+            self.currentPoint.y -= 1
+            if self.currentPoint.y == -self.stepDist:
+                self.stepDir = 2
+        elif self.stepDir == 2: # Next, Left
+            self.currentPoint.x += 1
+            if self.currentPoint.x == self.stepDist:
+                self.stepDir = 3
+        elif self.stepDir == 3: # Then Down
+            self.currentPoint.y += 1
+            if self.currentPoint.y == self.stepDist:
+                self.stepDir = 0
+                self.stepDist += 1 # If we hit this point, now we restart the spiral and increase the distance
+        
+    def GetLoc(self):
+        return self.currentPoint
+    
+    def GetTID(self):
+        return str(self.currentPoint)
+
 # Additional math helper functions
 
 def Clamp(a, b, val):

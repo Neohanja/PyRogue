@@ -82,7 +82,7 @@ class Actor:
             return False # couldn't move
 
         # Check if a space is blocked or not. If it is, we cannot move here
-        if not self.map_data.SpaceBlocked(self.position + offset) and collide == None:
+        if not self.map_data.SpaceBlocked(self.position + offset, False) and collide == None:
             self.position += offset
             return True
     

@@ -1,11 +1,11 @@
 # Player Class, since the player is a unique actor
 from Actor import *
 from Map import *
-from Monster import Monster
 
 # Initial Classes (for stat distrubution)
 # Class Name : Bonus stats (if/when skills get worked in, add here as well)
 CLASSES = {
+    '<Classes Not Implemented yet>' : [], # part of the to-do list
     'Warrior' : [['Strength', 2], ['Vitality', 2]],
     'Rogue' : [['Dexterity', 2], ['Strength', 2]]
 }
@@ -42,8 +42,12 @@ class Player(Actor):
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
-        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)        
-
+        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)
+    
+    def OnDeath(self):
+        """ What to do when the player is defeated """
+        pass
+        
     def OnCollide(self, other):
         """ What happens when the actor collides with something """
         if other.actorType == 'Monster':

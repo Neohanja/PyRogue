@@ -1,6 +1,7 @@
 # A group of functions designed to help build a town
 from AStar import AStar
 from MathFun import *
+from NameGen import *
 import random
 
 # Minimum distance for buildings to be apart from each other
@@ -12,6 +13,57 @@ T_RNG = 3
 T_LEVEL = 4
 T_UP = 5
 T_DOWN = 6
+
+# Overworld header data
+HEADER = 0
+MAP_NAME = 0
+MAP_WIDTH = 1
+MAP_HEIGHT = 2
+MAP_RNG = 3
+WORLD_SEED = 4
+OVER_TOWNS = 5
+MAP_ASTAR = 7
+
+def PlaceTowns(overworld : list):
+    """ Places towns on the overmap """
+    mapper = overworld[HEADER][MAP_ASTAR]
+    oRNG = overworld[HEADER][MAP_RNG]
+    town_count = oRNG.randint(3, 10) # For now, define between 3 to 10 starting towns
+    seed = overworld[HEADER][WORLD_SEED]
+        
+    width = overworld[HEADER][MAP_WIDTH]
+    height = overworld[HEADER][MAP_HEIGHT]
+        
+    # Find the center town first
+    tLoc = Vec2(width // 2, height // 2)
+    tSpiral = Spiral(tLoc)
+    while overworld[tSpiral.GetLoc().y + 1][tSpiral.GetLoc().x] != 'Grass':# self.SpaceBlocked(tSpiral.GetLoc()):
+            # If the center is not available, spiral around it until a space is open. The start
+            # town should be as close the center as possible.
+            tSpiral.Step()
+    tLoc = tSpiral.GetLoc()
+    # Add town to map
+    overworld[HEADER][OVER_TOWNS][str(tLoc)] = GenTownName(seed + str(tLoc))
+    overworld[tLoc.y + 1][tLoc.x] = 'Town'
+    
+    towns = 0
+    tries = 0
+    # We set a max amount of tries, in the event the computer is unable to find a suitable place
+    # to build a town. This prevents the player waiting too long for a game to start, as well as
+    # ensuring we don't run into a possible infinite loop.
+    while towns < town_count and tries < 1000:
+        x = oRNG.randint(1, width - 2) # no towns on the very edge of the map
+        y = oRNG.randint(1, height - 2) # no towns on the very edge of the map
+        if overworld[y + 1][x] == 'Grass': # For now, we only want towns on Grass Tiles
+            ntLoc = Vec2(x, y)
+            path = mapper.FindPath(ntLoc, tLoc, False)
+            if path != []: # If we can build a path to the new town (ntLoc)
+                # Since we came this far, we can build the town!
+                overworld[HEADER][OVER_TOWNS][str(ntLoc)] = GenTownName(seed + str(ntLoc))
+                overworld[ntLoc.y + 1][ntLoc.x] = 'Town'
+                towns += 1
+                tLoc = ntLoc
+            tries += 1 # increase the amount of times we tried to place a town, regardless of the outcome.
 
 def TownGenerator(town_header : list):
     """ Generates a town with specified dimentions"""

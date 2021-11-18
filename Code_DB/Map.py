@@ -8,7 +8,7 @@ import ColorPallet
 import MathFun
 from Noise import *
 from NameGen import *
-from TownGen import TownGenerator
+from TownGen import *
 from DungeonGen import DungeonGenerator
 
 # For maps only, or map manipulation (such as A* and entity placement)
@@ -124,7 +124,7 @@ class WorldMap:
         # This assumes we are building a new world, and will override the old one if it exists
         self.overworld = [overworld_header]
         self.worldSeed = overworld_header[MAP_NAME]
-
+        
         for row in range(height):
             new_row = []
             for col in range(width):
@@ -143,13 +143,11 @@ class WorldMap:
                     if  map_decor < 0.005:
                         symbol = 'Portal'
                         overworld_header[OVER_DUNGEONS][terrainID] = GenTownName(self.worldSeed + terrainID)
-                    elif map_decor < 0.01:
-                        symbol = 'Town'
-                        overworld_header[OVER_TOWNS][terrainID] = GenTownName(self.worldSeed + terrainID)
                 new_row += [symbol]
             self.overworld += [new_row]
 
-        overworld_header.append(AStar(self.overworld))
+        overworld_header.append(AStar(self.overworld[1:]))
+        PlaceTowns(self.overworld)
 
     def BuildTown(self, t_cord):
         """ Builds a town """
@@ -311,6 +309,8 @@ class WorldMap:
     
     def GetTownLoc(self):
         """ Gets the location of the current town. Not valid if this location is not in a town """
+        if self.curMapType != 't':
+            return None
         m = self.mapID.split(',')
         return Vec2(int(m[0]), int(m[1]))
 
@@ -330,7 +330,8 @@ class WorldMap:
             if m[0] == 'o':
                 x = random.randint(0, self.overworld[HEADER][MAP_WIDTH] - 1)
                 y = random.randint(0, self.overworld[HEADER][MAP_HEIGHT] - 1)
-                if not MAP_SYMBOLS[self.overworld[y + 1][x]][SYMBOL_BLOCK_MOVEMENT]:
+                if not MAP_SYMBOLS[self.overworld[y + 1][x]][SYMBOL_BLOCK_MOVEMENT] and \
+                    self.overworld[y + 1][x] != 'Town' and self.overworld[y + 1][x] != 'Portal':
                     return Vec2(x, y)
             elif m[0] == 't':
                 width = self.towns[m[1]][HEADER][MAP_WIDTH]
@@ -351,7 +352,7 @@ class WorldMap:
                         continue
                     return point
 
-    def SpaceBlocked(self, cord : MathFun.Vec2):
+    def SpaceBlocked(self, cord : MathFun.Vec2, includeTowns = True):
         """ 
             Checks if a location is blocked
             Map Index:
@@ -364,6 +365,8 @@ class WorldMap:
             if cord.x < 0 or cord.x >= self.overworld[HEADER][MAP_WIDTH]:
                 return True
             if cord.y < 0 or cord.y >= self.overworld[HEADER][MAP_HEIGHT]:
+                return True
+            if includeTowns and self.overworld[cord.y + 1][cord.x] == 'Town':
                 return True
             return MAP_SYMBOLS[self.overworld[cord.y + 1][cord.x]][SYMBOL_BLOCK_MOVEMENT] # <--- That is almost a nightmare to remember!
         elif self.curMapType == 't':

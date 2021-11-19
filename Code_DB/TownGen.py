@@ -44,6 +44,7 @@ def PlaceTowns(overworld : list):
     tLoc = tSpiral.GetLoc()
     # Add town to map
     overworld[HEADER][OVER_TOWNS][str(tLoc)] = GenTownName(seed + str(tLoc))
+    first = str(tLoc) # Get the address for the first town, or "start town"
     overworld[tLoc.y + 1][tLoc.x] = 'Town'
     
     towns = 0
@@ -64,18 +65,19 @@ def PlaceTowns(overworld : list):
                 towns += 1
                 tLoc = ntLoc
             tries += 1 # increase the amount of times we tried to place a town, regardless of the outcome.
+    return first
 
 def TownGenerator(town_header : list):
     """ Generates a town with specified dimentions"""
     height = town_header[T_HEIGHT]
     width = town_header[T_WIDTH]
     tRNG = town_header[T_RNG]
-    town_design = []
+    town_design = [] # The layout
 
     for y in range(height):
         new_row = []
         for x in range(width):
-            new_row += ['Grass'] # Grass, temporarily.
+            new_row += ['Grass'] # Grass, the default tile.
         town_design += [new_row]
 
     # Will have to mess with this later so buildings aren't too sparse
@@ -86,7 +88,7 @@ def TownGenerator(town_header : list):
     # the town center.
     cX = width // 2
     cY = height // 2 
-    pending_rooms = [Room(Vec2(cX - 3, cY - 3), Vec2(cX + 3, cY + 3))]
+    pending_rooms = [Room(Vec2(cX - 3, cY - 3), Vec2(cX + 3, cY + 3))] # Town Center
 
     while rooms < room_count and tries < 1000:
         sizeX = tRNG.randint(5, 10)
@@ -122,9 +124,10 @@ def TownGenerator(town_header : list):
         tries += 1
     
     # Random garble for now
-    town_header.append(None) # Level
-    town_header.append(None) # Upstairs
-    town_header.append(None) # DownStairs
+    town_header.append(None) # NPCs - Future implementation
+    town_header.append(None) # Quest - Future implementation
+    # town_header.append(tRNG.choice(pending_rooms).center) # Spawn
+    town_header.append(Vec2(cX, height - 1)) # Above is a work in progress, should only happen the first spawn
 
     # Remove the 'town square'
     pending_rooms.pop(0)

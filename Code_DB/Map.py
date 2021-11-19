@@ -148,8 +148,7 @@ class WorldMap:
             self.overworld += [new_row]
 
         overworld_header.append(AStar(self.overworld[1:]))
-        PlaceTowns(self.overworld)
-        self.startTown = self.overworld[HEADER][OVER_TOWNS].keys()[0]
+        self.startTown = PlaceTowns(self.overworld)        
 
     def BuildTown(self, t_cord):
         """ Builds a town """
@@ -157,9 +156,7 @@ class WorldMap:
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
         
-        town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG, None, None]
-        
-        town_header.append(Vec2(new_point = Vec2(town_width // 2, town_height - 1))) # Spawn Point
+        town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG]
 
         # Build the map using an external function, as to not bloat the map drawing class
         new_map = TownGenerator(town_header)

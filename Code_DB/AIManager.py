@@ -29,7 +29,8 @@ class AI_Manager:
         
         # Always need a player
         self.player = Player.Player(map_data, self, player_name)
-        self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
+        # This is done in the map gen now, when the player is set to the map
+        # self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
         self.map.SetPlayer(self.player)
 
     def SaveActors(self):

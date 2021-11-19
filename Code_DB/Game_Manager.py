@@ -386,7 +386,7 @@ class GameManager:
                 # Create and populate the new town
                 self.world.BuildTown(loc)
             self.messenger.AddText('Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.')
-            new_point = Vec2(self.world.towns[loc][Map.HEADER][Map.MAP_WIDTH]//2, self.world.towns[loc][Map.HEADER][Map.MAP_HEIGHT] - 1)
+            new_point = self.world.towns[loc][HEADER][TOWN_SPAWN]
             mapLoc = 't:' + loc
             change_map = True
         elif feature == "Portal":
@@ -397,7 +397,7 @@ class GameManager:
                 self.world.BuildDungeon(loc)
                 self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][Map.HEADER][Map.MAP_RNG], 1)
             self.messenger.AddText('You have entered ' + self.world.dungeons[loc][Map.HEADER][Map.MAP_NAME] + '.')
-            new_point = Vec2(self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS].x, self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS].y)
+            new_point = self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS]
             
             change_map = True
         elif feature == "Upstairs":
@@ -415,7 +415,7 @@ class GameManager:
                 if new_map not in self.world.dungeons:
                     self.world.BuildDungeon(new_map)
                     self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl - 1)
-                new_point = Vec2(self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS].x, self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS].y)                
+                new_point = self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS]
             change_map = True
         elif feature == "Downstairs":
             m = self.world.mapID.split(',')
@@ -427,7 +427,7 @@ class GameManager:
                 # Create the new dungeon and populate it
                 self.world.BuildDungeon(new_map)
                 self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl + 1)
-            new_point = Vec2(self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS].x, self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS].y)            
+            new_point = self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS]
             change_map = True
 
         if change_map:
@@ -441,4 +441,4 @@ class GameManager:
     def LoadGame(self, file = 'Default'):
         """ Loads a specific game file """
         self.messenger.ClearScreen()
-        SaveGame.LoadGame(file, self.aiEngine, self.world)        
+        SaveGame.LoadGame(file, self.aiEngine, self.world)

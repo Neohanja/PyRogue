@@ -71,7 +71,7 @@ DOWNSTAIRS = 6
 # Town Specific (Once needed/Used)
 TOWN_NPCS = 4
 TOWN_QUESTS = 5
-# Town somthing = 6
+TOWN_SPAWN = 6
 # Overworld Specific (Once needed/Used)
 WORLD_SEED = 4
 OVER_TOWNS = 5
@@ -101,6 +101,7 @@ class WorldMap:
         # Temporary: World seed is 'Drakland'. Should be a string to ensure continuity with all "seeds"
         overworld_header = [seedName, width, height, random.Random(seedName), seedName, {}, {}]
         self.worldSeed = ''
+        self.startTown = ''
         self.curMapType = 'o' # Defaults the start point to the overworld
         self.player = None # Does not build the player to start with
         self.mapID = '' # The current "town/dungeon". This is empty for the overworld (as for now, there is only one)
@@ -148,6 +149,7 @@ class WorldMap:
 
         overworld_header.append(AStar(self.overworld[1:]))
         PlaceTowns(self.overworld)
+        self.startTown = self.overworld[HEADER][OVER_TOWNS].keys()[0]
 
     def BuildTown(self, t_cord):
         """ Builds a town """
@@ -155,7 +157,9 @@ class WorldMap:
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
         town_height = tRNG.randrange(WorldMap.MAP_VIEW_HEIGHT, WorldMap.MAP_VIEW_HEIGHT * 2)
         
-        town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG]
+        town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG, None, None]
+        
+        town_header.append(Vec2(new_point = Vec2(town_width // 2, town_height - 1))) # Spawn Point
 
         # Build the map using an external function, as to not bloat the map drawing class
         new_map = TownGenerator(town_header)
@@ -241,9 +245,15 @@ class WorldMap:
             return st
 
     # Helper functions for manipulating map functions and such
-    def SetPlayer(self, player):
+    def SetPlayer(self, player, spawnInTown = True):
         """ Sets the player character for map operations """
         self.player = player
+        if not spawnInTown:
+            return # Don't need to build all this and move the player if we are loading a save file
+        if self.startTown not in self.towns:
+            self.BuildTown(self.startTown)
+        self.player.SetSpawn('t:' + self.startTown, self.towns[self.startTown][HEADER][TOWN_SPAWN]) # Change this later, to get a good spawn point
+        self.ChangeMap('t:' + self.startTown)
 
     def GetPathfinder(self):
         """ Gets the pathfinding engine for the current map """
@@ -406,11 +416,18 @@ class WorldMap:
             display.print(x = map_display_loc.x, y = map_display_loc.y, string = dungeon_name)
             self.DrawDungeon(start, display)
 
-    def DrawTown(self, start : MathFun.Vec2, display : tcod.Console):
+    def DrawTown(self, start : MathFun.Vec2, display : tcod.Console, mapID = 'selfID'):
         """ Draws a town """
+        if mapID == 'selfID':
+            mapID = self.mapID
+        
         # Simplify the use of the repetitive data
-        width = self.towns[self.mapID][HEADER][MAP_WIDTH]
-        height = self.towns[self.mapID][HEADER][MAP_HEIGHT]
+        if mapID not in self.towns:
+                # Create and populate the new town
+                self.BuildTown(mapID)
+        
+        width = self.towns[mapID][HEADER][MAP_WIDTH]
+        height = self.towns[mapID][HEADER][MAP_HEIGHT]
         
         start.x = Clamp(0, width - WorldMap.MAP_VIEW_WIDTH, start.x)
         start.y = Clamp(0, height - WorldMap.MAP_VIEW_HEIGHT, start.y)
@@ -418,18 +435,23 @@ class WorldMap:
         for x in range(WorldMap.MAP_VIEW_WIDTH):
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
-                index = self.towns[self.mapID][start.y + y + 1][start.x + x]
+                index = self.towns[mapID][start.y + y + 1][start.x + x]
                 icon = MAP_SYMBOLS[index][SYMBOL_ICON]
                 color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 
                     y = y + WorldMap.START_Y, string = icon, fg = color)
         
-
-    def DrawDungeon(self, start : MathFun.Vec2, display : tcod.Console):
+    def DrawDungeon(self, start : MathFun.Vec2, display : tcod.Console, mapID = 'selfID'):
         """ Draws the dungeon at a x/y/z coord """
+        if mapID == 'selfID':
+            mapID = self.mapID
+        
+        if mapID not in self.dungeons:
+            self.BuildDungeon(mapID)
+        
         # Simplify the use of the repetitive data
-        width = self.dungeons[self.mapID][HEADER][MAP_WIDTH]
-        height = self.dungeons[self.mapID][HEADER][MAP_HEIGHT]
+        width = self.dungeons[mapID][HEADER][MAP_WIDTH]
+        height = self.dungeons[mapID][HEADER][MAP_HEIGHT]
         
         # Clamp the values of x and y
         start.x = Clamp(0, width - WorldMap.MAP_VIEW_WIDTH, start.x)
@@ -438,7 +460,7 @@ class WorldMap:
         for x in range(WorldMap.MAP_VIEW_WIDTH):
             for y in range(WorldMap.MAP_VIEW_HEIGHT):
                 # Get the index
-                index = self.dungeons[self.mapID][start.y + y + 1][start.x + x]
+                index = self.dungeons[mapID][start.y + y + 1][start.x + x]
                 icon = MAP_SYMBOLS[index][SYMBOL_ICON]
                 color = ColorPallet.GetColor(MAP_SYMBOLS[index][SYMBOL_COLOR])
                 display.print(x = x + WorldMap.START_X, 

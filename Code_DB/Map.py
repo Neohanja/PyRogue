@@ -70,8 +70,8 @@ UPSTAIRS = 5
 DOWNSTAIRS = 6
 # Town Specific (Once needed/Used)
 TOWN_NPCS = 4
-TOWN_QUESTS = 5
-TOWN_SPAWN = 6
+TOWN_SPAWN = 5
+TOWN_ENTRANCE = 6
 # Overworld Specific (Once needed/Used)
 WORLD_SEED = 4
 OVER_TOWNS = 5

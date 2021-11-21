@@ -386,7 +386,7 @@ class GameManager:
                 # Create and populate the new town
                 self.world.BuildTown(loc)
             self.messenger.AddText('Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.')
-            new_point = self.world.towns[loc][HEADER][TOWN_SPAWN]
+            new_point = self.world.towns[loc][HEADER][TOWN_ENTRANCE]
             mapLoc = 't:' + loc
             change_map = True
         elif feature == "Portal":

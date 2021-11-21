@@ -2,7 +2,7 @@
 # actions taken by them
 
 class Action:
-    pass # Abstract class
+    pass # Abstract class, not intended to be used as a stand-alone.
 
 class EscapeAction(Action):
     pass # To-Do

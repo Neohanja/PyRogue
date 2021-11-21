@@ -125,7 +125,7 @@ def TownGenerator(town_header : list):
     
     # Random garble for now
     town_header.append(None) # NPCs - Future implementation
-    town_header.append(None) # Quest - Future implementation
+    town_header.append(tRNG.choice(pending_rooms).center) # Spawn Point
     # town_header.append(tRNG.choice(pending_rooms).center) # Spawn
     town_header.append(Vec2(cX, height - 1)) # Above is a work in progress, should only happen the first spawn
 

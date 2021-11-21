@@ -10,6 +10,17 @@ CLASSES = {
     'Rogue' : [['Dexterity', 2], ['Strength', 2]]
 }
 
+# A kind of helper for the player to understand the buttons to press
+# to play the game
+HOTKEYS = [
+    'Hotkeys:',
+    '',
+    'E - Enter/Use',
+    'I - Info',
+    'WASD/Arrows - Movement',
+    'ESC - Main Menu'
+]
+
 # XP Chart: 0 = 0 XP, because players start at level 1
 LEVEL_REQ = [ 0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 
               6600, 7800, 9100, 10500, 12000, 13600, 15300, 17100, 19000]
@@ -82,5 +93,9 @@ class Player(Actor):
             d = str(self.stats[stat])
             console.print(x = x, y = y, string = d)
             y += 1
+        
+        for tooltips in HOTKEYS:
+            y += 1
+            console.print(x = x, y = y, string = tooltips)
 
         console.print(x = WorldMap.MAP_VIEW_WIDTH - 2, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = str(self.position.ToString()))

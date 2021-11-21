@@ -13,8 +13,6 @@ CLASSES = {
 # A kind of helper for the player to understand the buttons to press
 # to play the game
 HOTKEYS = [
-    'Hotkeys:',
-    '',
     'E - Enter/Use',
     'I - Info',
     'WASD/Arrows - Movement',
@@ -33,6 +31,7 @@ class Player(Actor):
         
         self.actorType = 'Player'
         self.debug = False
+        self.showTooltip = True
     
     def Update(self, offset : Vec2):
         self.Move(offset)
@@ -58,6 +57,10 @@ class Player(Actor):
     def OnDeath(self):
         """ What to do when the player is defeated """
         pass
+
+    def ToggleTooltip(self):
+        """ Turns on and off the tooltip (help menu) """
+        self.showTooltip = not self.showTooltip
         
     def OnCollide(self, other):
         """ What happens when the actor collides with something """
@@ -94,8 +97,18 @@ class Player(Actor):
             console.print(x = x, y = y, string = d)
             y += 1
         
-        for tooltips in HOTKEYS:
-            y += 1
-            console.print(x = x, y = y, string = tooltips)
+        if self.showTooltip:
+            suf = ' (F1 to Hide)'
+        else:
+            suf = ' (F1 to Show)'
+
+        y += 1
+        console.print(x = x, y = y, string = 'Hotkeys:' + suf)
+        y += 1
+
+        if self.showTooltip:
+            for tooltips in HOTKEYS:
+                y += 1
+                console.print(x = x, y = y, string = tooltips)
 
         console.print(x = WorldMap.MAP_VIEW_WIDTH - 2, y = WorldMap.MAP_VIEW_HEIGHT + 3, string = str(self.position.ToString()))

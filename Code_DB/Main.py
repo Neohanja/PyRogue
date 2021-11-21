@@ -4,9 +4,9 @@
 
 # Files included to assist with functionality
 import tcod
-from Game_Manager import GameManager
 
 # Self made files for classes and additional functions
+from Game_Manager import GameManager
 from Action import *
 from Input_Handlers import *
 from MathFun import *
@@ -27,8 +27,8 @@ def main() -> None:
     event_handler = EventHandler(game_loop)
 
     with tcod.context.new(
-        columns=console.width, # + console.width // 2,
-        rows=console.height, # + console.height // 2,
+        columns=console.width,
+        rows=console.height,
         tileset=tileset,
         title = "Python Rogue-Esque : Intro to Computing Finale",
         vsync = True
@@ -48,6 +48,11 @@ def main() -> None:
                 action = event_handler.dispatch(event)
                 if event.type == 'WINDOWRESIZED': # If we change the size of the screen, it needs to be refreshed.
                     refresh_screen = True
+
+                if game_loop.playState == 'Loading': # Special case
+                    game_loop.Update(None)
+                    refresh_screen = True
+                    continue
 
                 if action is None:
                     continue

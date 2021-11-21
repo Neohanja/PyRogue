@@ -7,6 +7,10 @@ class Action:
 class EscapeAction(Action):
     pass # To-Do
 
+class ToolTipUI(Action):
+    """ Shows/Hides hotkey tooltip UI """
+    pass
+
 class MovementAction(Action):
     """ Dictates what happens when a movement key is pressed """
     def __init__(self, dx: int, dy: int):

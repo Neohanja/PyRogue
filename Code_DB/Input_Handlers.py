@@ -25,7 +25,7 @@ class EventHandler(tcod.event.EventDispatch[Action]):
         # Check if the game loop is in a text receive state
         textLock = False
         if self.game_loop != None:
-            textLock = self.game_loop.textLock
+            textLock = self.game_loop.textLock        
 
         if textLock: # If the text lock is on, then only these inputs are allowed
             if key in ALPHA_INPUT:
@@ -50,6 +50,8 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = UseAction()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
+        elif key == tcod.event.K_F1:
+            action = ToolTipUI()
         
         return action
     

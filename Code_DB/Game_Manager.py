@@ -17,7 +17,14 @@ TITLE_IMAGE = 'Title.png'
 WORLD_WIDTH = 256
 WORLD_HEIGHT = 256
 # Game State Info
-PLAY_STATE = ['Main Menu', 'Help Menu', 'Story Page', 'Dialog Loop', 'Stat Screen', 'Game Loop', 'Load Menu', 'CharGen']
+# States not yet used:
+# Dialog Loop
+# Stat Screen
+# Help Menu
+# Story Page - WIP
+PLAY_STATE = [
+    'Main Menu', 'Help Menu', 'Story Page', 'Dialog Loop', 'Stat Screen', 
+    'Game Loop', 'Load Menu', 'CharGen', 'Loading' ]
 MAIN_MENU = 0
 HELP_MENU = 1
 STORY_PAGE = 2
@@ -26,6 +33,7 @@ STAT_PAGE = 4
 GAME_LOOP = 5
 LOAD_MENU = 6
 CHAR_GEN = 7
+LOADING = 8
 
 class GameManager:
     """ Game Manager """
@@ -49,11 +57,12 @@ class GameManager:
         self.newName = ''
         self.seedName = ''
         self.textLock = False # For any time a text entry is being used
+        self.loadingSave = False # Since it takes a few seconds to load from a 'new' a new game
+        self.loadName = '' # What is the name of the save file we are loading?
     
     def Start(self):
         """ Start a new Game """
         # To-Do:
-        # Seed the world (Give it a name and stuff)
         # Character Generator
         if self.newName == '':
             self.newName = 'Default'
@@ -85,11 +94,7 @@ class GameManager:
             # Move up or down on the menu
             self.cursorLoc.y = Clamp(0, self.maxOptions, self.cursorLoc.y + action.dy)
             return True
-
-        elif isinstance(action, EscapeAction):
-            # Escape to quit from the menu - may change later
-            raise SystemExit()
-
+            
         elif isinstance(action, EnterAction):
             m_option = self.menuOptions[self.cursorLoc.y]
             if m_option == 'New':
@@ -111,6 +116,7 @@ class GameManager:
             elif m_option == 'Quit':
                 raise SystemExit()
             return True
+
         return False
 
     def LoadMenuSelections(self, action):
@@ -132,15 +138,9 @@ class GameManager:
                 self.cursorLoc.y = 0
                 self.page += 1
             else:
-                # Load the game. If we get a file name, the file *should* exist
-                if not self.gamePlaying:
-                    self.Start() # If the game loop isn't going, this is needed to start the game loop
-                    self.gamePlaying = True
-                self.LoadGame(m_option)                    
-                self.AddLog('Game Loaded')
-                self.playState = PLAY_STATE[GAME_LOOP]
-                self.previousLoc.y = 0
-                self.cursorLoc.y = 0
+                self.playState = PLAY_STATE[LOADING]
+                self.loadName = m_option
+                self.loadingSave = True
             return True
         return False
 
@@ -155,8 +155,7 @@ class GameManager:
         elif isinstance(action, EnterAction): # New Game
             mSelection = self.menuOptions[self.cursorLoc.y]
             if mSelection == 'Start':
-                self.Start()
-                self.playState = PLAY_STATE[GAME_LOOP]
+                self.playState = PLAY_STATE[LOADING] # Brings up a Loading screen
             elif mSelection == 'Name' or mSelection == 'Seed':
                 self.textLock = not self.textLock
             return True
@@ -198,12 +197,34 @@ class GameManager:
         elif isinstance(action, ExamineAction):
             self.messenger.AddText(self.world.GetExamineAction())
             return True
+
+        elif isinstance(action, ToolTipUI):
+            self.mainCharacter.ToggleTooltip()
+            return True
                 
         elif isinstance(action, EscapeAction):
             self.playState = PLAY_STATE[MAIN_MENU]
             self.cursorLoc.x = 0
             self.cursorLoc.y = 0
             return True
+
+    def NewAndLoading(self, action):
+        """ 
+            Just a temp loading state for building game data. Since a new game/load file takes a few
+            moments to load, we want a visual queue to inform the player something isn't broken.
+        """
+        if not self.gamePlaying:
+            self.Start()
+
+        if self.loadingSave:
+            self.loadingSave = False
+            self.LoadGame(self.loadName)
+            self.AddLog('Game Loaded')            
+            self.previousLoc.y = 0
+            self.cursorLoc.y = 0
+
+        self.playState = PLAY_STATE[GAME_LOOP]
+        return True
 
     def Update(self, action):
         """ Actions to take during the game loop """
@@ -221,7 +242,9 @@ class GameManager:
         elif self.playState == PLAY_STATE[CHAR_GEN]:
             if self.NewGameUpdate(action):
                 refresh_screen = True
-
+        elif self.playState == PLAY_STATE[LOADING]:
+            if self.NewAndLoading(action):
+                refresh_screen = True
         return refresh_screen
 
     # Draw Loops to update the screen
@@ -236,6 +259,8 @@ class GameManager:
             self.DrawLoadScreen(console)
         elif self.playState == PLAY_STATE[CHAR_GEN]:
             self.DrawCharacterGenerator(console)
+        elif self.playState == PLAY_STATE[LOADING]:
+            self.DrawGameLoading(console)
 
     def DrawLoadScreen(self, console):
         """ Draws the load screen, and borrows much of the code from the title """
@@ -364,6 +389,22 @@ class GameManager:
         self.aiEngine.Draw(console, corner)
         # Draw the messanger system info
         self.messenger.PrintText(console)
+
+    def DrawGameLoading(self, console):
+        """ Because it takes a few moments to load the new/saved games, make an indicator of such """
+        wording = 'Loading, please wait...'
+        yLoc = self.screenSize.y // 2
+        xLoc = self.screenSize.x // 2 - len(wording) // 2 - 1
+        border = Title(self.screenSize.x, self.screenSize.y)
+        for line in range(len(border)):
+                    console.print(x=0,y=line, string = border[line])
+
+        for letter in wording:
+            r = random.randint(125, 255)
+            g = random.randint(125, 255)
+            b = random.randint(125, 255)
+            console.print(x = xLoc, y = yLoc, string = letter, fg = [r, g, b])
+            xLoc += 1
 
     # Helper functions
 

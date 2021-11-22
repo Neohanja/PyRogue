@@ -67,7 +67,7 @@ def PlaceTowns(overworld : list):
             tries += 1 # increase the amount of times we tried to place a town, regardless of the outcome.
     return first
 
-def TownGenerator(town_header : list):
+def TownGenerator(town_header : list, t_Index, AI_Engine):
     """ Generates a town with specified dimentions"""
     height = town_header[T_HEIGHT]
     width = town_header[T_WIDTH]
@@ -123,10 +123,9 @@ def TownGenerator(town_header : list):
 
         tries += 1
     
-    # Random garble for now
-    town_header.append(None) # NPCs - Future implementation
+    # Random garble for now - Fix this part
+    town_header.append([]) # Empty dictionary for building centers
     town_header.append(tRNG.choice(pending_rooms).center) # Spawn Point
-    # town_header.append(tRNG.choice(pending_rooms).center) # Spawn
     town_header.append(Vec2(cX, height - 1)) # Above is a work in progress, should only happen the first spawn
 
     # Remove the 'town square'
@@ -153,5 +152,7 @@ def TownGenerator(town_header : list):
         for add_path in next_path:
             if town_design[add_path.y][add_path.x] == 'Grass':
                 town_design[add_path.y][add_path.x] = 'Road'
+    
+    AI_Engine.PopulateNPCs(t_Index, pending_rooms, town_header)
     
     return town_design

@@ -125,7 +125,13 @@ class GameManager:
             # Move up or down on the menu
             self.cursorLoc.y = Clamp(0, self.maxOptions, self.cursorLoc.y + action.dy)
             return True
-
+        elif isinstance(action, EscapeAction):
+            # If the player presses escape, return them to the main menu
+            self.page = 0
+            self.cursorLoc.y = self.previousLoc.y
+            self.previousLoc.y = 0
+            self.playState = PLAY_STATE[MAIN_MENU]
+            return True # Always return true if changing menues, as this refreshes the screen
         elif isinstance(action, EnterAction):
             m_option = self.menuOptions[self.cursorLoc.y]
             if m_option == '<Back>':
@@ -141,6 +147,7 @@ class GameManager:
                 self.playState = PLAY_STATE[LOADING]
                 self.loadName = m_option
                 self.loadingSave = True
+                self.page = 0
             return True
         return False
 
@@ -155,6 +162,7 @@ class GameManager:
         elif isinstance(action, EnterAction): # New Game
             mSelection = self.menuOptions[self.cursorLoc.y]
             if mSelection == 'Start':
+                self.gamePlaying = False
                 self.playState = PLAY_STATE[LOADING] # Brings up a Loading screen
             elif mSelection == 'Name' or mSelection == 'Seed':
                 self.textLock = not self.textLock
@@ -289,7 +297,7 @@ class GameManager:
             console.print(x = 30, y = 25 + (index * 2), string = self.menuOptions[index])
         
         # Print the user cursor
-        console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>', fg = ColorPallet.GetColor('Green'))
+        console.print(x = 28, y = 25 + (self.cursorLoc.y * 2), string = '>')
 
     def DrawTitle(self, console):
         """ Draw the title screen, or the first screen seen by the player before their adventure begins"""
@@ -423,12 +431,13 @@ class GameManager:
         mapLoc = ''
 
         if feature == "Town":
+            mapLoc = 't:' + loc
             if loc not in self.world.towns:
                 # Create and populate the new town
                 self.world.BuildTown(loc)
+                self.aiEngine.PopulateNPCs(mapLoc, self.world.towns[loc])
             self.messenger.AddText('Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.')
             new_point = self.world.towns[loc][HEADER][TOWN_ENTRANCE]
-            mapLoc = 't:' + loc
             change_map = True
         elif feature == "Portal":
             loc += ',1'

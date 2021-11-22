@@ -72,7 +72,12 @@ def GenTownName(seed = ''):
     
     return town_name.title()
 
-
+def GetCitizenName(l : int, nRNG : random.Random):
+    """ Returns a name of (l) length"""
+    name = ''
+    while len(name) < l:
+        name += ChooseLetter(nRNG.random() < .4, nRNG.random())
+    return name
 
 def ChooseLetter(vowel : bool, percent):
     if vowel:

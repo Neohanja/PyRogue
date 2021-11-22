@@ -159,6 +159,6 @@ def GetSaveFiles(maxLength, page = 0):
             save_index += 1
         else: # we reached the end of the names
             return save_choices
-    if name < save_file_list.count: # Allow the next option if there are more choices to be made
+    if name < len(save_file_list): # Allow the next option if there are more choices to be made
         save_choices[save_index] = '<Next>'
     return save_choices

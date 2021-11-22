@@ -1,0 +1,4 @@
+<PLAYER>;Toasty;t:121,128;25,49;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MAP>;o:;Drakland;256,256;
+<MAP>;t:121,128;Blackfehiquovshire,78,81;
+<EOF>

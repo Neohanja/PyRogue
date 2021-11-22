@@ -1,11 +1,12 @@
 # Dedicated to running and playing the AI manipulations
 import Monster
 import Player
-#import NPC
+import NPC
 
 # Other imports required for functionality
 import Map
 import random
+from NameGen import *
 from MathFun import *
 from Stats import Stat
 
@@ -31,7 +32,7 @@ class AI_Manager:
         self.player = Player.Player(map_data, self, player_name)
         # This is done in the map gen now, when the player is set to the map
         # self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
-        self.map.SetPlayer(self.player)
+        self.map.SetPlayer(self, self.player)
 
     def SaveActors(self):
         """ Saves all actors to a file """
@@ -91,6 +92,9 @@ class AI_Manager:
         if mapID in self.monsters:
             for m in self.monsters[mapID]:
                 m.Draw(console, corner)
+        if mapID in self.npcs:
+            for npc in self.npcs[mapID]:
+                npc.Draw(console, corner)
 
     def ToggleDebug(self, toggle):
         """ Turns on or off the Dev-mode debug options s"""
@@ -116,9 +120,23 @@ class AI_Manager:
             new_monster.SetSpawn(d_Index, spawn_loc)
             self.monsters[d_Index] += [new_monster]
 
-    def PopulateNPCs(self, t_Index : str):
+    def PopulateNPCs(self, t_Index : str, buildings : list, town_header):
         """ Populates a town """
-        pass
+        # 3 = Map RNG
+        tRNG = town_header[3] # random.Random('temp seed for testing')
+        citizens = tRNG.randint(len(buildings) // 3, len(buildings) // 3 * 2)
+        
+        if t_Index not in self.npcs:
+            self.npcs[t_Index] = []
+        
+        for c in range(citizens):
+            cName = GetCitizenName(tRNG.randint(5, 10), tRNG)
+            new_npc = NPC.NPC(cName, self.map, self)
+            spawn_loc = tRNG.choice(buildings).center
+            while self.EntityHere(spawn_loc, t_Index):
+                spawn_loc = tRNG.choice(buildings).center
+            new_npc.SetSpawn(t_Index, spawn_loc)
+            self.npcs[t_Index] += [new_npc]
 
     def CheckCollision(self, actor_a, offset):
         """ Checks if an actor (A) is trying to enter the space of another actor. If so, return it """
@@ -148,10 +166,12 @@ class AI_Manager:
         self.player.Update(playerMove)
 
         mapID = self.map.GetCurrentMap()
-
         if mapID in self.monsters:
             for m in self.monsters[mapID]:
                 m.Update()
+        if mapID in self.npcs:
+            for npc in self.npcs[mapID]:
+                npc.Update()
     
     def Defeated(self, attacker, defender):
         """ Handles an actor being defeated by another actor """

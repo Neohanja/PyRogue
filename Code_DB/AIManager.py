@@ -32,7 +32,7 @@ class AI_Manager:
         self.player = Player.Player(map_data, self, player_name)
         # This is done in the map gen now, when the player is set to the map
         # self.player.SetSpawn('o:', self.map.GetEmptySpot('o:'))
-        self.map.SetPlayer(self, self.player)
+        self.map.SetPlayer(self.player, self)
 
     def SaveActors(self):
         """ Saves all actors to a file """
@@ -120,21 +120,22 @@ class AI_Manager:
             new_monster.SetSpawn(d_Index, spawn_loc)
             self.monsters[d_Index] += [new_monster]
 
-    def PopulateNPCs(self, t_Index : str, buildings : list, town_header):
+    def PopulateNPCs(self, t_Index : str, town_header):
         """ Populates a town """
         # 3 = Map RNG
         tRNG = town_header[3] # random.Random('temp seed for testing')
+        buildings = town_header[4]
         citizens = tRNG.randint(len(buildings) // 3, len(buildings) // 3 * 2)
         
         if t_Index not in self.npcs:
             self.npcs[t_Index] = []
         
         for c in range(citizens):
-            cName = GetCitizenName(tRNG.randint(5, 10), tRNG)
+            cName = GetCitizenName(tRNG.randint(5, 10), tRNG).title()
             new_npc = NPC.NPC(cName, self.map, self)
-            spawn_loc = tRNG.choice(buildings).center
+            spawn_loc = tRNG.choice(buildings)
             while self.EntityHere(spawn_loc, t_Index):
-                spawn_loc = tRNG.choice(buildings).center
+                spawn_loc = tRNG.choice(buildings)
             new_npc.SetSpawn(t_Index, spawn_loc)
             self.npcs[t_Index] += [new_npc]
 
@@ -171,7 +172,7 @@ class AI_Manager:
                 m.Update()
         if mapID in self.npcs:
             for npc in self.npcs[mapID]:
-                npc.Update()
+                npc.Update(Vec2(0, 0))
     
     def Defeated(self, attacker, defender):
         """ Handles an actor being defeated by another actor """

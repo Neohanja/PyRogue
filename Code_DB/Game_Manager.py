@@ -1,7 +1,7 @@
 # Manages the many aspects of the game, 
 # to include a game loop
 
-import Map
+from Map import *
 import AIManager
 import Player
 from Messenger import *
@@ -38,7 +38,7 @@ LOADING = 8
 class GameManager:
     """ Game Manager """
 
-    def __init__(self, Screen_Size : Vec2, DebugMode = False):
+    def __init__(self, Screen_Size : Vec2):
         """ Game Manager Constructor """        
         self.screenSize = Screen_Size
         self.playState = PLAY_STATE[MAIN_MENU] # Initialize the game state from the list of options (Enumeration)
@@ -69,14 +69,14 @@ class GameManager:
         if self.seedName == '':
             self.seedName = 'Drakland'
 
-        self.world = Map.WorldMap(WORLD_HEIGHT, WORLD_WIDTH, self.seedName)
+        self.world = WorldMap(WORLD_HEIGHT, WORLD_WIDTH, self.seedName)
         self.aiEngine = AIManager.AI_Manager(self.world, self, self.newName)
         self.aiEngine.ToggleDebug(True)
         self.mainCharacter = self.aiEngine.player
 
-        sL = Map.WorldMap.MAP_VIEW_HEIGHT + 2
+        sL = WorldMap.MAP_VIEW_HEIGHT + 2
         eL = self.screenSize.y - 1 - sL
-        mL = Map.WorldMap.MAP_VIEW_WIDTH - 10
+        mL = WorldMap.MAP_VIEW_WIDTH - 10
 
         self.messenger = Messenger(sL, eL, mL)
         self.gamePlaying = True
@@ -386,11 +386,11 @@ class GameManager:
         for line in range(len(border)):
             console.print(x=0,y=line, string = border[line])
         # Find the Upper Left corner
-        max_x = self.world.overworld[Map.HEADER][Map.MAP_WIDTH] - Map.WorldMap.MAP_VIEW_WIDTH + 1
-        max_y = self.world.overworld[Map.HEADER][Map.MAP_HEIGHT] - Map.WorldMap.MAP_VIEW_HEIGHT + 1
+        max_x = self.world.overworld[HEADER][MAP_WIDTH] - WorldMap.MAP_VIEW_WIDTH + 1
+        max_y = self.world.overworld[HEADER][MAP_HEIGHT] - WorldMap.MAP_VIEW_HEIGHT + 1
         corner = Vec2(
-                    Clamp(0, max_x, self.aiEngine.player.position.x - (Map.WorldMap.MAP_VIEW_WIDTH // 2)),
-                    Clamp(0, max_y, self.aiEngine.player.position.y - (Map.WorldMap.MAP_VIEW_HEIGHT // 2)))
+                    Clamp(0, max_x, self.aiEngine.player.position.x - (WorldMap.MAP_VIEW_WIDTH // 2)),
+                    Clamp(0, max_y, self.aiEngine.player.position.y - (WorldMap.MAP_VIEW_HEIGHT // 2)))
 
         # Draw everything else
         self.world.Draw(corner, console)
@@ -435,8 +435,8 @@ class GameManager:
             if loc not in self.world.towns:
                 # Create and populate the new town
                 self.world.BuildTown(loc)
-                self.aiEngine.PopulateNPCs(mapLoc, self.world.towns[loc])
-            self.messenger.AddText('Welcome to ' + self.world.towns[loc][Map.HEADER][Map.MAP_NAME] + '.')
+                self.aiEngine.PopulateNPCs(mapLoc, self.world.towns[loc][HEADER])
+            self.messenger.AddText('Welcome to ' + self.world.towns[loc][HEADER][MAP_NAME] + '.')
             new_point = self.world.towns[loc][HEADER][TOWN_ENTRANCE]
             change_map = True
         elif feature == "Portal":
@@ -445,16 +445,16 @@ class GameManager:
             if loc not in self.world.dungeons:
                 # Generate and populate the dungeon
                 self.world.BuildDungeon(loc)
-                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][Map.HEADER][Map.MAP_RNG], 1)
-            self.messenger.AddText('You have entered ' + self.world.dungeons[loc][Map.HEADER][Map.MAP_NAME] + '.')
-            new_point = self.world.dungeons[loc][Map.HEADER][Map.UPSTAIRS]
+                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][HEADER][MAP_RNG], 1)
+            self.messenger.AddText('You have entered ' + self.world.dungeons[loc][HEADER][MAP_NAME] + '.')
+            new_point = self.world.dungeons[loc][HEADER][UPSTAIRS]
             
             change_map = True
         elif feature == "Upstairs":
             m = self.world.mapID.split(',')
             lvl = int(m[2]) # Get the current level
             if lvl <= 1:
-                self.messenger.AddText('You Have escaped the dungeon, ' + self.world.dungeons[self.world.mapID][Map.HEADER][Map.MAP_NAME] + '.')
+                self.messenger.AddText('You Have escaped the dungeon, ' + self.world.dungeons[self.world.mapID][HEADER][MAP_NAME] + '.')
                 new_point = Vec2(int(m[0]), int(m[1]))
                 mapLoc = 'o:'
             else:
@@ -464,8 +464,8 @@ class GameManager:
                 # In the event this dungeon portion does not exist for some reason
                 if new_map not in self.world.dungeons:
                     self.world.BuildDungeon(new_map)
-                    self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl - 1)
-                new_point = self.world.dungeons[new_map][Map.HEADER][Map.DOWNSTAIRS]
+                    self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER][MAP_RNG], lvl - 1)
+                new_point = self.world.dungeons[new_map][HEADER][DOWNSTAIRS]
             change_map = True
         elif feature == "Downstairs":
             m = self.world.mapID.split(',')
@@ -476,8 +476,8 @@ class GameManager:
             if new_map not in self.world.dungeons:
                 # Create the new dungeon and populate it
                 self.world.BuildDungeon(new_map)
-                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][Map.HEADER][Map.MAP_RNG], lvl + 1)
-            new_point = self.world.dungeons[new_map][Map.HEADER][Map.UPSTAIRS]
+                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER][MAP_RNG], lvl + 1)
+            new_point = self.world.dungeons[new_map][HEADER][UPSTAIRS]
             change_map = True
 
         if change_map:

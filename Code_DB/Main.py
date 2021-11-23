@@ -16,7 +16,7 @@ WIDTH, HEIGHT = 100, 60
 
 # Declare as the main function:
 def main() -> None:
-    game_loop = GameManager(Vec2(WIDTH, HEIGHT), True)
+    game_loop = GameManager(Vec2(WIDTH, HEIGHT))
     refresh_screen = True
 
     # Code from python-tcod.readthedocs.io/en/latest/tcod/getting-started.htlm to set up a custom screen for imporved display

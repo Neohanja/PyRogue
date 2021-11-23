@@ -69,7 +69,7 @@ DUNGEON_LEVEL = 4
 UPSTAIRS = 5
 DOWNSTAIRS = 6
 # Town Specific (Once needed/Used)
-TOWN_NPCS = 4
+TOWN_BUILDINGS = 4
 TOWN_SPAWN = 5
 TOWN_ENTRANCE = 6
 # Overworld Specific (Once needed/Used)
@@ -150,7 +150,7 @@ class WorldMap:
         overworld_header.append(AStar(self.overworld[1:]))
         self.startTown = PlaceTowns(self.overworld)        
 
-    def BuildTown(self, t_cord, ai_engine):
+    def BuildTown(self, t_cord):
         """ Builds a town """
         tRNG = random.Random(self.worldSeed + t_cord)
         town_width = tRNG.randrange(WorldMap.MAP_VIEW_WIDTH,WorldMap.MAP_VIEW_WIDTH * 2)
@@ -159,7 +159,7 @@ class WorldMap:
         town_header = [self.overworld[HEADER][OVER_TOWNS][t_cord], town_width, town_height, tRNG]
 
         # Build the map using an external function, as to not bloat the map drawing class
-        new_map = TownGenerator(town_header, t_cord, ai_engine)
+        new_map = TownGenerator(town_header)
         # If we are making the town, then the town 
         # does not exist in the dictionary yet.
         self.towns[t_cord] = [town_header] # Header for all towns/dungeons
@@ -242,13 +242,14 @@ class WorldMap:
             return st
 
     # Helper functions for manipulating map functions and such
-    def SetPlayer(self, ai_eng, player, spawnInTown = True):
+    def SetPlayer(self, player, aiEngine, spawnInTown = True):
         """ Sets the player character for map operations """
         self.player = player
         if not spawnInTown:
             return # Don't need to build all this and move the player if we are loading a save file
         if self.startTown not in self.towns:
-            self.BuildTown(self.startTown, ai_eng)
+            self.BuildTown(self.startTown)
+            aiEngine.PopulateNPCs('t:' + self.startTown, self.towns[self.startTown][HEADER])
         self.player.SetSpawn('t:' + self.startTown, self.towns[self.startTown][HEADER][TOWN_SPAWN]) # Change this later, to get a good spawn point
         self.ChangeMap('t:' + self.startTown)
 

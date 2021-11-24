@@ -66,6 +66,8 @@ class Player(Actor):
         """ What happens when the actor collides with something """
         if other.actorType == 'Monster':
             self.Attack(other)
+        elif other.actorType == 'NPC':
+            other.GetDialog(other)
         else:
             return super().OnCollide(other)
 

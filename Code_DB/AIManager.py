@@ -130,9 +130,11 @@ class AI_Manager:
         if t_Index not in self.npcs:
             self.npcs[t_Index] = []
         
+        npc_jobs = [job for job in NPC.NPC_JOBS.keys()]
+        
         for c in range(citizens):
             cName = GetCitizenName(tRNG.randint(5, 10), tRNG).title()
-            new_npc = NPC.NPC(cName, self.map, self)
+            new_npc = NPC.NPC(cName, tRNG.choice(npc_jobs), self.map, self)
             spawn_loc = tRNG.choice(buildings)
             while self.EntityHere(spawn_loc, t_Index):
                 spawn_loc = tRNG.choice(buildings)

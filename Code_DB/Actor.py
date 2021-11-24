@@ -70,9 +70,13 @@ class Actor:
         """ Update for game loop purposes """
         self.Move(offset)
     
+    def GetDialog(self, other):
+        """ Get the dialog piece for the two actors """
+        self.SendMessage(self.name + ' says hello to ' + other.name + '.')
+
     def OnCollide(self, other):
         """ Determine what to do on colliding """
-        self.SendMessage(self.name + ' says hello to ' + other.name + '.')
+        self.GetDialog(other)
 
     def Move(self, offset : Vec2):
         """ Moves an actor """

@@ -7,8 +7,9 @@ import Stats
 
 
 MONSTER_STATS = {
-    "Goblin" : ['G', 'Green', 10, 5, 3, 15],
-    "Orc" : ['O', 'Orange', 15, 8, 5, 35]
+    "Goblin" : ['G', 'Green', 10, 3, 1, 15],
+    "Orc" : ['O', 'Orange', 15, 5, 3, 35],
+    "Overlord" : ['Y', 'Olive', 25, 15, 5, 55]
 }
 
 # Biome Spawn Disbursement

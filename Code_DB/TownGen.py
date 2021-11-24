@@ -122,19 +122,16 @@ def TownGenerator(town_header : list):
             test_room.door = Vec2(dX, dY)
 
         tries += 1
-    
-    # Random garble for now - Fix this part
-    t_spawn = []
-    for get_center in pending_rooms:
-        t_spawn += [get_center.center]
-    p_spawn = tRNG.randint(0, len(t_spawn) - 1)
-
-    town_header.append(t_spawn) # Empty dictionary for building centers
-    town_header.append(t_spawn.pop(p_spawn)) # Spawn Point
-    town_header.append(Vec2(cX, height - 1)) # Above is a work in progress, should only happen the first spawn
 
     # Remove the 'town square'
     pending_rooms.pop(0)
+    # Get the list of room centers for spawning and stuff
+    t_spawn = [room.center for room in pending_rooms]
+    p_spawn = tRNG.randint(0, len(t_spawn) - 1)
+    # Build the town header proper
+    town_header.append(t_spawn) # Empty dictionary for building centers
+    town_header.append(t_spawn.pop(p_spawn)) # Spawn Point
+    town_header.append(Vec2(cX, height - 1)) # Above is a work in progress, should only happen the first spawn
 
     # Build the rooms to the grid
     for build_room in pending_rooms:

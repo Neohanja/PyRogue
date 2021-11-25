@@ -76,7 +76,7 @@ def GetCitizenName(l : int, nRNG : random.Random):
     """ Returns a name of (l) length"""
     name = ''
     while len(name) < l:
-        name += ChooseLetter(nRNG.random() < .4, nRNG.random())
+        name += ChooseLetter(nRNG.random() < 0.35, nRNG.random())
     return name
 
 def ChooseLetter(vowel : bool, percent):

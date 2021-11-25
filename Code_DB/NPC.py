@@ -23,6 +23,6 @@ class NPC(Actor):
     def GetDialog(self, other):
         """ Get the dialog of the NPC """
         if self.job in NPC_JOBS:
-            self.SendMessage(self.name + 'says: \"' + NPC_JOBS[self.job][NPC_DIALOG] + '\"')
+            self.SendMessage(self.name + ' says: \"' + NPC_JOBS[self.job][NPC_DIALOG] + '\"')
         else:
             super().GetDialog(other)

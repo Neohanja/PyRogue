@@ -15,7 +15,7 @@ from MathFun import *
 WIDTH, HEIGHT = 100, 60
 
 # Declare as the main function:
-def main() -> None:
+def main():
     game_loop = GameManager(Vec2(WIDTH, HEIGHT))
     refresh_screen = True
 

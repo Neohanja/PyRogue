@@ -3,6 +3,8 @@ from AStar import AStar
 from MathFun import *
 
 # Minimum distance for buildings to be apart from each other
+# 0 means they can be touching, negative means they can overlap
+# -1 for shared walls, for example
 BUILDING_MIN_DISTANCE = 5
 
 D_NAME = 0
@@ -34,13 +36,16 @@ def DungeonGenerator(dungeon_header : list):
         dungeon += [new_row]
 
     # Will have to mess with this later so rooms aren't too sparse
-    room_count = dRNG.randint(3 + level, level * 5)
+    room_max = dRNG.randint(3 + level, level * 5)
     tries = 0
-    rooms = 0
 
+    # Start the list of rooms
     pending_rooms = []
 
-    while rooms < room_count and tries < 1000:
+    # We want to keep the number of tries within a limit, to ensure the generator doesn't keep
+    # trying if the dungeon is small, and the room count is large. Setting a max limit to the
+    # number of tries helps keep the possibility of an infinite loop under control.
+    while len(pending_rooms) < room_max and tries < 1000:
         sizeX = dRNG.randint(5, 10)
         sizeY = dRNG.randint(5, 10)
         startX = dRNG.randint(3, width - sizeX - 4)
@@ -55,7 +60,6 @@ def DungeonGenerator(dungeon_header : list):
         # If this building isn't too close to anything else, add it to the list
         if keep_room:
             pending_rooms += [test_room]
-            rooms += 1
             # Add a proper door
             door_wall = dRNG.randint(0,3)
             dX = test_room.start.x
@@ -99,8 +103,13 @@ def DungeonGenerator(dungeon_header : list):
     
     # And to the map
     dungeon[up_stairs.y][up_stairs.x] = 'Upstairs'
-    if not is_bottom: # Do not place stairs if we are at the bottom of the portal/dungeon
+
+    # Do not place stairs if we are at the bottom of the portal/dungeon
+    if not is_bottom: 
         dungeon[down_stairs.y][down_stairs.x] = 'Downstairs'
+    # But we do need a way to tell the dungeon it is the bottom
+    else:
+        dungeon_header[D_DOWN] = 'Last Floor'
 
     # Start the path making thing
     path_maker = AStar(dungeon)

@@ -445,7 +445,7 @@ class GameManager:
             if loc not in self.world.dungeons:
                 # Generate and populate the dungeon
                 self.world.BuildDungeon(loc)
-                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][HEADER][MAP_RNG], 1)
+                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[loc][HEADER], 1)
             self.messenger.AddText('You have entered ' + self.world.dungeons[loc][HEADER][MAP_NAME] + '.')
             new_point = self.world.dungeons[loc][HEADER][UPSTAIRS]
             
@@ -464,7 +464,7 @@ class GameManager:
                 # In the event this dungeon portion does not exist for some reason
                 if new_map not in self.world.dungeons:
                     self.world.BuildDungeon(new_map)
-                    self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER][MAP_RNG], lvl - 1)
+                    self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER], lvl - 1)
                 new_point = self.world.dungeons[new_map][HEADER][DOWNSTAIRS]
             change_map = True
         elif feature == "Downstairs":
@@ -476,7 +476,7 @@ class GameManager:
             if new_map not in self.world.dungeons:
                 # Create the new dungeon and populate it
                 self.world.BuildDungeon(new_map)
-                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER][MAP_RNG], lvl + 1)
+                self.aiEngine.PopulateMonsters(mapLoc, self.world.dungeons[new_map][HEADER], lvl + 1)
             new_point = self.world.dungeons[new_map][HEADER][UPSTAIRS]
             change_map = True
 

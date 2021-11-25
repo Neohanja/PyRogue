@@ -19,7 +19,8 @@ COLOR_PALLET = {
     "Dark Grey" : [75, 75, 75],
     "Portal" : [71, 204, 231],
     "Orange" : [255, 133, 51],
-    "Bloody" : [175, 0, 50]
+    "Bloody" : [175, 0, 50],
+    "Red" : [215, 45, 100]
     }
 
 def GetColor(color_name : str):

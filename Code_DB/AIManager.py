@@ -104,15 +104,65 @@ class AI_Manager:
         """ Added a send message to log function here for ease of access """
         self.gm.AddLog(message)
 
-    def PopulateMonsters(self, d_Index : str, dRNG : random.Random, level : int):
+    def PopulateMonsters(self, d_Index : str, dungeon_header : list, level : int):
         """ Populates a dungeon """
+        dRNG = dungeon_header[3]
+
         m_count = dRNG.randint(3 * level, 5 * level)
 
         if d_Index not in self.monsters:
             self.monsters[d_Index] = []
 
+        master_list = []
+        monster_choices = {}
+        must_include = []
+        spawn_list = []
+
+        if isinstance(dungeon_header[6], str) and dungeon_header[6] == 'Last Floor':
+            master_list = Monster.DUNGEON_BASEMENT
+        else:
+            master_list = Monster.DUNGEON
+
+        for m_choice in master_list:
+            # Unlimited, or 'ul'
+            if m_choice[1] == 'ul':
+                monster_choices[m_choice[0]] = m_count
+                spawn_list += [m_choice[0]]
+            # since 'ul' is currently the only other one containing l, we can safely put this here.
+            # l = Level * number for max able to be spawned
+            elif 'l' in m_choice[1]:
+                # remove the l to get the number, mutliply by the level
+                count = int(m_choice[1][1:]) * level
+                # max number that can be spawned in this location
+                monster_choices[m_choice[0]] = count
+                spawn_list += [m_choice[0]]
+            # s = static number of max able to be spawned, does not use level to multiply
+            elif 's' in m_choice[1]:
+                # remove the s to get the number of max able to be spawned in this level.
+                count = int(m_choice[1][1:])
+                monster_choices[m_choice[0]] = count
+                spawn_list += [m_choice[0]]
+            # uq = unique monster. Unique monsters mean, at the moment, that if this is in the spawn pool,
+            # at least one must be spawned into the level as well. We add it to the different list.
+            # At the moment, this is the dungeon boss.
+            elif m_choice[1] == 'uq':
+                must_include = [m_choice[0]]
+
         for m in range(m_count):
-            which_monster = dRNG.choice(Monster.DUNGEON)
+            which_monster = ''
+            # Go through manditory monsters first
+            if len(must_include) > 0:
+                which_monster = must_include.pop(0)
+            # Then all others
+            else:
+                which_monster = dRNG.choice(spawn_list)
+                # ensure we spawn only up to the max possible
+                monster_choices[which_monster] -= 1
+                # should never go below 0, but just in case, using <= is good practice
+                if monster_choices[which_monster] <= 0:
+                    # remove this monster from the possible spawns if we reach the max count.
+                    spawn_list.remove(which_monster)
+            # Create the monster, then place it into the world
             new_monster = Monster.Monster(which_monster, self.map, self.player, self)
             spawn_loc = self.map.GetEmptySpot(d_Index)
             while self.EntityHere(spawn_loc, d_Index):

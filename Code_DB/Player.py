@@ -48,11 +48,11 @@ class Player(Actor):
         """        
         self.stats['Level'] = Stat('Lvl', 1, 0, 2)
         self.stats['Experience'] = Stat('Exp', 0, 0, 2)
-        self.stats['Hit Points'] = Stat('HP', 10, 10, 1, 'Vit', 2)
+        self.stats['Hit Points'] = Stat('HP', 10, 10, 1, 'Vit', 1)
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
         self.stats['Vitality'] = Stat('Vit', 5, 0, 0)
-        self.stats['Damage'] = Stat('Dmg', 1, 0, 0, 'Str', 2)
+        self.stats['Damage'] = Stat('Dmg', 6, 0, 0, 'Str', 1)
     
     def OnDeath(self):
         """ What to do when the player is defeated """

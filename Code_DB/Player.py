@@ -15,6 +15,7 @@ CLASSES = {
 HOTKEYS = [
     'E - Enter/Use',
     'I - Info',
+    'Q - Use Potion',
     'WASD/Arrows - Movement',
     'ESC - Main Menu'
 ]
@@ -48,6 +49,8 @@ class Player(Actor):
         """        
         self.stats['Level'] = Stat('Lvl', 1, 0, 2)
         self.stats['Experience'] = Stat('Exp', 0, 0, 2)
+        self.stats['Gold'] = Stat('Gold', 5, 0, 2)
+        self.stats['Potions'] = Stat('Potions', 2, 0, 2)
         self.stats['Hit Points'] = Stat('HP', 10, 10, 1, 'Vit', 1)
         self.stats['Strength'] = Stat('Str', 5, 0, 0)
         self.stats['Dexterity'] = Stat('Dex', 5, 0, 0)
@@ -86,6 +89,20 @@ class Player(Actor):
             self.stats['Hit Points'].LevelUp(3, []) # Temp
             self.stats['Hit Points'].AddTo(150) # until HP is higher than 150, this should always heal full
             self.stats['Damage'].LevelUp(1, []) # Temp
+            
+    def UsePotion(self):
+        """ Tells the player to attempt to use a potion """
+        if self.stats['Potions'].Total() <= 0:
+            self.SendMessage('You are out of potions!!!')
+            return False # Didn't use a potion, if it matters later on
+        elif self.stats['Hit Points'].IsFull():
+            self.SendMessage('You are already at full health.')
+            return False
+        else:
+            self.SendMessage('You gain 5 hp from the potion!')
+            self.stats['Hit Points'].AddTo(5)
+            self.stats['Potions'].Use()
+            return True
 
     def Draw(self, console, corner):
         super().Draw(console, corner) # Ensure to conform to the Actor.Draw() first

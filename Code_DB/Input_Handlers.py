@@ -48,6 +48,8 @@ class EventHandler(tcod.event.EventDispatch[Action]):
             action = EnterAction()
         elif key == tcod.event.K_e: # Use Key
             action = UseAction()
+        elif key == tcod.event.K_q: # Potion Key
+            action = UsePotion()
         elif key == tcod.event.K_ESCAPE:
             action = EscapeAction()
         elif key == tcod.event.K_F1:

@@ -149,10 +149,10 @@ class AI_Manager:
                 must_include = [m_choice[0]]
 
         for m in range(m_count):
-            which_monster = ''
+            new_monster = None
             # Go through manditory monsters first
             if len(must_include) > 0:
-                which_monster = must_include.pop(0)
+                new_monster = Monster.Boss(must_include.pop(0), self.map, self.player, self)
             # Then all others
             else:
                 which_monster = dRNG.choice(spawn_list)
@@ -162,8 +162,12 @@ class AI_Manager:
                 if monster_choices[which_monster] <= 0:
                     # remove this monster from the possible spawns if we reach the max count.
                     spawn_list.remove(which_monster)
-            # Create the monster, then place it into the world
-            new_monster = Monster.Monster(which_monster, self.map, self.player, self)
+                # Create the monster, then place it into the world    
+                new_monster = Monster.Monster(which_monster, self.map, self.player, self)
+            
+            if new_monster == None:
+                break # If we ran out of monsters, end the loop.
+            
             spawn_loc = self.map.GetEmptySpot(d_Index)
             while self.EntityHere(spawn_loc, d_Index):
                 spawn_loc = self.map.GetEmptySpot(d_Index)
@@ -228,6 +232,8 @@ class AI_Manager:
     
     def Defeated(self, attacker, defender):
         """ Handles an actor being defeated by another actor """
+        self.AddLog(attacker.name + ' has defeated ' + defender.name + '!')
+        
         if defender.actorType == 'Player':
             # place player has been defeated stuff here
             pass

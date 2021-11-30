@@ -11,6 +11,10 @@ class ToolTipUI(Action):
     """ Shows/Hides hotkey tooltip UI """
     pass
 
+class UsePotion(Action):
+    """ Pass this action when a potion is used """
+    pass
+
 class MovementAction(Action):
     """ Dictates what happens when a movement key is pressed """
     def __init__(self, dx: int, dy: int):

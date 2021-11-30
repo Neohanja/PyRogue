@@ -1,7 +1,5 @@
 # Message system for the game:
 
-# Special characters, in case I forget:
-
 # Class Definition
 class Messenger:
     """ Prints messages to the screen for readability """

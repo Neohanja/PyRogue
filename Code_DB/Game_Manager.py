@@ -201,6 +201,10 @@ class GameManager:
         elif isinstance(action, UseAction):
             self.UseTerrain()
             return True
+        
+        elif isinstance(action, UsePotion):
+            self.aiEngine.player.UsePotion()
+            return True
 
         elif isinstance(action, ExamineAction):
             self.messenger.AddText(self.world.GetExamineAction())

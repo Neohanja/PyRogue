@@ -29,10 +29,21 @@ class Stat:
     
     def IsEmpty(self):
         """ Returns if the value is empty (aka: Dead)"""
-        if self.stat_type == 0 and self.mod_val <= 0:
+        if self.mod_val <= 0:
             return True
         else:
             return False
+    
+    def IsFull(self):
+        """ Checks if the stat is full, such as health or mana """
+        return self.mod_val >= self.base_val and self.stat_type
+    
+    def Use(self, amount = 1):
+        if self.base_val >= amount:
+            self.base_val -= amount
+            return True
+        else:
+            return False # Can't lower below Zero
     
     def PercentRemaining(self):
         """ Returns the ratio of mod value to base value (ie, health, mana, rage) """

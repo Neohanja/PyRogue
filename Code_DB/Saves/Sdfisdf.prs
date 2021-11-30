@@ -1,0 +1,14 @@
+<PLAYER>;Sdfisdf;t:128,128;68,52;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Gold,Gold,5,0,2,;<STAT>,Potions,Potions,2,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,6,0,0,;
+<NPC>;Ttjkycifav;t:128,128;109,51;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Xvxsfuuuhv;t:128,128;122,14;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Fudnmchta;t:128,128;30,48;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Vvuhojreda;t:128,128;132,52;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Hlmmicaam;t:128,128;10,29;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Eitdaqu;t:128,128;93,47;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ptxee;t:128,128;7,45;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Oucwbunji;t:128,128;44,34;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ujebr;t:128,128;85,24;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Aunnu;t:128,128;76,8;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MAP>;o:;Sfkjhsdfk;256,256;
+<MAP>;t:128,128;Wiquuburg,140,63;
+<EOF>

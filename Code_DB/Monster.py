@@ -35,8 +35,6 @@ class Monster(Actor.Actor):
         self.FSM = FSM(self.map_data, self, target)
         self.sight = MONSTER_STATS[monster_ID][M_SIGHT]
         self.actorType = 'Monster'
-        if monster_ID == 'Overlord':
-            self.name += ' ' + GetCitizenName(random.randint(3, 6), random.Random())
 
     def CreateStats(self):
         """ 
@@ -63,3 +61,8 @@ class Monster(Actor.Actor):
             self.Attack(other)
         else:
             return super().OnCollide(other)
+        
+class Boss(Monster):
+    def __init__(self, monster_ID: str, map_data: WorldMap, target, ai_manager):
+        super().__init__(monster_ID, map_data, target, ai_manager)
+        self.name += ' ' + GetCitizenName(random.randint(3, 6), random.Random())

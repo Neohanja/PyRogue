@@ -7,9 +7,9 @@ import Stats
 
 
 MONSTER_STATS = {
-    "Goblin" : ['G', 'Green', 10, 3, 1, 15],
-    "Orc" : ['O', 'Orange', 15, 5, 3, 35],
-    "Overlord" : ['Y', 'Red', 25, 15, 5, 55]
+    "Goblin" : ['G', 'Green', 10, 3, 1, 15, 3],
+    "Orc" : ['O', 'Orange', 15, 5, 3, 35, 5],
+    "Overlord" : ['Y', 'Red', 25, 15, 5, 55, 25]
 }
 
 # Biome Spawn Disbursement
@@ -25,6 +25,7 @@ M_SIGHT = 2
 M_HP = 3
 M_DMG = 4
 M_XP = 5
+M_GOLD = 6
 
 class Monster(Actor.Actor):
     """ Monster class, for all things trying to harm/kill the player"""
@@ -47,13 +48,21 @@ class Monster(Actor.Actor):
         self.stats['Dexterity'] = Stats.Stat('Dex', 5)
         self.stats['Vitality'] = Stats.Stat('Vit', 5)
         self.stats['Damage'] = Stats.Stat('Dmg', monster[M_DMG], 0, 0, 'Str', 1)
+        self.stats['Gold'] = Stats.Stat('Gold', monster[M_GOLD], stat_type = 2)
 
     def Update(self):
         """ Game Update loop for Monster Actor """
         self.FSM.Update()
 
     def GetXP(self):
+        """ Return how much XP the creature is worth """
         return self.stats['Experience'].Total(False)
+    
+    def GetGold(self):
+        """ Return the amount of gold the creature drops """
+        # Get a random range from 1/3rd to twice as much as their loot table allows.
+        gold = random.randint(self.stats['Gold'].Total(False) // 3, self.stats['Gold'].Total(False) * 2)
+        return gold
 
     def OnCollide(self, other):
         """ What happens when the actor collides with something """
@@ -63,6 +72,8 @@ class Monster(Actor.Actor):
             return super().OnCollide(other)
         
 class Boss(Monster):
-    def __init__(self, monster_ID: str, map_data: WorldMap, target, ai_manager):
+    def __init__(self, monster_ID: str, map_data: WorldMap, target, ai_manager, mName = ''):
         super().__init__(monster_ID, map_data, target, ai_manager)
-        self.name += ' ' + GetCitizenName(random.randint(3, 6), random.Random())
+        if mName == '':
+            mName = GetCitizenName(random.randint(3, 6), random.Random())
+        self.name += ' ' + mName

@@ -71,7 +71,11 @@ class AI_Manager:
                 self.player.LoadStats(stat_list)
                 new_map_load = aMap
             elif actor_data[0] == '<MONSTER>':
-                monster = Monster.Monster(aName, self.map, self.player, self)
+                if ' ' in aName:
+                    mName = aName.split(' ')
+                    monster = Monster.Boss(mName[0], self.map, self.player, self, mName[1])
+                else:
+                    monster = Monster.Monster(aName, self.map, self.player, self)
                 monster.SetSpawn(aMap, aPos)
                 monster.LoadStats(stat_list)
                 if aMap in self.monsters:
@@ -238,12 +242,14 @@ class AI_Manager:
             # place player has been defeated stuff here
             pass
         elif defender.actorType == 'Monster' and attacker.actorType == 'Player':
-            attacker.GainExp(defender.GetXP())
+            xp = defender.GetXP()
+            gold = defender.GetGold()
+            attacker.GainExp(xp)
+            attacker.GainGold(gold)
+            self.AddLog(attacker.name + ' gains ' + str(xp) + ' experience and ' + str(gold) + ' gold.')
             mapID = self.map.GetCurrentMap()
             if mapID in self.monsters:
                 self.monsters[mapID].remove(defender)
-            pass
-
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """
@@ -258,5 +264,4 @@ class AI_Manager:
             for npc in self.npcs[mapID]:
                 if npc.Position() == location:
                     return True
-
         return False # If it gets to this point, then there is nothing here

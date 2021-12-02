@@ -1,8 +1,0 @@
-<PLAYER>;Alternate;d:129,127,1;7,26;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:129,127,1;20,36;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
-<MONSTER>;Goblin;d:129,127,1;10,14;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
-<MONSTER>;Orc;d:129,127,1;45,29;<STAT>,Hit Points,HP,8,8,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,5,0,0,;
-<MAP>;o:;Egg;256,256;
-<MAP>;t:128,128;Bajaz Shire,145,76;
-<MAP>;d:129,127,1;Cove,90,59;
-<EOF>

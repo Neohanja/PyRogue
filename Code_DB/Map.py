@@ -9,7 +9,7 @@ import MathFun
 from Noise import *
 from NameGen import *
 from TownGen import *
-from DungeonGen import DungeonGenerator
+from DungeonGen import *
 
 # For maps only, or map manipulation (such as A* and entity placement)
 # Dictionary : Key => Terrain Feature
@@ -138,17 +138,15 @@ class WorldMap:
                     symbol = 'Sand'
                 elif 0.3 <= noise_map[row][col]:
                     symbol = 'Mountains'
-                else:
-                    map_decor = wRNG.random()
-                    terrainID = str(col) + ',' + str(row)
-                    if  map_decor < 0.005:
-                        symbol = 'Portal'
-                        overworld_header[OVER_DUNGEONS][terrainID] = GenTownName(self.worldSeed + terrainID)
                 new_row += [symbol]
             self.overworld += [new_row]
 
+        # Start the overworld A* for making sure all dungeons and 
+        # towns can be accessed from the start location.
         overworld_header.append(AStar(self.overworld[1:]))
-        self.startTown = PlaceTowns(self.overworld)        
+        # Spawn towns and portals
+        self.startTown = PlaceTowns(self.overworld)
+        PlaceDungeons(self.overworld, self.startTown)
 
     def BuildTown(self, t_cord):
         """ Builds a town """

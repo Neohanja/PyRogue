@@ -1,6 +1,7 @@
 # A group of functions designed to help build a Dungeon
 from AStar import AStar
 from MathFun import *
+from NameGen import GenTownName
 
 # Minimum distance for buildings to be apart from each other
 # 0 means they can be touching, negative means they can overlap
@@ -15,7 +16,43 @@ D_LEVEL = 4
 D_UP = 5
 D_DOWN = 6
 
-# Most of this will be the same (for now) as the town generator, but with some changes to give more depth
+def PlaceDungeons(overworld : list, sTown : str):
+    """ Creates Dungeons to add to the Map """
+    # Get the Vector2 of the s(tart)town
+    t = sTown.split(',')
+    startTown = Vec2(int(t[0]), int(t[1]))
+    # Overworld PAthfinder
+    mapper = overworld[0][7]
+    # Overworld Random Number Generator
+    oRNG = overworld[0][3]
+    # Determine the amount of dungeons in the world
+    dungeon_count = oRNG.randint(5, 15)
+    # Get the world seed
+    seed = overworld[0][4]
+    # Get the world dimensions
+    width = overworld[0][1]
+    height = overworld[0][2]
+    # Maximum attempts to place dungeons, to avoid an accidental infinite loop
+    maxTries = 1000
+    dungeons_made = 0
+    for trial in range(maxTries):
+        # first, make sure we haven't hit the dungeon quota
+        if dungeons_made >= dungeon_count:
+            break
+        # Pick a random (x, y) coord, based on the seed. 
+        # y + 1 to account for the header
+        x = oRNG.randint(0, width - 1)
+        y = oRNG.randint(1, height)
+        # First, make sure the spot is on grass - For now, the only place things can spawn
+        if overworld[y][x] == 'Grass':
+            # Make sure a path from here to the starting town can be made
+            if len(mapper.FindPath(Vec2(x, y), startTown, False)) > 0:
+                overworld[y][x] = 'Portal' # Add the portal here
+                d_loc = str(x) + ',' + str(y - 1) # Get the coord string, subtracting the 1 from y
+                overworld[0][6][d_loc] = GenTownName(seed + d_loc) # add it to the dungeon list
+                dungeons_made += 1 # and the count
+                
+# Most of this will be the same as the town generator, but with some changes to give more depth
 def DungeonGenerator(dungeon_header : list):
     """ Generates a town with specified dimentions"""
     dungeon = []

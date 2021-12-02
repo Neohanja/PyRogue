@@ -86,9 +86,14 @@ class Player(Actor):
             # Level up stuff
             self.stats['Level'].LevelUp(1, []) # No stats passing through, as this will be handled later
             my_lvl += 1
-            self.stats['Hit Points'].LevelUp(3, []) # Temp
-            self.stats['Hit Points'].AddTo(150) # until HP is higher than 150, this should always heal full
-            self.stats['Damage'].LevelUp(1, []) # Temp
+            self.stats['Hit Points'].LevelUp(3, [])
+            self.stats['Hit Points'].mod_val = self.stats['Hit Points'].base_val # Completely heal
+            self.stats['Damage'].LevelUp(1, [])
+            self.SendMessage(self.name + ' leveled up, gaining +3 hit points and +1 to damage!')
+    
+    def GainGold(self, coin_count):
+        """ Gives the character gold. Will be used for potions """
+        self.stats['Gold'].LevelUp(coin_count, [])
             
     def UsePotion(self):
         """ Tells the player to attempt to use a potion """

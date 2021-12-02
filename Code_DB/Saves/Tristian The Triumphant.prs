@@ -1,5 +1,0 @@
-<PLAYER>;Tristian The Triumphant;d:221,238,1;68,34;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,30,0,2,;<STAT>,Hit Points,HP,10,-14,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
-<MONSTER>;Goblin;d:221,238,1;68,29;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;
-<MAP>;o:;Tland;256,256;
-<MAP>;d:221,238,1; Burg,99,68;
-<EOF>

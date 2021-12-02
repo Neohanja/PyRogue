@@ -45,7 +45,7 @@ class Actor:
             sd += str(self.stats[stats].base_val) + ','
             sd += str(self.stats[stats].mod_val) + ','
             sd += str(self.stats[stats].stat_type) + ','
-            sd += ';'
+            sd += ';'        
         return sd
 
     def CreateStats(self):

@@ -1,5 +1,6 @@
 # Player Class, since the player is a unique actor
 from Actor import *
+from ColorPallet import GetColor
 from Map import *
 
 # Initial Classes (for stat distrubution)
@@ -33,6 +34,7 @@ class Player(Actor):
         self.actorType = 'Player'
         self.debug = False
         self.showTooltip = True
+        self.defeated_dungeons = []
     
     def Update(self, offset : Vec2):
         self.Move(offset)
@@ -41,6 +43,14 @@ class Player(Actor):
                 self.position = self.map_data.GetTownLoc()
                 self.mapLoc = 'o:'
                 self.map_data.ChangeMap('o:')
+                
+    def SaveFormatter(self):
+        sd = super().SaveFormatter()
+        sd += '<Defeated>'
+        for save_score in self.defeated_dungeons:
+            sd += '$' + save_score
+        sd += ';'
+        return sd
 
     def CreateStats(self):
         """ 
@@ -93,10 +103,15 @@ class Player(Actor):
     
     def GainGold(self, coin_count):
         """ Gives the character gold. Will be used for potions """
+        if not 'Gold' in self.stats:
+            self.stats['Gold'] = Stat('Gold', 0, 0, 2)
         self.stats['Gold'].LevelUp(coin_count, [])
             
     def UsePotion(self):
         """ Tells the player to attempt to use a potion """
+        if not 'Potions' in self.stats:
+            self.stats['Potions'] = Stat('Potions', 5, 0, 2)
+        
         if self.stats['Potions'].Total() <= 0:
             self.SendMessage('You are out of potions!!!')
             return False # Didn't use a potion, if it matters later on
@@ -121,6 +136,12 @@ class Player(Actor):
             console.print(x = x, y = y, string = d)
             y += 1
         
+        portal_st = str(len(self.defeated_dungeons)) + ' / ' + str(len(self.defeated_dungeons) + len(self.map_data.overworld[0][6]))
+        y += 1
+        console.print(x = x, y = y, string = 'Portals Defeated (0): ', fg = GetColor('Portal'))
+        y += 1
+        console.print(x = x, y = y, string = portal_st, fg = GetColor('Portal'))
+        y += 2
         if self.showTooltip:
             suf = ' (F1 to Hide)'
         else:

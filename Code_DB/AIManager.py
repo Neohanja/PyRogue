@@ -57,6 +57,7 @@ class AI_Manager:
             aMap = actor_data[2]
             aLoc = actor_data[3].split(',')
             aPos = Vec2(int(aLoc[0]), int(aLoc[1]))
+            dList = []
             # Load stats
             if len(actor_data) > 4:
                 stat_list = {}
@@ -64,12 +65,18 @@ class AI_Manager:
                     s_data = stat.split(',')
                     if s_data[0] == '<STAT>':
                         stat_list[s_data[1]] = Stat(s_data[2], int(s_data[3]), int(s_data[4]), int(s_data[5]))
+                    elif '$' in stat:
+                        dung = stat.split('$')
+                        for dung_defeat in dung[1:]:
+                            dList += [dung_defeat]
+                        
             # Not too complex, now to figure out which actor to add. Replace player, add monster/NPC        
             if actor_data[0] == '<PLAYER>':
                 self.player.SetSpawn(aMap, aPos)
                 self.player.name = aName
                 self.player.LoadStats(stat_list)
                 new_map_load = aMap
+                self.player.defeated_dungeons = dList
             elif actor_data[0] == '<MONSTER>':
                 if ' ' in aName:
                     mName = aName.split(' ')
@@ -250,6 +257,8 @@ class AI_Manager:
             mapID = self.map.GetCurrentMap()
             if mapID in self.monsters:
                 self.monsters[mapID].remove(defender)
+            if isinstance(defender, Monster.Boss):
+                self.map.ClosePortal(self)
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """

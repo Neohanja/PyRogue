@@ -1,0 +1,28 @@
+<PLAYER>;Bella Moses The Bestest;o:;161,66;<STAT>,Level,Lvl,4,0,2,;<STAT>,Experience,Exp,600,0,2,;<STAT>,Gold,Gold,170,0,2,;<STAT>,Potions,Potions,1,0,2,;<STAT>,Hit Points,HP,19,19,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,9,0,0,;<Defeated>$160,66;
+<MONSTER>;Goblin;d:160,66,3;97,66;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;29,15;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Orc;d:160,66,3;21,21;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Orc;d:160,66,3;55,15;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;86,15;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;43,21;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;93,50;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;70,51;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;57,59;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;61,35;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;40,35;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;48,21;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;84,57;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;97,26;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;99,30;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;86,35;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,3;102,60;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Goblin;d:160,66,3;92,54;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,3;94,43;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:160,66,1;54,31;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Goblin;d:160,66,1;55,20;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Goblin;d:160,66,1;52,14;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:160,66,2;52,52;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Orc;d:160,66,2;136,29;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MAP>;o:;Bing Bong;256,256;
+<MAP>;t:127,128;Kabend,125,55;
+<EOF>

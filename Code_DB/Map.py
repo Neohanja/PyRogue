@@ -1,6 +1,7 @@
 # Map Class, for making and using the map
 # of the "world"
 
+from typing import overload
 import tcod
 import random
 from AStar import AStar
@@ -188,18 +189,46 @@ class WorldMap:
             msd += [self.GetMapString('d', dungeon) + '\n']
         return msd
         
+    def ClosePortal(self, AIEngine):
+        """ Once the boss is defeated, kick the player out of the dungeon and close it off! """
+        if self.curMapType != 'd':
+            return # If we aren't in a dungeon, this was reached by mistake
+        d_ID = self.mapID.split(',')
+        base_dungeon = d_ID[0] + ',' + d_ID[1]
+        depth = int(d_ID[2])
+        x = int(d_ID[0])
+        y = int(d_ID[1])
+        
+        for level in range(depth): # Will be 0 -> the depth, so add 1 later
+            d_Index = base_dungeon + ',' + str(level + 1)
+            self.dungeons.pop(d_Index)
+            if d_Index in AIEngine.monsters:
+                AIEngine.monsters.pop(d_Index)
+        
+        self.overworld[y+1][x] = 'Grass'
+        self.overworld[HEADER][OVER_DUNGEONS].pop(base_dungeon) # Remove the dungeon from the list
+        self.ChangeMap('o:')
+        self.player.SetSpawn('o:', Vec2(x, y))
+        self.player.defeated_dungeons += [base_dungeon]
+        
     def LoadMapData(self, map_lines : list):
         """ Loads in a map """
         self.dungeons.clear()
         self.towns.clear()
         for map_data in map_lines:
             self.CreateMapFromString(map_data)
+        for remove_dungeon in self.player.defeated_dungeons:
+            self.overworld[HEADER][OVER_DUNGEONS].pop(remove_dungeon)
+            coord = remove_dungeon.split(',')
+            x = int(coord[0])
+            y = int(coord[1])
+            self.overworld[y + 1][x] = 'Grass'
     
     def CreateMapFromString(self, map_string : str):
         """ Loads a map from a string """
         parsed_map = map_string.split(';')
         mapType = parsed_map[1].split(':')[0]   
-        # overworld_header = ['Drakland', height, width, random.Random('Drakland'), 'Drakland', {}, {}]
+        
         if mapType == 'o':
             mapName = parsed_map[2]
             mapdimensions = parsed_map[3].split(',')
@@ -207,15 +236,15 @@ class WorldMap:
             mapHeight = int(mapdimensions[1])   
             header = [mapName, mapHeight, mapWidth, random.Random(mapName), mapName, {}, {}]
             self.BuildOverworld(header)
-            pass
         elif mapType == 'd':
-            mapID = parsed_map[1].split(':')[1]  
+            mapID = parsed_map[1].split(':')[1]
+            base_dungeon = mapID[:3]
+            if base_dungeon in self.player.defeated_dungeons:
+                return # don't build the dungeon if has already been destroyed
             self.BuildDungeon(mapID)
-            pass
         elif mapType == 't':
             mapID = parsed_map[1].split(':')[1]  
             self.BuildTown(mapID)
-            pass
 
     def GetMapString(self, mapType : str, mapID : str):
         """ Gets the string interpretation of a map """

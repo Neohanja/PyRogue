@@ -46,17 +46,17 @@ Noise.py - Distorted Gradient noise based loosely on Ken Perlin's Improved Noise
 
 NameGen.py - Generates Town, Dungeon and Villager/Boss names
 
-# Files made using tutorials from rogueliketutorials.com, meant for input processing:
+## Files made using tutorials from rogueliketutorials.com, meant for input processing:
 Input_Handlers.py - Handles key input and what action should be attached to specific keys
 
 Action.py - The action subclass that tells the system what to do based on keys pressed
 
-# Other Python code from Class
+## Other Python code from Class
 Loadpng.py - Problem Set 10, Image Manipulation (For title screen)
 
 png.py - Problem Set 10, MIT *.png Loading
 
-# Additional Files:
+## Additional Files:
 terminal12x12_gs_ro.png (font file; tcod github repository; https://github.com/libtcod/python-tcod/tree/master/fonts/libtcod)
 
 Title.png - Picture taken at Forest Park, Springfield, MA. Downscaled for screen size

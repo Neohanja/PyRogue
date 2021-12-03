@@ -258,7 +258,8 @@ class AI_Manager:
             if mapID in self.monsters:
                 self.monsters[mapID].remove(defender)
             if isinstance(defender, Monster.Boss):
-                self.map.ClosePortal(self)
+                self.AddLog('Dungeon ' + self.map.dungeons[self.map.mapID][0][0] + ' has been destroyed!')
+                self.map.ClosePortal(self)                
 
     def EntityHere(self, location : Vec2, mapID : str):
         """ Checks if any other entities are in this spot """

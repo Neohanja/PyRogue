@@ -23,12 +23,12 @@ WORLD_HEIGHT = 256
 # Help Menu
 # Story Page - WIP
 PLAY_STATE = [
-    'Main Menu', 'Help Menu', 'Story Page', 'Dialog Loop', 'Stat Screen', 
+    'Main Menu', 'Game Over', 'Story Page', 'Win Game', 'Stat Screen', 
     'Game Loop', 'Load Menu', 'CharGen', 'Loading' ]
 MAIN_MENU = 0
-HELP_MENU = 1
+GAME_OVER = 1
 STORY_PAGE = 2
-DIALOG_LOOP = 3
+WIN_GAME = 3
 STAT_PAGE = 4
 GAME_LOOP = 5
 LOAD_MENU = 6
@@ -54,6 +54,7 @@ class GameManager:
         self.page = 0
 
         # general data for new games
+        self.gameOver = False
         self.newName = ''
         self.seedName = ''
         self.textLock = False # For any time a text entry is being used
@@ -64,6 +65,7 @@ class GameManager:
         """ Start a new Game """
         # To-Do:
         # Character Generator
+        self.gameOver = False
         if self.newName == '':
             self.newName = 'Default'
         if self.seedName == '':
@@ -102,6 +104,9 @@ class GameManager:
                 self.playState = PLAY_STATE[CHAR_GEN]
                 self.previousLoc.y = self.cursorLoc.y
                 self.cursorLoc.y = 0
+            elif m_option == 'Story':
+                # Get the story of the game
+                self.playState = PLAY_STATE[STORY_PAGE]
             elif m_option == 'Back':
                 self.playState = PLAY_STATE[GAME_LOOP]
             elif m_option == 'Save':
@@ -117,6 +122,12 @@ class GameManager:
                 raise SystemExit()
             return True
 
+        return False
+
+    def StoryScreen(self, action):
+        if isinstance(action, EscapeAction):
+            self.playState = PLAY_STATE[MAIN_MENU]
+            return True
         return False
 
     def LoadMenuSelections(self, action):
@@ -194,31 +205,42 @@ class GameManager:
 
     def GameLoopUpdate(self, action):
         """ Game Loop for Updating """
-        if isinstance(action, MovementAction):  
-            self.aiEngine.Update(Vec2(action.dx, action.dy))
-            return True
-        
-        elif isinstance(action, UseAction):
-            self.UseTerrain()
-            return True
-        
-        elif isinstance(action, UsePotion):
-            self.aiEngine.player.UsePotion()
-            return True
-
-        elif isinstance(action, ExamineAction):
-            self.messenger.AddText(self.world.GetExamineAction())
-            return True
-
-        elif isinstance(action, ToolTipUI):
-            self.mainCharacter.ToggleTooltip()
-            return True
-                
-        elif isinstance(action, EscapeAction):
+        hasUpdate = False
+        # Make sure the escape comes first, so that the player can escape to the main menu at a minimum when killed
+        if isinstance(action, EscapeAction):
             self.playState = PLAY_STATE[MAIN_MENU]
             self.cursorLoc.x = 0
             self.cursorLoc.y = 0
-            return True
+            hasUpdate = True
+        
+        elif self.aiEngine.player.IsDead():
+            if not self.gameOver:
+                self.AddLog('You have been vanquished by evil, hero. Reload the last save, or start a new game to try again.')
+                self.gameOver = True
+            hasUpdate = True
+                
+        
+        elif isinstance(action, MovementAction):  
+            self.aiEngine.Update(Vec2(action.dx, action.dy))
+            hasUpdate = True
+        
+        elif isinstance(action, UseAction):
+            self.UseTerrain()
+            hasUpdate = True
+        
+        elif isinstance(action, UsePotion):
+            self.aiEngine.player.UsePotion()
+            hasUpdate = True
+
+        elif isinstance(action, ExamineAction):
+            self.messenger.AddText(self.world.GetExamineAction())
+            hasUpdate = True
+
+        elif isinstance(action, ToolTipUI):
+            self.mainCharacter.ToggleTooltip()
+            hasUpdate = True
+        
+        return hasUpdate
 
     def NewAndLoading(self, action):
         """ 
@@ -245,6 +267,9 @@ class GameManager:
         if self.playState == PLAY_STATE[GAME_LOOP]:
             if self.GameLoopUpdate(action):
                 refresh_screen = True
+        elif self.playState == PLAY_STATE[STORY_PAGE]:
+            if self.StoryScreen(action):
+                refresh_screen = True
         elif self.playState == PLAY_STATE[MAIN_MENU]:
             if self.MainTitle(action):
                 refresh_screen = True
@@ -265,6 +290,8 @@ class GameManager:
         """ Draws updates to all game existances """
         if self.playState == PLAY_STATE[GAME_LOOP]:
             self.DrawWorld(console)
+        elif self.playState == PLAY_STATE[STORY_PAGE]:
+            self.DrawStory(console)
         elif self.playState == PLAY_STATE[MAIN_MENU]:
             self.DrawTitle(console)
         elif self.playState == PLAY_STATE[LOAD_MENU]:
@@ -273,6 +300,17 @@ class GameManager:
             self.DrawCharacterGenerator(console)
         elif self.playState == PLAY_STATE[LOADING]:
             self.DrawGameLoading(console)
+
+    def DrawStory(self, console):
+        """ Draws the story of the game to the screen """
+        border = Title(self.screenSize.x, self.screenSize.y)
+        for line in range(len(border)):
+                    console.print(x=0, y=line, string = border[line])
+        x = 2
+        y = 3
+        for line in TellStory():
+            console.print(x = x, y = y, string = line)
+            y += 2
 
     def DrawLoadScreen(self, console):
         """ Draws the load screen, and borrows much of the code from the title """

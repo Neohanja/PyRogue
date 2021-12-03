@@ -26,7 +26,7 @@ def PlaceDungeons(overworld : list, sTown : str):
     # Overworld Random Number Generator
     oRNG = overworld[0][3]
     # Determine the amount of dungeons in the world
-    dungeon_count = oRNG.randint(5, 15)
+    dungeon_count = oRNG.randint(5, 15) # Each world has between 5 (short game) and 15 (longer game)
     # Get the world seed
     seed = overworld[0][4]
     # Get the world dimensions

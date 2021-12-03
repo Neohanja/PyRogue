@@ -18,6 +18,7 @@ TITLE_MENU = [
     ['---------------------------------', True, ''],
     ['         Continue', False, 'Back'],
     ['         New Game', True, 'New'],
+    ['         Story', True, 'Story'],
     ['         Load Game', True, 'Load'],
     ['         Save Game', False, 'Save'],
     ['         Quit', True, 'Quit']
@@ -28,8 +29,8 @@ CHARACTER_GENERATOR = [
     ['        New Character :          ', 0, ''],
     ['---------------------------------', 0, ''],
     ['  Name: ', 8, '<Name>'],
-    ['  World Name: ', 14, '<Seed>'],
-    ['', 2, '<Classes>']
+    ['  World Name: ', 14, '<Seed>']
+    # ['', 2, '<Classes>']
 ]
 
 ALPHA_INPUT = {
@@ -94,6 +95,31 @@ def Title(width, height):
             else:
                 line += ' '
         s.append(line)
+    return s
+
+def TellStory():
+    s = [
+        '    Long ago, war erupted between 2 nations: Drakland, a land of magic,',
+        'and Atlantis, a land of technology. When the two countries came to a', 
+        'stand still, they enlisted the help of Orion, a nearby land that was',
+        'neither of magic nor technology. Knowing either of the two lands could',
+        'turn on them, the people of Orion found a way to neutralize both warring',
+        'nations. Without technology, Atlantis was unable to stay afloat the',
+        'ocean and sunk to the bottom of the ocean. Without magic, Drakland could',
+        'not exist, and simply disappeared. The lands of Orion were corrupted by',
+        'the influx of magic and technology, splitting the land into several',
+        'massive land masses.',
+        ' ',
+        '    As the powers that be were merciful, Drakland was saved. Instead of',
+        'ceasing to exist, it was instead pulled from our dimension and placed in',
+        'the care of a new dimension. But this was not without consequence. The',
+        'dimensional rip caused portals to open around the world, forcing heroes',
+        'to come together to close the portals and save the new realm. Will you,',
+        'dear hero, answer the call to save the day?',
+        ' ',
+        ' ',
+        ' < Press Escape (Esc) to return to the main menu > '
+    ]
     return s
 
 def WorldUI(width, height):

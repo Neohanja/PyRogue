@@ -198,18 +198,30 @@ class WorldMap:
         depth = int(d_ID[2])
         x = int(d_ID[0])
         y = int(d_ID[1])
-        
+        # Close each level of the dungeon first
         for level in range(depth): # Will be 0 -> the depth, so add 1 later
             d_Index = base_dungeon + ',' + str(level + 1)
             self.dungeons.pop(d_Index)
             if d_Index in AIEngine.monsters:
                 AIEngine.monsters.pop(d_Index)
-        
+        # Then remove the dungeon from the library and world
         self.overworld[y+1][x] = 'Grass'
         self.overworld[HEADER][OVER_DUNGEONS].pop(base_dungeon) # Remove the dungeon from the list
         self.ChangeMap('o:')
         self.player.SetSpawn('o:', Vec2(x, y))
         self.player.defeated_dungeons += [base_dungeon]
+        # And if this was the last dungeon, congratulate the player!
+        if self.PortalsRemaining() <= 0:
+            AIEngine.AddLog(' ')
+            AIEngine.AddLog('Congratulations, you have closed all the chaos portals and have') 
+            AIEngine.AddLog('saved the day, brave hero!')
+            AIEngine.AddLog(' ')
+            AIEngine.AddLog('The world has rejoiced, and bards sing your praises! You can') 
+            AIEngine.AddLog('continue to explore or start a new game!')
+            AIEngine.AddLog(' ')
+            AIEngine.AddLog('Thank you for playing, and enjoy your hero\'s victory!! Hoozah!')
+            AIEngine.AddLog(' ')
+        
         
     def LoadMapData(self, map_lines : list):
         """ Loads in a map """
@@ -223,6 +235,10 @@ class WorldMap:
             x = int(coord[0])
             y = int(coord[1])
             self.overworld[y + 1][x] = 'Grass'
+    
+    def PortalsRemaining(self):
+        """ Get the count of portals still remaining to be closed """
+        return len(self.overworld[HEADER][OVER_DUNGEONS])
     
     def CreateMapFromString(self, map_string : str):
         """ Loads a map from a string """

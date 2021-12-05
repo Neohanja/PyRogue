@@ -1,0 +1,14 @@
+<PLAYER>;George;d:118,123,1;99,15;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,35,0,2,;<STAT>,Gold,Gold,7,0,2,;<STAT>,Potions,Potions,2,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,6,0,0,;<Defeated>;
+<MONSTER>;Goblin;d:118,123,1;68,5;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Orc;d:118,123,1;120,35;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Experience,XP,35,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,3,0,0,;<STAT>,Gold,Gold,5,0,2,;
+<MONSTER>;Goblin;d:118,123,1;120,36;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<MONSTER>;Goblin;d:118,123,1;23,20;<STAT>,Hit Points,HP,3,3,1,;<STAT>,Experience,XP,15,0,2,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;<STAT>,Gold,Gold,3,0,2,;
+<NPC>;Xggfvdan;t:128,128;42,15;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Hialbiboz;t:128,128;88,38;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ulblilmk;t:128,128;45,58;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ulxril;t:128,128;30,34;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Aekrest;t:128,128;30,20;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MAP>;o:;Cs 120;256,256;
+<MAP>;t:128,128;Suminster,103,68;
+<MAP>;d:118,123,1;Gavagohovel,146,56;
+<EOF>

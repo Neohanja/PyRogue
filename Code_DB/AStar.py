@@ -56,11 +56,14 @@ class ANode:
     # Operations for sorting an ANode List
     def __lt__(self, other):
         """ Less than < operator """
-        return self.total_cost < other.total_cost
+        return self.manhattan_cost < other.manhattan_cost
     
     def __gt__(self, other):
         """ Greater than > operator """
-        return self.total_cost > other.total_cost
+        return self.manhattan_cost > other.manhattan_cost
+
+# The algorith class for A* pathfinding. Stores the map for future use, to make sure it
+# doesn't need to be called each time the pathfinder is used.
 
 class AStar:
     """ 
@@ -69,9 +72,12 @@ class AStar:
     """
     def __init__(self, grid):
         """ Constructor """
-        self.node_status = {}
+        # Determines if a node is open or closed
+        self.node_list = {}
         self.open_list = []
+        # The map storage
         self.grid = grid
+        # The max dimensions of the map
         self.max_x = len(grid[0])
         self.max_y = len(grid)
 
@@ -83,34 +89,31 @@ class AStar:
             the end point
         """
         # Clear the lists
-        self.node_status.clear()
+        self.node_list.clear()
         self.open_list.clear()
 
         # Get the first point, and start from there. None means there is no "parent"
         start_node = ANode(start, end)
-        self.node_status[str(start_node)] = 'Open'
         self.open_list.append(start_node)
 
         if start == end:
             # In the event the pathfinder is at the end point already,
             # it is useless to send it to the next point
             return []
-
+        # Process the list of open nodes, until there are no more nodes to process
         while len(self.open_list) > 0:
             if self.open_list[0].point == end:
                 cur_node = self.open_list[0]
                 if not include_goal: # Skip the goal if we program that. Useful for NPCs
                     cur_node = cur_node.parent_node
                 return cur_node.GetPath() # call the recursion on the A* Nodes to get the path
-
-            self.node_status[str(self.open_list[0])] = 'Closed'
+            self.node_list[str(self.open_list[0])] = 'Closed'
             self.AddSurrounding(self.open_list.pop(0), end)
-
-        return []
+        return [] # return a blank list if nothing was found.
 
     def AddSurrounding(self, point : ANode, goal : MathFun.Vec2):
         """ Adds the surrounding areas to the current node """
-        start = point.point
+        start = point.point.Copy()
         # No diagonals, as the characters and world can only move the north/east/south/west
         for neighbor in [MathFun.Vec2(-1, 0), MathFun.Vec2(1, 0), MathFun.Vec2(0, -1), MathFun.Vec2(0, 1)]:
             if 0 <= start.x + neighbor.x < self.max_x and 0 <= start.y + neighbor.y < self.max_y:
@@ -123,8 +126,10 @@ class AStar:
             Checks if this node is new, or already in the open/closed list 
             If it is a new node, adds it to the open list
         """
-        if str(node) in self.node_status:
+        # Ensure we have not already used this node
+        if str(node) in self.node_list:
             return # Node is already being processed
         
-        self.node_status[str(node)] = 'Open'
+        self.node_list[str(node)] = 'Open'
         self.open_list.append(node)
+        self.open_list.sort()

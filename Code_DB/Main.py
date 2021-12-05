@@ -1,4 +1,4 @@
-# File: Pyrog.py (Python Rogue-Esque)
+# File: Main.py (Main Run File)
 # AUthor: George Hall
 # CS 120 Final: Python Rogue-like mini-game
 
@@ -27,9 +27,9 @@ def main():
     event_handler = EventHandler(game_loop)
 
     with tcod.context.new(
-        columns=console.width,
-        rows=console.height,
-        tileset=tileset,
+        columns = console.width,
+        rows = console.height,
+        tileset = tileset,
         title = "Python Rogue-Esque : Intro to Computing Finale",
         vsync = True
     ) as context:

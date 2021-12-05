@@ -3,14 +3,6 @@ from Actor import *
 from ColorPallet import GetColor
 from Map import *
 
-# Initial Classes (for stat distrubution)
-# Class Name : Bonus stats (if/when skills get worked in, add here as well)
-CLASSES = {
-    '<Classes Not Implemented yet>' : [], # part of the to-do list
-    'Warrior' : [['Strength', 2], ['Vitality', 2]],
-    'Rogue' : [['Dexterity', 2], ['Strength', 2]]
-}
-
 # A kind of helper for the player to understand the buttons to press
 # to play the game
 HOTKEYS = [

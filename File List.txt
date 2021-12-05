@@ -1,11 +1,11 @@
 # PyRogue
 File: Python Rogue
-
 Author: George Hall
-
 Final Project : CS 120
 
 # File List:
+\Saves\* - Saved games, used for reloading and demonstrating file manipulation
+
 Main.py (Main) - Contains the Main Method to run the program
 
 Game_Manager.py - Contains the game loop and all necessary data for controlling game elements

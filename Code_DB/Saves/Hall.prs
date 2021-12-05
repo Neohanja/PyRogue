@@ -1,0 +1,9 @@
+<PLAYER>;Hall;t:128,128;51,64;<STAT>,Level,Lvl,1,0,2,;<STAT>,Experience,Exp,0,0,2,;<STAT>,Gold,Gold,5,0,2,;<STAT>,Potions,Potions,2,0,2,;<STAT>,Hit Points,HP,10,10,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,6,0,0,;<Defeated>;
+<NPC>;Xggfvdan;t:128,128;42,15;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Hialbiboz;t:128,128;88,38;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ulblilmk;t:128,128;45,58;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Ulxril;t:128,128;30,34;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<NPC>;Aekrest;t:128,128;30,20;<STAT>,Hit Points,HP,5,5,1,;<STAT>,Strength,Str,5,0,0,;<STAT>,Dexterity,Dex,5,0,0,;<STAT>,Vitality,Vit,5,0,0,;<STAT>,Damage,Dmg,1,0,0,;
+<MAP>;o:;Cs 120;256,256;
+<MAP>;t:128,128;Suminster,103,68;
+<EOF>

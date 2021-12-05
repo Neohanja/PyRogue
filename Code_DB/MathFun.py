@@ -112,19 +112,19 @@ class Spiral:
         """ Get the next step in the spiral """
         if self.stepDir == 0: # Go Right
             self.currentPoint.x -= 1
-            if self.currentPoint.x == -self.stepDist:
+            if self.currentPoint.x == self.initialPoint.x - self.stepDist:
                 self.stepDir = 1
         elif self.stepDir == 1: # Then Up
             self.currentPoint.y -= 1
-            if self.currentPoint.y == -self.stepDist:
+            if self.currentPoint.y == self.initialPoint.y - self.stepDist:
                 self.stepDir = 2
         elif self.stepDir == 2: # Next, Left
             self.currentPoint.x += 1
-            if self.currentPoint.x == self.stepDist:
+            if self.currentPoint.x == self.initialPoint.x + self.stepDist:
                 self.stepDir = 3
         elif self.stepDir == 3: # Then Down
             self.currentPoint.y += 1
-            if self.currentPoint.y == self.stepDist:
+            if self.currentPoint.y == self.initialPoint.y + self.stepDist:
                 self.stepDir = 0
                 self.stepDist += 1 # If we hit this point, now we restart the spiral and increase the distance
         

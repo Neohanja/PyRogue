@@ -17,11 +17,6 @@ TITLE_IMAGE = 'Title.png'
 WORLD_WIDTH = 256
 WORLD_HEIGHT = 256
 # Game State Info
-# States not yet used:
-# Dialog Loop
-# Stat Screen
-# Help Menu
-# Story Page - WIP
 PLAY_STATE = [
     'Main Menu', 'Game Over', 'Story Page', 'Win Game', 'Stat Screen', 
     'Game Loop', 'Load Menu', 'CharGen', 'Loading' ]

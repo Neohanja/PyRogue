@@ -249,7 +249,7 @@ class WorldMap:
             mapName = parsed_map[2]
             mapdimensions = parsed_map[3].split(',')
             mapWidth = int(mapdimensions[0])
-            mapHeight = int(mapdimensions[1])   
+            mapHeight = int(mapdimensions[1])
             header = [mapName, mapHeight, mapWidth, random.Random(mapName), mapName, {}, {}]
             self.BuildOverworld(header)
         elif mapType == 'd':
